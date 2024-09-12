@@ -1,0 +1,121 @@
+{
+  "id": "4600300",
+  "name": "广14",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "6883163",
+      "name": "个人头像",
+      "font_class": "gerentouxiang",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "12911862",
+      "name": "查看",
+      "font_class": "chakan",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "13896047",
+      "name": "question-mark-circle",
+      "font_class": "question-mark-circle",
+      "unicode": "e78f",
+      "unicode_decimal": 59279
+    },
+    {
+      "icon_id": "36915421",
+      "name": "globe",
+      "font_class": "globe",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "40668659",
+      "name": "Bell",
+      "font_class": "Bell",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "1319976",
+      "name": "系统设置",
+      "font_class": "xitongshezhi",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "4100335",
+      "name": "智能分析",
+      "font_class": "zhinengfenxi",
+      "unicode": "e75d",
+      "unicode_decimal": 59229
+    },
+    {
+      "icon_id": "8859251",
+      "name": "运营",
+      "font_class": "yunying",
+      "unicode": "e788",
+      "unicode_decimal": 59272
+    },
+    {
+      "icon_id": "14047641",
+      "name": "维护管理",
+      "font_class": "wrench-fill",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "22247935",
+      "name": "健康管理",
+      "font_class": "jiankangguanli",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
+      "icon_id": "28582580",
+      "name": "知识库",
+      "font_class": "a-zhishiku-011",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    },
+    {
+      "icon_id": "36595587",
+      "name": "历史数据",
+      "font_class": "lishishuju",
+      "unicode": "e962",
+      "unicode_decimal": 59746
+    },
+    {
+      "icon_id": "36604135",
+      "name": "规则引擎",
+      "font_class": "icon_guizeyinqing",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "4661022",
+      "name": "0601-重大危险",
+      "font_class": "-zhongdaweixian",
+      "unicode": "ebfd",
+      "unicode_decimal": 60413
+    },
+    {
+      "icon_id": "8312527",
+      "name": "通过",
+      "font_class": "tongguo",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "9826664",
+      "name": "警告",
+      "font_class": "jinggao",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    }
+  ]
+}
