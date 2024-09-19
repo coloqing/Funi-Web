@@ -3,10 +3,7 @@
     <!-- <router-view /> -->
     <!-- 页面计算适配测试 -->
     <!-- 最大变化元素 -->
-    <div
-      class="change_container"
-      :style="{ width: screenWidth + 'px', height: screenHeight + 'px' }"
-    >
+    <div class="change_container" :style="{ width: screenWidth + 'px', height: screenHeight + 'px' }">
       <router-view />
     </div>
   </div>
@@ -57,16 +54,20 @@ export default {
   margin: 0;
   padding: 0;
 }
+
 body {
   background-color: #181f31;
 }
+
 .router_link {
   color: #164b7d;
   text-decoration: none;
 }
+
 ::-webkit-scrollbar {
   display: none;
 }
+
 #app {
   background-color: #0b1121;
   width: 100vw;
@@ -75,7 +76,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
+
 //-------------------页面适配-------------------------
 // .change_container{
 //   background-color: rgb(204, 26, 56);
@@ -83,21 +86,26 @@ body {
 // 文本大小统一
 // 标题
 .font_size26w {
-  font-size: 1.2vw; //26
+  // font-size: 1.2vw; //26
+  font-size: 1vw;
   font-weight: bold;
 }
+
 // 表头
 .font_size20 {
   font-size: 1vw; //20
 }
+
 // 小号表头(特殊文本)
 .font_size16 {
   font-size: 0.6vw; //16
 }
+
 // 普通文本
 .font_size18 {
   font-size: 0.85vw; //18
 }
+
 // 状态(特殊文本)
 .font_size24 {
   font-size: 1.1vw; //24

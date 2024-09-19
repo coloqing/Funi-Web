@@ -142,13 +142,13 @@
             </el-date-picker>
           </div>
         </div>
-        <el-divider />
+        <!-- <el-divider /> -->
         <div class="line_bott_echarts font_size20">
           <!-- 报警预警趋势 -->
           <div class="line_warning1">
             <div class="alarm_echarts_title font_size20">报警预警趋势</div>
             <!-- <div ref="alarm_echarts" class="alarm_echarts"></div> -->
-            <MyCharts :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></MyCharts>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></EChartsCom>
           </div>
 
           <el-divider direction="vertical" style="height: 100%;" />
@@ -156,19 +156,20 @@
           <div class="line_warning2">
             <div class="history_alarm_title">历史报警分布统计</div>
             <!-- <div ref="history_alarm" class="history_alarm" style="height: 78%; width: 100%"></div> -->
-            <MyCharts :width="'100%'" :height="'92%'" :option="history_alarm_option"></MyCharts>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_alarm_option"></EChartsCom>
           </div>
           <!-- 历史预警发布统计 -->
           <div class="line_warning3">
             <div class="history_forewarn_title">历史预警发布统计</div>
             <!-- <div ref="history_forewarn" class="history_forewarn" style="height: 78%; width: 100%"></div> -->
-            <MyCharts :width="'100%'" :height="'92%'" :option="history_forewarn_option"></MyCharts>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_forewarn_option"></EChartsCom>
           </div>
           <!-- 报警预警top10 -->
           <div class="line_warning4">
             <div class="line_top10_title">报警预警top10</div>
             <!-- <div ref="line_top10" class="line_top10" style="height: 78%; width: 100%"></div> -->
-            <MyCharts :width="'100%'" :height="'92%'" :option="history_forewarn_option"></MyCharts>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="top10_option">
+            </EChartsCom>
           </div>
         </div>
       </div>
@@ -180,11 +181,11 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import * as echarts from "echarts";
-import MyCharts from '@/components/MyCharts.vue';
+import EChartsCom from '@/components/EChartsCom.vue';
 export default {
   name: "HomeView",
   components: {
-    MyCharts,
+    EChartsCom,
   },
   data() {
     return {
@@ -262,7 +263,8 @@ export default {
             }
           }
         ]
-      }
+      },
+      top10_option: {}
     };
   },
   // 初始化之前
@@ -330,14 +332,14 @@ export default {
           }
         },
         tooltip: {},
-        color: ['#7093b3', '#e69e4e'],
+        color: ['#da1e28', '#fc7b1e'],
         dataset: {
           source: [
             ['类型', '预警', '故障'],
-            ['2024-06', 43.3, 85.8],
-            ['2024-07', 83.1, 73.4],
-            ['2024-08', 86.4, 65.2],
-            ['2024-09', 72.4, 53.9]
+            ['2024-06', 3, 0],
+            ['2024-07', 40, 1],
+            ['2024-08', 12, 0],
+            ['2024-09', 5, 0]
           ]
         },
         xAxis: { type: 'category' },
@@ -368,6 +370,78 @@ export default {
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
             }
+          }
+        ]
+      }
+      return op
+    },
+
+    get_top10_option() {
+      let op = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            show: true,
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          },
+          textStyle: {
+            fontSize: 20
+          }
+        },
+        color: ['#7093b3'],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          show: false
+        },
+        yAxis: {
+          type: 'category',
+          axisLine: {
+            show: false // 不显示 Y 轴的轴线
+          },
+          axisLabel: {
+            fontSize: 18,
+            interval: 0
+          },
+          axisTick: {
+            show: false // 不显示 Y 轴的刻度线
+          },
+          data: [
+            '101102',
+            '101103',
+            '101104',
+            '101105',
+            '101106',
+            '101107',
+            '101108',
+            '101109',
+            '101110',
+            '101111'
+          ] // 这里假设了一些类别名称
+        },
+        series: [
+          {
+            name: '次数',
+            type: 'bar',
+            barWidth: '90%',
+            stack: '总量',
+            label: {
+              show: true,
+              // insideLeft:'left',
+              position: 'insideLeft',
+              fontSize: 14,
+              formatter: '{c}' // 显示具体的数值
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            // barMaxWidth: '15',
+            data: [866, 740, 638, 610, 544, 477, 410, 390, 351, 288].reverse() // 这里是您的数据
           }
         ]
       }
@@ -745,6 +819,9 @@ export default {
 
       let history_forewarn_option = this.get_history_forewarn_option()
       this.history_forewarn_option = history_forewarn_option;
+
+      let top10_option = this.get_top10_option()
+      this.top10_option = top10_option;
     }
   },
 
