@@ -1,5 +1,12 @@
 <template>
   <div class="train">
+    <div>
+      <el-select v-model="value" placeholder="请选择">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button @click="goback">返回</el-button>
+    </div>
     <!-- 顶部实时预警/报警 12.5-->
     <div class="train_top">
       <!-- 实时报警 -->
@@ -128,7 +135,7 @@
                   <td>
                     <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
                       item.state === 0 ? "异常" : "正常"
-                    }}</span>
+                      }}</span>
                   </td>
                   <td class="detail">
                     <span @click="instructions_togg">查看详情</span>
@@ -152,11 +159,11 @@
             <div class="curves_title_le">电机滤网</div>
             <!-- 查询时间 -->
             <div class="curves_title_ri">
-              <div class="choices">
+              <!-- <div class="choices">
                 <div>近7天</div>
                 <div>近30天</div>
                 <div>近12月</div>
-              </div>
+              </div> -->
               <div class="block">
                 <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
                   end-placeholder="结束日期">
@@ -643,6 +650,22 @@ export default {
                 borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
               },
               data: [0, 8, 0, 0],
+              markLine: {
+                data: [
+                  {
+                    yAxis: 6, // 阈值
+                    label: {
+                      // 自定义阈值线的标签
+                      formatter: '阈值: 6',
+                      position: "middle"
+                    },
+                    lineStyle: {
+                      type: 'dashed', // 虚线
+                      color: 'red'    // 红色
+                    }
+                  }
+                ]
+              }
             },
             {
               name: "故障",
@@ -689,6 +712,9 @@ export default {
         }
       }, 30);
     },
+    goback() {
+      this.$router.back()
+    }
   },
   created() {
     this.total;
@@ -892,7 +918,7 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 0.8rem;
-          color: b3b5bb;
+          color: #b3b5bb;
           margin: 0.3rem;
           border-radius: 2px;
           border: 1px dashed;
@@ -1065,7 +1091,7 @@ export default {
         }
 
         .block {
-          width: 40%;
+          width: 100%;
         }
       }
     }

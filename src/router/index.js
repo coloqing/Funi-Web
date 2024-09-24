@@ -4,6 +4,9 @@ import HomeView from "../views/HomeView.vue";
 import TrainClass from "../views/TrainClass.vue";
 import failureAnalysis from "../views/failureAnalysis.vue";
 import Test from "../views/Test.vue";
+import AlarmInfo from "@/views/AlarmInfo.vue";
+import HomePic from "@/views/HomePic.vue";
+import TrainPic from "@/views/TrainPic.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +30,21 @@ const routes = [
     path: "/Test",
     name: "Test",
     component: Test,
+  },
+  {
+    path: "/AlarmInfo",
+    name: "AlarmInfo",
+    component: AlarmInfo,
+  },
+  {
+    path: "/HomePic",
+    name: "HomePic",
+    component: HomePic,
+  },
+  {
+    path: "/TrainPic",
+    name: "TrainPic",
+    component: TrainPic,
   },
 ];
 

@@ -31,7 +31,7 @@
               <div class="forewarn body_forewarn">70</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <span>查看详情</span>
+                <router-link to="/TrainClass" class="router_link">查看详情</router-link>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/TrainClass" class="router_link">查看详情</router-link>
+                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
                 </div>
               </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <span>查看详情</span>
+                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
                 </div>
               </div>
             </div>

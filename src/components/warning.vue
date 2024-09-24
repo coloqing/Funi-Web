@@ -4,7 +4,7 @@
         <div class="line_alarm">
             <!-- 报警title -->
             <div class="alarm_title">
-                <div class="recording font_size26w">{{msg? '实时预警' :'实时报警'}}</div>
+                <div class="recording font_size26w">{{ msg ? '实时预警' : '实时报警' }}</div>
                 <!-- 日期选择 -->
                 <!-- <div class="alarm_choose">
                     <div class="alarm_time1">近7天</div>
@@ -46,7 +46,7 @@
                     </div>
                     <!--操作 -->
                     <div class="operate body_operate">
-                        <router-link to="/failureAnalysis" @click="" class="router_link">详情</router-link>
+                        <router-link to="/AlarmInfo" @click="" class="router_link">详情</router-link>
 
                     </div>
                 </div>
@@ -63,7 +63,7 @@
 export default {
     name: 'warning',
     props: {
-        msg:Number
+        msg: Number
     },
     data() {
         return {
@@ -75,14 +75,16 @@ export default {
 
 <style lang="less" scoped>
 .warning {
-   height: 100%;
-   padding: 0 0.5vw;
+    height: 100%;
+    padding: 0 0.5vw;
     background: #181f30;
+
     // 报警记录
     .line_alarm {
         min-height: 100%;
         max-height: 100%;
         height: 100%;
+
         // overflow: hidden;
         // font-size: 1vw;
         .train_number {
@@ -186,6 +188,7 @@ export default {
             height: 76%;
             color: #989eae;
             overflow-y: auto;
+
             // font-size: 1vw;
             .train_body_list {
                 display: flex;

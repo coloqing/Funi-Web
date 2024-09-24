@@ -1,5 +1,5 @@
 <template>
-    <div ref='bar' :style="{ height: height, width: width }"></div>
+    <div ref='echartref' :style="{ height: height, width: width }"></div>
 </template>
 
 <script>
@@ -17,8 +17,8 @@ export default {
         }
     },
     mounted() {
-        if (this.$refs.bar) {
-            this.bar_echarts = echarts.init(this.$refs.bar);
+        if (this.$refs.echartref) {
+            this.bar_echarts = echarts.init(this.$refs.echartref);
             this.bar_echarts.setOption(this.option)
         }
     },

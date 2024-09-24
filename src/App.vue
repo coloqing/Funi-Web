@@ -1,9 +1,10 @@
 <template>
-  <div id="app" style="font-size: 16px">
+  <div id="app" style="font-size: 14px">
     <!-- <router-view /> -->
     <!-- 页面计算适配测试 -->
     <!-- 最大变化元素 -->
-    <div class="change_container" :style="{ width: screenWidth + 'px', height: screenHeight + 'px' }">
+    <!-- <div class="change_container" :style="{ width: screenWidth + 'px', height: screenHeight + 'px' }"> -->
+    <div class="change_container" :style="{ width: '100dvw', height: '100dvh' }">
       <router-view />
     </div>
   </div>
@@ -76,7 +77,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  font-family: -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica Neue,
+    Arial,
+    Noto Sans,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    Segoe UI Symbol,
+    "Noto Color Emoji";
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  font-feature-settings: "tnum";
 }
 
 //-------------------页面适配-------------------------
