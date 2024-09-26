@@ -77,10 +77,13 @@ export default {
             font-variant: tabular-nums;
             line-height: 1.5715;
             position: relative;
-            display: -webkit-box;
             overflow: hidden;
             text-overflow: ellipsis;
-            word-break: break-all;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+
         }
 
         .signal-value {

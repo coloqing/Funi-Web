@@ -39,8 +39,9 @@
                         <div>状态</div>
                         <div>
                             <el-select v-model="stateValue" placeholder="请选择" size="mini">
-                                <el-option v-for="item in stateOptions" :key="item.value" :label="item.label"
-                                    :value="item.value">
+                                <el-option
+                                    v-for="item in [{ value: '', label: '全部' }, { value: '已消除', label: '已消除' }, { value: '未消除', label: '未消除' }]"
+                                    :key="item.value" :label="item.label" :value="item.value">
                                 </el-option>
                             </el-select>
                         </div>
@@ -91,35 +92,55 @@
                     </el-col>
                     <el-col :span="12">
                         <div style="display: flex;justify-content: end;">
-                            <el-button size="mini">导出(已选择0项)</el-button>
+                            <el-button size="mini">导出(已选择{{ selectedRow.length }}项)</el-button>
                         </div>
                     </el-col>
                 </el-row>
                 <el-row>
                     <div>
-                        <!-- <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
-                                    style="width: 100%" @selection-change="handleSelectionChange">
-                                    <el-table-column type="selection">
-                                    </el-table-column>
-                                    <el-table-column label="预警名称">
-                                    </el-table-column>
-                                    <el-table-column prop="name" label="子系统">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="状态">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="开始时间">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="结束时间">
-                                    </el-table-column>
-                                </el-table> -->
+                        <el-table ref="alarmTable" :data="tableData.data" tooltip-effect="dark" style="width: 100%"
+                            @selection-change="handleSelectionChange" @current-change="handleRowChange"
+                            highlight-current-row>
+                            <el-table-column type="selection">
+                            </el-table-column>
+                            <el-table-column prop="info.faultName" label="预警名称">
+                            </el-table-column>
+                            <el-table-column prop="info.subsystem" label="子系统" width="80">
+                            </el-table-column>
+                            <el-table-column label="状态" width="90">
+                                <template slot-scope="scope">
+                                    <div v-if="scope.row.info.type == 0"
+                                        class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
+                                        <span class="crrc-tag-status-dot crrc-tag-badge "></span>
+                                        未消除
+                                    </div>
+                                    <div v-if="scope.row.info.type == 1"
+                                        class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
+                                        <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
+                                        车载消除
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="开始时间">
+                                <template slot-scope="scope">
+                                    {{ scope.row.evaluateDetecttime ? formatTimestamp(scope.row.evaluateDetecttime) :
+                                        '--' }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="结束时间">
+                                <template slot-scope="scope">
+                                    {{ scope.row.evaluateOcstime ? formatTimestamp(scope.row.evaluateOcstime) : '--' }}
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </div>
                 </el-row>
 
                 <el-row>
                     <div>
                         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                            :current-page="currentPageValue" :page-sizes="[7, 14, 28, 56]" :page-size="100"
-                            layout="sizes, prev, pager, next, jumper" :total="5">
+                            :current-page="currentPageValue" :page-sizes="[7, 14, 28, 56]" :page-size="pageSize"
+                            layout="sizes, prev, pager, next, jumper" :total="tableData.total">
                         </el-pagination>
                     </div>
                 </el-row>
@@ -130,13 +151,15 @@
                 <el-col :span="16">
                     <div style="display: flex;align-items: center;">
                         <div>
-                            <h2>A2车SIV-B反馈 蓄电池电压低红色报警指示</h2>
+                            <h2>{{ currentRow.info.faultName }}</h2>
                         </div>
-                        <div class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
+                        <div v-if="currentRow.info.type == 0"
+                            class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge "></span>
                             未消除
                         </div>
-                        <div class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
+                        <div v-if="currentRow.info.type == 1"
+                            class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
                             车载消除
                         </div>
@@ -151,42 +174,43 @@
 
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>线路：11</span>
+                    <span>线路：{{ currentRow.lineName }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车型：E11</span>
+                    <span>车型：{{ currentRow.trainType }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车号：11013014</span>
+                    <span>车号：{{ currentRow.trainNo }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车厢：A11</span>
+                    <span>车厢：{{ currentRow.unevaluateTraincoach }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>子系统：辅助系统</span>
+                    <span>子系统：{{ currentRow.info.subsystem }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警等级：中等预警</span>
+                    <span>预警等级：{{ currentRow.info.level }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警码：siv20012</span>
+                    <span>预警码：{{ currentRow.evaluateCode }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>发生时间：2024-09-13 09:29:33</span>
+                    <span>发生时间：{{ currentRow.evaluateDetecttime ? formatTimestamp(currentRow.evaluateDetecttime) :
+                        '--' }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
                 <div style="display: flex;">
                     <div class="diagnosis">
                         <div class="diagnosis-title">诊断逻辑</div>
-                        <div class="content">充电机温度传感器大于150℃或者小于-50℃（该故障为警告，充电机继续保持工作）</div>
+                        <div class="content">{{ currentRow.info.diagnoseLogic }}</div>
                     </div>
                     <div class="operate">
                         <div class="operate-title">操作处置建议</div>
                         <div class="content">
-                            1.检查蓄电池；2.检查充电机是否工作{{ text }}
+                            {{ currentRow.info.solution }}
                         </div>
                     </div>
                 </div>
@@ -197,7 +221,7 @@
                 </el-col>
                 <el-col :span="12">
                     <div style="color: white; display: flex;justify-content: end;">
-                        <div style="margin-right: 5px;">
+                        <div style="margin-right: 5px;cursor: pointer;">
 
                             <svg @click="goback" t="1726801127036" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="878" width="22" height="22">
@@ -206,7 +230,7 @@
                                     fill="#ffffff" p-id="879"></path>
                             </svg>
                         </div>
-                        <div>
+                        <div style="cursor: pointer;">
                             <svg t="1726801203625" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="2803" width="22" height="22">
                                 <path
@@ -227,20 +251,29 @@
                     </el-button-group>
                 </el-col>
                 <el-col :span="12">
-                    <span>时间范围：</span>
-                    <el-select v-model="value" placeholder="请选择" size="mini">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <div style="display: flex;justify-content: end;align-items: center;">
+                        <div>
+                            <span>时间范围：</span>
+                        </div>
+                        <div style="width: 100px;">
+                            <el-select v-model="dataTimeRangeValue" placeholder="请选择" size="mini">
+                                <el-option
+                                    v-for="item in [{ value: 1, label: '±1分钟' }, { value: 3, label: '±3分钟' }, { value: 5, label: '±5分钟' }]"
+                                    :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
                 </el-col>
             </el-row>
             <el-row>
                 <div class="signal-panel">
-                    <div class="singal-item" v-for="i in 3" v-bind:key="i">
-                        <SignalCom :signal_name="'A1-充电机输出电流传感器BC11'" signal_value="50A" :color="'#ac3577'">
+                    <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
+                        <SignalCom :signal_name="'A' + item" signal_value="50A" :color="getColor(index)"
+                            :initCheckList="signals">
                         </SignalCom>
                     </div>
-                    <div class="add-signal-btn">
+                    <div class="add-signal-btn" @click="modSignals">
                         <div> <i class="el-icon-plus"></i></div>
                         <span> &nbsp;编辑信号量</span>
                     </div>
@@ -267,6 +300,11 @@
                 <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
             </div>
         </div>
+
+
+        <el-dialog :visible.sync="dialogVisible" class="selector">
+            <SignalSelector @cancel="cancel" @comfirm="comfirm" />
+        </el-dialog>
     </div>
 
 </template>
@@ -274,12 +312,14 @@
 import SignalCom from '@/components/SignalCom.vue';
 import EChartsCom from '@/components/EChartsCom.vue';
 import moment from 'moment';
-import { test, getLineTrains } from '@/api/api.js'
+import { getLineTrains, alarmList, colors, lineData } from '@/api/api.js'
+import SignalSelector from '@/components/SignalSelector.vue';
 
 export default {
     components: {
         SignalCom,
-        EChartsCom
+        EChartsCom,
+        SignalSelector
     },
     data() {
         return {
@@ -315,26 +355,22 @@ export default {
                 label: '辅助系统'
             }],
             stateValue: '',
-            stateOptions: [{
-                value: '',
-                label: '全部'
-            },
-            {
-                value: '已消除',
-                label: '已消除'
-            },
-            {
-                value: '未消除',
-                label: '未消除'
-            }],
 
             timerangeValue: '',
             alarmNameValue: '',
             alarmTypeValue: '',
 
+            pageSize: 7,
+
+            dialogVisible: false,
+
             currentPageValue: 1,
 
+            dataTimeRangeValue: 5,
+
             tableData: {},
+            selectedRow: [],
+            currentRow: { info: {} },
             options: [{
                 value: '11',
                 label: '11'
@@ -352,29 +388,11 @@ export default {
                 label: '15'
             }],
             value: '',
+
+            signals: ['1-逆变器V相电流', '1-LLC输出下半部电压', '8-斩波输出电压2'],
+
             signal_option: {
-                color: [
-                    '#1f77b4', // 蓝色
-                    '#ff7f0e', // 橙色
-                    '#2ca02c', // 绿色
-                    '#d62728', // 红色
-                    '#9467bd', // 紫色
-                    '#8c564b', // 棕色
-                    '#e377c2', // 粉红色
-                    '#7f7f7f', // 灰色
-                    '#bcbd22', // 黄绿色
-                    '#17becf', // 青色
-                    '#d32f2f', // 深红色
-                    '#1976d2', // 深蓝色
-                    '#388e3c', // 深绿色
-                    '#fbc02d', // 黄色
-                    '#e64a19', // 深橙色
-                    '#5e35b1', // 深紫色
-                    '#0097a7', // 深青色
-                    '#f06292', // 浅粉红色
-                    '#795548', // 深棕色
-                    '#c0ca33'  // 浅黄绿色
-                ],
+                color: colors(),
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
@@ -450,30 +468,8 @@ export default {
                 }
                 ],
                 series: [
-                    {
-                        name: '电流',
-                        type: 'line',
-                        showSymbol: true,
-                        smooth: false,
-                        yAxisIndex: 0,
-                        data: [['2024/9/13 14:00:00', 53], ['2024/9/13 14:00:01', 49], ['2024/9/13 14:00:02', 53], ['2024/9/13 14:00:03', 50], ['2024/9/13 14:00:04', 53], ['2024/9/13 14:00:05', 50], ['2024/9/13 14:00:06', 48], ['2024/9/13 14:00:07', 51], ['2024/9/13 14:00:08', 48], ['2024/9/13 14:00:09', 48], ['2024/9/13 14:00:10', 53], ['2024/9/13 14:00:11', 50], ['2024/9/13 14:00:12', 50], ['2024/9/13 14:00:13', 52], ['2024/9/13 14:00:14', 54], ['2024/9/13 14:00:15', 51], ['2024/9/13 14:00:16', 52], ['2024/9/13 14:00:17', 51], ['2024/9/13 14:00:18', 53], ['2024/9/13 14:00:19', 54], ['2024/9/13 14:00:20', 54], ['2024/9/13 14:00:21', 47], ['2024/9/13 14:00:22', 51], ['2024/9/13 14:00:23', 50], ['2024/9/13 14:00:24', 54], ['2024/9/13 14:00:25', 51], ['2024/9/13 14:00:26', 51], ['2024/9/13 14:00:27', 50], ['2024/9/13 14:00:28', 53], ['2024/9/13 14:00:29', 47], ['2024/9/13 14:00:30', 47], ['2024/9/13 14:00:31', 51], ['2024/9/13 14:00:32', 54], ['2024/9/13 14:00:33', 48], ['2024/9/13 14:00:34', 53], ['2024/9/13 14:00:35', 47], ['2024/9/13 14:00:36', 54], ['2024/9/13 14:00:37', 49], ['2024/9/13 14:00:38', 51], ['2024/9/13 14:00:39', 53]]
-                    },
-                    {
-                        name: '短路接触器',
-                        type: 'line',
-                        showSymbol: true,
-                        smooth: false,
-                        yAxisIndex: 2,
-                        data: [['2024/9/13 14:00:00', 0], ['2024/9/13 14:00:01', 0], ['2024/9/13 14:00:02', 0], ['2024/9/13 14:00:03', 0], ['2024/9/13 14:00:04', 0], ['2024/9/13 14:00:05', 0], ['2024/9/13 14:00:06', 0], ['2024/9/13 14:00:07', 0], ['2024/9/13 14:00:08', 0], ['2024/9/13 14:00:09', 0], ['2024/9/13 14:00:10', 0], ['2024/9/13 14:00:11', 0], ['2024/9/13 14:00:12', 0], ['2024/9/13 14:00:13', 0], ['2024/9/13 14:00:14', 0], ['2024/9/13 14:00:15', 0], ['2024/9/13 14:00:16', 0], ['2024/9/13 14:00:17', 0], ['2024/9/13 14:00:18', 0], ['2024/9/13 14:00:19', 0], ['2024/9/13 14:00:20', 0], ['2024/9/13 14:00:21', 0], ['2024/9/13 14:00:22', 0], ['2024/9/13 14:00:23', 0], ['2024/9/13 14:00:24', 0], ['2024/9/13 14:00:25', 0], ['2024/9/13 14:00:26', 0], ['2024/9/13 14:00:27', 0], ['2024/9/13 14:00:28', 0], ['2024/9/13 14:00:29', 0], ['2024/9/13 14:00:30', 0], ['2024/9/13 14:00:31', 0], ['2024/9/13 14:00:32', 0], ['2024/9/13 14:00:33', 0], ['2024/9/13 14:00:34', 0], ['2024/9/13 14:00:35', 0], ['2024/9/13 14:00:36', 0], ['2024/9/13 14:00:37', 0], ['2024/9/13 14:00:38', 0], ['2024/9/13 14:00:39', 0]]
-                    },
-                    {
-                        name: '交流接触器',
-                        type: 'line',
-                        showSymbol: true,
-                        smooth: false,
-                        yAxisIndex: 2,
-                        data: [['2024/9/13 14:00:00', 1], ['2024/9/13 14:00:01', 1], ['2024/9/13 14:00:02', 1], ['2024/9/13 14:00:03', 1], ['2024/9/13 14:00:04', 1], ['2024/9/13 14:00:05', 1], ['2024/9/13 14:00:06', 1], ['2024/9/13 14:00:07', 1], ['2024/9/13 14:00:08', 1], ['2024/9/13 14:00:09', 1], ['2024/9/13 14:00:10', 1], ['2024/9/13 14:00:11', 1], ['2024/9/13 14:00:12', 1], ['2024/9/13 14:00:13', 1], ['2024/9/13 14:00:14', 1], ['2024/9/13 14:00:15', 1], ['2024/9/13 14:00:16', 1], ['2024/9/13 14:00:17', 1], ['2024/9/13 14:00:18', 1], ['2024/9/13 14:00:19', 1], ['2024/9/13 14:00:20', 1], ['2024/9/13 14:00:21', 1], ['2024/9/13 14:00:22', 1], ['2024/9/13 14:00:23', 1], ['2024/9/13 14:00:24', 1], ['2024/9/13 14:00:25', 1], ['2024/9/13 14:00:26', 1], ['2024/9/13 14:00:27', 1], ['2024/9/13 14:00:28', 1], ['2024/9/13 14:00:29', 1], ['2024/9/13 14:00:30', 1], ['2024/9/13 14:00:31', 1], ['2024/9/13 14:00:32', 1], ['2024/9/13 14:00:33', 1], ['2024/9/13 14:00:34', 1], ['2024/9/13 14:00:35', 1], ['2024/9/13 14:00:36', 1], ['2024/9/13 14:00:37', 1], ['2024/9/13 14:00:38', 1], ['2024/9/13 14:00:39', 1]]
-                    }
+                    // lineData('电压', 1, new Date(), 1490, 1510),
+                    // lineData('电流', 0, new Date(), 40, 60)
                 ]
             },
         }
@@ -495,23 +491,58 @@ export default {
         }
 
         this.trainOptions = temp
-    },
-    computed: {
-        text() {
-            return test();
-        }
+
+        this.tableData = alarmList(1, 7)
+        this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
+        this.getSignalsData()
+
     },
     methods: {
-        handleSizeChange() {
-        },
-        handleCurrentChange() {
+        getSignalsData() {
+            var data = []
+            for (let i = 0; i < this.signals.length; i++) {
+                data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550))
+            }
 
+            this.signal_option.series = data
         },
-        handleSelectionChange() {
 
+        handleSizeChange(val) {
+            this.pageSize = val
+            this.tableData = alarmList(1, this.pageSize)
         },
+        handleCurrentChange(val) {
+            this.currentPageValue = val
+            this.tableData = alarmList(this.currentPageValue, this.pageSize)
+        },
+        handleSelectionChange(val) {
+            this.selectedRow = val
+        },
+        handleRowChange(val) {
+            if (!val)
+                rerutn
+            this.currentRow = val
+        },
+
+        formatTimestamp(timestamp) {
+            return moment.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
+        },
+
         goback() {
             this.$router.back()
+        },
+        modSignals() {
+            this.dialogVisible = true
+        },
+        cancel() {
+            this.dialogVisible = false
+        },
+        comfirm(val) {
+            this.dialogVisible = false
+            console.log(val)
+        },
+        getColor(i) {
+            return colors(i)
         }
     }
 }
@@ -605,12 +636,16 @@ export default {
                 box-sizing: border-box;
                 cursor: pointer;
             }
+
+            .selector {
+                padding: 0;
+            }
         }
     }
 }
 </style>
 
-<style>
+<style lang="less">
 .el-row {
     margin-bottom: 1dvh;
 
@@ -704,36 +739,24 @@ export default {
     background: #4a5463;
 }
 
+.el-date-editor .el-range__icon {
+    line-height: 26px;
+}
+
+.el-date-editor .el-range-separator {
+    line-height: 26px;
+    color: #626468;
+}
+
 .el-button {
     background: #181f30;
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
 
-.el-table thead {
-    color: #e9eaec;
-}
 
-.el-table th.el-table__cell {
-    background-color: #20283c;
-}
-
-.el-pager li {
-    background: #20283c;
-}
-
-.el-pager li.active {
-    color: #409EFF;
-}
-
-.el-pagination button:disabled {
-    color: #ffffffca;
-    background-color: #20283c;
-}
-
-.el-table__footer-wrapper,
-.el-table__header-wrapper {
-    background-color: #20283c;
+.el-select {
+    width: 100%;
 }
 
 .el-select-dropdown {
@@ -807,5 +830,99 @@ export default {
 
 .crrc-tag-blue .crrc-tag-badge {
     background-color: #2186cf;
+}
+</style>
+<style>
+.panel .el-divider {
+    background-color: #303645;
+}
+
+.panel .el-dialog {
+    padding: 0;
+}
+
+.panel .el-dialog__header {
+    display: none;
+}
+
+.panel .el-dialog__body {
+    height: 70dvh;
+    padding: 0;
+}
+
+.panel .el-table tr {
+    background-color: #181f30;
+    color: #aeb1b7;
+}
+
+.panel.el-table thead {
+    color: #e9eaec;
+}
+
+.panel .el-table th.el-table__cell {
+    background-color: #20283c;
+}
+
+.panel .el-table__footer-wrapper,
+.el-table__header-wrapper {
+    background-color: #20283c;
+}
+
+.panel .el-table__body tr.current-row:hover>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
+    background-color: #005db4;
+}
+
+.panel .el-table__body tr.current-row>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
+    background-color: #005db4;
+}
+
+.panel .el-table td.el-table__cell,
+.el-table th.el-table__cell.is-leaf {
+    border-bottom: 1px solid #3a404f;
+    font-size: 12px;
+}
+
+.panel .el-table__body tr:hover>td.el-table__cell {
+    background-color: transparent;
+}
+
+.panel .el-pager li {
+    background-color: #181f30;
+    color: #aeb1b7;
+}
+
+.panel .el-pager li.active {
+    color: #2186cf;
+}
+
+.panel .el-pagination button:disabled {
+    background-color: transparent;
+    color: #525764;
+}
+
+.panel .el-pagination .btn-next,
+.el-pagination .btn-prev {
+    background-color: transparent;
+    color: #aeb1b7;
+}
+
+.panel .el-table,
+.el-table__expanded-cell {
+    background-color: transparent;
+}
+
+.panel .el-table::before {
+    height: 0;
+}
+
+.panel .cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 </style>
