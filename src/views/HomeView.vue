@@ -31,13 +31,18 @@
               <div class="forewarn body_forewarn">70</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link to="/TrainClass" class="router_link">查看详情</router-link>
+                <router-link to="/TrainClass" class="router_link"
+                  >查看详情</router-link
+                >
               </div>
             </div>
           </div>
         </div>
         <!-- 辅变系统 -->
-        <div class="line_Tcenter font_size26w">辅变系统</div>
+        <div class="line_Tcenter font_size26w" style=" display: flex ;flex-direction: column; " >
+         <div>辅变系统</div>
+          <AssistChange></AssistChange>
+        </div>
 
         <!-- 警示记录 -->
         <div class="line_Tbott">
@@ -53,8 +58,13 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
-                end-placeholder="结束日期">
+              <el-date-picker
+                v-model="value1"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -80,7 +90,9 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
+                  <router-link to="/AlarmInfo" class="router_link"
+                    >查看详情</router-link
+                  >
                 </div>
               </div>
             </div>
@@ -97,8 +109,13 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
-                end-placeholder="结束日期">
+              <el-date-picker
+                v-model="value1"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -124,7 +141,9 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
+                  <router-link to="/AlarmInfo" class="router_link"
+                    >查看详情</router-link
+                  >
                 </div>
               </div>
             </div>
@@ -137,8 +156,13 @@
           <div class="bott_title_left">车辆预警报警统计</div>
           <div class="bott_title_right">
             <!-- 年月日选择器 -->
-            <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
-              end-placeholder="结束日期">
+            <el-date-picker
+              v-model="value1"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            >
             </el-date-picker>
           </div>
         </div>
@@ -148,21 +172,33 @@
           <div class="line_warning1">
             <div class="alarm_echarts_title font_size20">报警预警趋势</div>
             <!-- <div ref="alarm_echarts" class="alarm_echarts"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="alarm_echarts_option"
+            ></EChartsCom>
           </div>
 
-          <el-divider direction="vertical" style="height: 100%;" />
+          <el-divider direction="vertical" style="height: 100%" />
           <!-- 历史报警分布统计 -->
           <div class="line_warning2">
             <div class="history_alarm_title">历史报警分布统计</div>
             <!-- <div ref="history_alarm" class="history_alarm" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="history_alarm_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="history_alarm_option"
+            ></EChartsCom>
           </div>
           <!-- 历史预警发布统计 -->
           <div class="line_warning3">
             <div class="history_forewarn_title">历史预警发布统计</div>
             <!-- <div ref="history_forewarn" class="history_forewarn" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="history_forewarn_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="history_forewarn_option"
+            ></EChartsCom>
           </div>
           <!-- 报警预警top10 -->
           <div class="line_warning4">
@@ -181,11 +217,13 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import * as echarts from "echarts";
-import EChartsCom from '@/components/EChartsCom.vue';
+import EChartsCom from "@/components/EChartsCom.vue";
+import AssistChange from "@/components/AssistChange.vue";
 export default {
   name: "HomeView",
   components: {
     EChartsCom,
+    AssistChange
   },
   data() {
     return {
@@ -202,77 +240,77 @@ export default {
       alarm_echarts_option: {
         legend: {
           textStyle: {
-            color: '#adb0b6'  // 图例文字颜色设置为蓝色
-          }
+            color: "#adb0b6", // 图例文字颜色设置为蓝色
+          },
         },
         tooltip: {},
-        color: ['#7093b3', '#e69e4e'],
+        color: ["#7093b3", "#e69e4e"],
         dataset: {
           source: [
-            ['类型', '预警', '故障'],
-            ['2024-06', 0, 0],
-            ['2024-07', 0, 0],
-            ['2024-08', 0, 0],
-            ['2024-09', 0, 0]
-          ]
+            ["类型", "预警", "故障"],
+            ["2024-06", 0, 0],
+            ["2024-07", 0, 0],
+            ["2024-08", 0, 0],
+            ["2024-09", 0, 0],
+          ],
         },
-        xAxis: { type: 'category' },
+        xAxis: { type: "category" },
         yAxis: {},
-        series: [{ type: 'bar' }, { type: 'bar' },]
+        series: [{ type: "bar" }, { type: "bar" }],
       },
       history_alarm_option: {
         legend: {
           textStyle: {
-            color: '#adb0b6'  // 图例文字颜色设置为蓝色
-          }
+            color: "#adb0b6", // 图例文字颜色设置为蓝色
+          },
         },
         tooltip: {},
-        color: ['#7093b3', '#e69e4e'],
+        color: ["#7093b3", "#e69e4e"],
         dataset: {
           source: [
-            ['类型', '预警', '故障'],
-            ['2024-06', 0, 0],
-            ['2024-07', 0, 0],
-            ['2024-08', 0, 0],
-            ['2024-09', 0, 0]
-          ]
+            ["类型", "预警", "故障"],
+            ["2024-06", 0, 0],
+            ["2024-07", 0, 0],
+            ["2024-08", 0, 0],
+            ["2024-09", 0, 0],
+          ],
         },
-        xAxis: { type: 'category' },
+        xAxis: { type: "category" },
         yAxis: {},
-        series: [{ type: 'line' }, { type: 'line' },]
+        series: [{ type: "line" }, { type: "line" }],
       },
       history_forewarn_option: {
         tooltip: {
-          trigger: 'item'
+          trigger: "item",
         },
         series: [
           {
-            type: 'pie',
+            type: "pie",
             radius: [50, 100],
             data: [
-              { value: 0, name: '已处置率' },
-              { value: 0, name: '未处置率' }
+              { value: 0, name: "已处置率" },
+              { value: 0, name: "未处置率" },
             ],
-            color: ['#7093b3', '#e69e4e'],
+            color: ["#7093b3", "#e69e4e"],
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
+          },
+        ],
       },
-      top10_option: {}
+      top10_option: {},
     };
   },
   // 初始化之前
-  beforeCreate() { },
+  beforeCreate() {},
   // 初始化之后
-  created() { },
+  created() {},
   // 挂载前
-  beforeMount() { },
+  beforeMount() {},
   // 挂载后
   mounted() {
     this.init_my_charts();
@@ -303,149 +341,152 @@ export default {
       let op = {
         legend: {
           textStyle: {
-            color: '#adb0b6'  // 图例文字颜色设置为蓝色
-          }
+            color: "#adb0b6", // 图例文字颜色设置为蓝色
+          },
         },
         tooltip: {},
-        color: ['#7093b3', '#e69e4e'],
+        color: ["#7093b3", "#e69e4e"],
         dataset: {
           source: [
-            ['类型', '预警', '故障'],
-            ['2024-06', 43.3, 85.8],
-            ['2024-07', 83.1, 73.4],
-            ['2024-08', 86.4, 65.2],
-            ['2024-09', 72.4, 53.9]
-          ]
+            ["类型", "预警", "故障"],
+            ["2024-06", 43.3, 85.8],
+            ["2024-07", 83.1, 73.4],
+            ["2024-08", 86.4, 65.2],
+            ["2024-09", 72.4, 53.9],
+          ],
         },
-        xAxis: { type: 'category' },
+        xAxis: { type: "category" },
         yAxis: {},
-        series: [{ type: 'bar' }, { type: 'bar' },]
-      }
-      return op
+        series: [{ type: "bar" }, { type: "bar" }],
+      };
+      return op;
     },
 
     get_history_alarm_option() {
       let op = {
         legend: {
           textStyle: {
-            color: '#adb0b6'  // 图例文字颜色设置为蓝色
-          }
+            color: "#adb0b6", // 图例文字颜色设置为蓝色
+          },
         },
         tooltip: {},
-        color: ['#da1e28', '#fc7b1e'],
+        color: ["#da1e28", "#fc7b1e"],
         dataset: {
           source: [
-            ['类型', '预警', '故障'],
-            ['2024-06', 3, 0],
-            ['2024-07', 40, 1],
-            ['2024-08', 12, 0],
-            ['2024-09', 5, 0]
-          ]
+            ["类型", "预警", "故障"],
+            ["2024-06", 3, 0],
+            ["2024-07", 40, 1],
+            ["2024-08", 12, 0],
+            ["2024-09", 5, 0],
+          ],
         },
-        xAxis: { type: 'category' },
+        xAxis: { type: "category" },
         yAxis: {},
-        series: [{ type: 'line', smooth: true }, { type: 'line', smooth: true },]
-      }
-      return op
+        series: [
+          { type: "line", smooth: true },
+          { type: "line", smooth: true },
+        ],
+      };
+      return op;
     },
 
     get_history_forewarn_option() {
       let op = {
         tooltip: {
-          trigger: 'item'
+          trigger: "item",
         },
         series: [
           {
-            type: 'pie',
+            type: "pie",
             radius: [50, 100],
             data: [
-              { value: 1048, name: '已处置率' },
-              { value: 735, name: '未处置率' }
+              { value: 1048, name: "已处置率" },
+              { value: 735, name: "未处置率" },
             ],
-            color: ['#7093b3', '#e69e4e'],
+            color: ["#7093b3", "#e69e4e"],
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
-      }
-      return op
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
+          },
+        ],
+      };
+      return op;
     },
 
     get_top10_option() {
       let op = {
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
             show: true,
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
           },
           textStyle: {
-            fontSize: 20
-          }
+            fontSize: 20,
+          },
         },
-        color: ['#7093b3'],
+        color: ["#7093b3"],
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
         },
         xAxis: {
-          type: 'value',
-          show: false
+          type: "value",
+          show: false,
         },
         yAxis: {
-          type: 'category',
+          type: "category",
           axisLine: {
-            show: false // 不显示 Y 轴的轴线
+            show: false, // 不显示 Y 轴的轴线
           },
           axisLabel: {
             fontSize: 18,
-            interval: 0
+            interval: 0,
           },
           axisTick: {
-            show: false // 不显示 Y 轴的刻度线
+            show: false, // 不显示 Y 轴的刻度线
           },
           data: [
-            '101102',
-            '101103',
-            '101104',
-            '101105',
-            '101106',
-            '101107',
-            '101108',
-            '101109',
-            '101110',
-            '101111'
-          ] // 这里假设了一些类别名称
+            "101102",
+            "101103",
+            "101104",
+            "101105",
+            "101106",
+            "101107",
+            "101108",
+            "101109",
+            "101110",
+            "101111",
+          ], // 这里假设了一些类别名称
         },
         series: [
           {
-            name: '次数',
-            type: 'bar',
-            barWidth: '90%',
-            stack: '总量',
+            name: "次数",
+            type: "bar",
+            barWidth: "90%",
+            stack: "总量",
             label: {
               show: true,
               // insideLeft:'left',
-              position: 'insideLeft',
+              position: "insideLeft",
               fontSize: 14,
-              formatter: '{c}' // 显示具体的数值
+              formatter: "{c}", // 显示具体的数值
             },
             emphasis: {
-              focus: 'series'
+              focus: "series",
             },
             // barMaxWidth: '15',
-            data: [866, 740, 638, 610, 544, 477, 410, 390, 351, 288].reverse() // 这里是您的数据
-          }
-        ]
-      }
-      return op
+            data: [866, 740, 638, 610, 544, 477, 410, 390, 351, 288].reverse(), // 这里是您的数据
+          },
+        ],
+      };
+      return op;
     },
 
     inti_charts(params) {
@@ -811,18 +852,18 @@ export default {
     },
 
     init_my_charts() {
-      let alarm_charts_option = this.get_alarm_charts_option()
+      let alarm_charts_option = this.get_alarm_charts_option();
       this.alarm_echarts_option = alarm_charts_option;
 
-      let history_alarm_option = this.get_history_alarm_option()
+      let history_alarm_option = this.get_history_alarm_option();
       this.history_alarm_option = history_alarm_option;
 
-      let history_forewarn_option = this.get_history_forewarn_option()
+      let history_forewarn_option = this.get_history_forewarn_option();
       this.history_forewarn_option = history_forewarn_option;
 
-      let top10_option = this.get_top10_option()
+      let top10_option = this.get_top10_option();
       this.top10_option = top10_option;
-    }
+    },
   },
 
   // DOM重新加载前
@@ -876,7 +917,7 @@ body {
       width: 25%;
       height: 100%;
 
-      >div {
+      > div {
         box-sizing: border-box;
         padding: 0 0.625rem;
       }
@@ -888,7 +929,7 @@ body {
       .state {
         width: 25%;
 
-        >.state_border {
+        > .state_border {
           border: #555b69 solid 1px;
           padding: 0.3vw 0;
           max-width: 4vw;
@@ -967,7 +1008,7 @@ body {
     .line_Tcenter {
       width: 45%;
       height: 100%;
-      background-color: rgb(16, 50, 80);
+      // background-color: rgb(16, 50, 80);
     }
 
     // 警示记录
@@ -991,7 +1032,7 @@ body {
         .state {
           width: 20%;
 
-          >.state_border {
+          > .state_border {
             width: 3.5vw;
             height: 1.5vw;
             box-sizing: border-box;
@@ -1101,7 +1142,6 @@ body {
 
       // 预警body
       .train_margin {
-
         // margin-top: 35px;
         // 预警title
         .alarm_title {
@@ -1277,7 +1317,13 @@ body {
   line-height: 0vw;
 }
 
-.line .line_block .line_top .line_Tbott .line_alarm .alarm_title .el-range-editor.el-input__inner {
+.line
+  .line_block
+  .line_top
+  .line_Tbott
+  .line_alarm
+  .alarm_title
+  .el-range-editor.el-input__inner {
   height: 1.8vw !important;
   width: 39%;
   background: transparent;
@@ -1293,3 +1339,8 @@ body {
   line-height: 0vw;
 }
 </style>
+
+
+
+
+
