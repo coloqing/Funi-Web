@@ -23,10 +23,14 @@ export default {
         }
     },
     watch: {
-        option(newValue) {
-            this.option = newValue;
-            this.bar_echarts.setOption(this.option)
-        }
+        option: {
+            handler(newVal, oldVal) {
+                this.option = newVal;
+                this.bar_echarts.setOption(this.option)
+            },
+            deep: true
+        },
+
     }
 }
 </script>

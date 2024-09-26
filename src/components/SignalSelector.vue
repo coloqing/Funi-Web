@@ -38,16 +38,25 @@
 import { signals } from "@/api/api.js"
 
 export default {
+    props: {
+        initCheckList: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        },
+    },
     data() {
         return {
             searchValue: '',
-            checkList: [],
-            signals: []
+            signals: [],
+            checkList: []
         }
     },
     mounted() {
         var sigs = signals()
-        this.signals = sigs
+        this.signals = sigs;
+        this.checkList = this.initCheckList
     },
     methods: {
         remove(val) {
@@ -61,6 +70,15 @@ export default {
         },
         comfirm() {
             this.$emit('comfirm', this.checkList);
+        }
+    },
+    watch: {
+        initCheckList: {
+            handler(newVal, oldVal) {
+                this.option = newVal;
+                this.checkList = this.initCheckList
+            },
+            deep: true
         }
     }
 }

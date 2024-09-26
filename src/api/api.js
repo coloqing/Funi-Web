@@ -1,4 +1,5 @@
 const Mock = require("mockjs");
+const moment = require("moment");
 
 export function test() {
   var data = Mock.mock({
@@ -2652,4 +2653,64 @@ export function alarmList(page, pagesize) {
     data: data.content.slice(start, end),
     total: 50,
   };
+}
+
+export function colors(i) {
+  var data = [
+    "#1f77b4", // 蓝色
+    "#ff7f0e", // 橙色
+    "#2ca02c", // 绿色
+    "#d62728", // 红色
+    "#9467bd", // 紫色
+    "#8c564b", // 棕色
+    "#e377c2", // 粉红色
+    "#7f7f7f", // 灰色
+    "#bcbd22", // 黄绿色
+    "#17becf", // 青色
+    "#d32f2f", // 深红色
+    "#1976d2", // 深蓝色
+    "#388e3c", // 深绿色
+    "#fbc02d", // 黄色
+    "#e64a19", // 深橙色
+    "#5e35b1", // 深紫色
+    "#0097a7", // 深青色
+    "#f06292", // 浅粉红色
+    "#795548", // 深棕色
+    "#c0ca33", // 浅黄绿色
+  ];
+
+  if (i >= 0) {
+    return data[i];
+  }
+  return data;
+}
+
+export function lineData(name, yAxisIndex, startTime, min, max) {
+  var temp = {
+    name: name,
+    type: "line",
+    showSymbol: true,
+    smooth: false,
+    yAxisIndex: 0,
+    sample: "auto",
+    data: [],
+  };
+  var date = new Date(startTime);
+
+  var time = moment(date);
+
+  for (let i = 0; i < 300; i += 5) {
+    time = time.add(1, "s");
+    var t = time.format("YYYY-MM-DD") + " " + time.format("HH:mm:ss");
+    var v = Mock.mock("@natural(" + min + ", " + max + ")");
+    if (temp.yAxisIndex == 2) v = Mock.mock("@natural(" + 0 + ", " + 1 + ")");
+    if (name.includes("电流")) {
+      v = Mock.mock("@natural(" + 30 + ", " + 60 + ")");
+      temp.yAxisIndex = 0;
+    } else {
+      temp.yAxisIndex = 1;
+    }
+    temp.data.push([t, v]);
+  }
+  return temp;
 }
