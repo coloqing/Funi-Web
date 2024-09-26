@@ -1,13 +1,14 @@
 <template>
-
-
+    <div style="display: flex;justify-content: center;align-items: center; background-color: gray;height: 100dvh;">
+        <SignalSelector></SignalSelector>
+    </div>
 </template>
 
 <script>
-import SignalCom from '@/components/SignalCom.vue';
+import SignalSelector from '@/components/SignalSelector.vue';
 export default {
     components: {
-        SignalCom
+        SignalSelector
     },
     data() {
         return {

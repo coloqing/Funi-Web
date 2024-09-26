@@ -39,8 +39,9 @@
                         <div>状态</div>
                         <div>
                             <el-select v-model="stateValue" placeholder="请选择" size="mini">
-                                <el-option v-for="item in stateOptions" :key="item.value" :label="item.label"
-                                    :value="item.value">
+                                <el-option
+                                    v-for="item in [{ value: '', label: '全部' }, { value: '已消除', label: '已消除' }, { value: '未消除', label: '未消除' }]"
+                                    :key="item.value" :label="item.label" :value="item.value">
                                 </el-option>
                             </el-select>
                         </div>
@@ -91,35 +92,55 @@
                     </el-col>
                     <el-col :span="12">
                         <div style="display: flex;justify-content: end;">
-                            <el-button size="mini">导出(已选择0项)</el-button>
+                            <el-button size="mini">导出(已选择{{ selectedRow.length }}项)</el-button>
                         </div>
                     </el-col>
                 </el-row>
                 <el-row>
                     <div>
-                        <!-- <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
-                                    style="width: 100%" @selection-change="handleSelectionChange">
-                                    <el-table-column type="selection">
-                                    </el-table-column>
-                                    <el-table-column label="预警名称">
-                                    </el-table-column>
-                                    <el-table-column prop="name" label="子系统">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="状态">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="开始时间">
-                                    </el-table-column>
-                                    <el-table-column prop="address" label="结束时间">
-                                    </el-table-column>
-                                </el-table> -->
+                        <el-table ref="alarmTable" :data="tableData.data" tooltip-effect="dark" style="width: 100%"
+                            @selection-change="handleSelectionChange" @current-change="handleRowChange"
+                            highlight-current-row>
+                            <el-table-column type="selection">
+                            </el-table-column>
+                            <el-table-column prop="info.faultName" label="预警名称">
+                            </el-table-column>
+                            <el-table-column prop="info.subsystem" label="子系统" width="80">
+                            </el-table-column>
+                            <el-table-column label="状态" width="90">
+                                <template slot-scope="scope">
+                                    <div v-if="scope.row.info.type == 0"
+                                        class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
+                                        <span class="crrc-tag-status-dot crrc-tag-badge "></span>
+                                        未消除
+                                    </div>
+                                    <div v-if="scope.row.info.type == 1"
+                                        class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
+                                        <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
+                                        车载消除
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="开始时间">
+                                <template slot-scope="scope">
+                                    {{ scope.row.evaluateDetecttime ? formatTimestamp(scope.row.evaluateDetecttime) :
+                                        '--' }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="结束时间">
+                                <template slot-scope="scope">
+                                    {{ scope.row.evaluateOcstime ? formatTimestamp(scope.row.evaluateOcstime) : '--' }}
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </div>
                 </el-row>
 
                 <el-row>
                     <div>
                         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                            :current-page="currentPageValue" :page-sizes="[7, 14, 28, 56]" :page-size="100"
-                            layout="sizes, prev, pager, next, jumper" :total="5">
+                            :current-page="currentPageValue" :page-sizes="[7, 14, 28, 56]" :page-size="pageSize"
+                            layout="sizes, prev, pager, next, jumper" :total="tableData.total">
                         </el-pagination>
                     </div>
                 </el-row>
@@ -130,13 +151,15 @@
                 <el-col :span="16">
                     <div style="display: flex;align-items: center;">
                         <div>
-                            <h2>A2车SIV-B反馈 蓄电池电压低红色报警指示</h2>
+                            <h2>{{ currentRow.info.faultName }}</h2>
                         </div>
-                        <div class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
+                        <div v-if="currentRow.info.type == 0"
+                            class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge "></span>
                             未消除
                         </div>
-                        <div class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
+                        <div v-if="currentRow.info.type == 1"
+                            class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
                             车载消除
                         </div>
@@ -151,42 +174,43 @@
 
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>线路：11</span>
+                    <span>线路：{{ currentRow.lineName }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车型：E11</span>
+                    <span>车型：{{ currentRow.trainType }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车号：11013014</span>
+                    <span>车号：{{ currentRow.trainNo }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车厢：A11</span>
+                    <span>车厢：{{ currentRow.unevaluateTraincoach }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>子系统：辅助系统</span>
+                    <span>子系统：{{ currentRow.info.subsystem }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警等级：中等预警</span>
+                    <span>预警等级：{{ currentRow.info.level }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警码：siv20012</span>
+                    <span>预警码：{{ currentRow.evaluateCode }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>发生时间：2024-09-13 09:29:33</span>
+                    <span>发生时间：{{ currentRow.evaluateDetecttime ? formatTimestamp(currentRow.evaluateDetecttime) :
+                        '--' }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
                 <div style="display: flex;">
                     <div class="diagnosis">
                         <div class="diagnosis-title">诊断逻辑</div>
-                        <div class="content">充电机温度传感器大于150℃或者小于-50℃（该故障为警告，充电机继续保持工作）</div>
+                        <div class="content">{{ currentRow.info.diagnoseLogic }}</div>
                     </div>
                     <div class="operate">
                         <div class="operate-title">操作处置建议</div>
                         <div class="content">
-                            1.检查蓄电池；2.检查充电机是否工作{{ text }}
+                            {{ currentRow.info.solution }}
                         </div>
                     </div>
                 </div>
@@ -197,7 +221,7 @@
                 </el-col>
                 <el-col :span="12">
                     <div style="color: white; display: flex;justify-content: end;">
-                        <div style="margin-right: 5px;">
+                        <div style="margin-right: 5px;cursor: pointer;">
 
                             <svg @click="goback" t="1726801127036" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="878" width="22" height="22">
@@ -206,7 +230,7 @@
                                     fill="#ffffff" p-id="879"></path>
                             </svg>
                         </div>
-                        <div>
+                        <div style="cursor: pointer;">
                             <svg t="1726801203625" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="2803" width="22" height="22">
                                 <path
@@ -227,11 +251,19 @@
                     </el-button-group>
                 </el-col>
                 <el-col :span="12">
-                    <span>时间范围：</span>
-                    <el-select v-model="value" placeholder="请选择" size="mini">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <div style="display: flex;justify-content: end;align-items: center;">
+                        <div>
+                            <span>时间范围：</span>
+                        </div>
+                        <div style="width: 100px;">
+                            <el-select v-model="dataTimeRangeValue" placeholder="请选择" size="mini">
+                                <el-option
+                                    v-for="item in [{ value: 1, label: '±1分钟' }, { value: 3, label: '±3分钟' }, { value: 5, label: '±5分钟' }]"
+                                    :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
                 </el-col>
             </el-row>
             <el-row>
@@ -240,7 +272,7 @@
                         <SignalCom :signal_name="'A1-充电机输出电流传感器BC11'" signal_value="50A" :color="'#ac3577'">
                         </SignalCom>
                     </div>
-                    <div class="add-signal-btn">
+                    <div class="add-signal-btn" @click="modSignals">
                         <div> <i class="el-icon-plus"></i></div>
                         <span> &nbsp;编辑信号量</span>
                     </div>
@@ -267,6 +299,11 @@
                 <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
             </div>
         </div>
+
+
+        <el-dialog :visible.sync="dialogVisible" class="selector">
+            <SignalSelector @cancel="cancel" @comfirm="comfirm" />
+        </el-dialog>
     </div>
 
 </template>
@@ -274,12 +311,14 @@
 import SignalCom from '@/components/SignalCom.vue';
 import EChartsCom from '@/components/EChartsCom.vue';
 import moment from 'moment';
-import { test, getLineTrains } from '@/api/api.js'
+import { getLineTrains, alarmList } from '@/api/api.js'
+import SignalSelector from '@/components/SignalSelector.vue';
 
 export default {
     components: {
         SignalCom,
-        EChartsCom
+        EChartsCom,
+        SignalSelector
     },
     data() {
         return {
@@ -315,26 +354,22 @@ export default {
                 label: '辅助系统'
             }],
             stateValue: '',
-            stateOptions: [{
-                value: '',
-                label: '全部'
-            },
-            {
-                value: '已消除',
-                label: '已消除'
-            },
-            {
-                value: '未消除',
-                label: '未消除'
-            }],
 
             timerangeValue: '',
             alarmNameValue: '',
             alarmTypeValue: '',
 
+            pageSize: 7,
+
+            dialogVisible: false,
+
             currentPageValue: 1,
 
+            dataTimeRangeValue: 5,
+
             tableData: {},
+            selectedRow: [],
+            currentRow: { info: {} },
             options: [{
                 value: '11',
                 label: '11'
@@ -495,23 +530,46 @@ export default {
         }
 
         this.trainOptions = temp
-    },
-    computed: {
-        text() {
-            return test();
-        }
+
+        this.tableData = alarmList(1, 7)
+        this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
     },
     methods: {
-        handleSizeChange() {
+        handleSizeChange(val) {
+            this.pageSize = val
+            this.tableData = alarmList(1, this.pageSize)
         },
-        handleCurrentChange() {
+        handleCurrentChange(val) {
+            this.currentPageValue = val
+            this.tableData = alarmList(this.currentPageValue, this.pageSize)
+        },
+        handleSelectionChange(val) {
+            this.selectedRow = val
+        },
+        handleRowChange(val) {
+            if (!val)
+                rerutn
+            this.currentRow = val
+            console.log('asdfadf', this.currentRow);
 
         },
-        handleSelectionChange() {
 
+        formatTimestamp(timestamp) {
+            return moment.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
         },
+
         goback() {
             this.$router.back()
+        },
+        modSignals() {
+            this.dialogVisible = true
+        },
+        cancel() {
+            this.dialogVisible = false
+        },
+        comfirm(val) {
+            this.dialogVisible = false
+            console.log(val)
         }
     }
 }
@@ -605,12 +663,16 @@ export default {
                 box-sizing: border-box;
                 cursor: pointer;
             }
+
+            .selector {
+                padding: 0;
+            }
         }
     }
 }
 </style>
 
-<style>
+<style lang="less">
 .el-row {
     margin-bottom: 1dvh;
 
@@ -704,36 +766,24 @@ export default {
     background: #4a5463;
 }
 
+.el-date-editor .el-range__icon {
+    line-height: 26px;
+}
+
+.el-date-editor .el-range-separator {
+    line-height: 26px;
+    color: #626468;
+}
+
 .el-button {
     background: #181f30;
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
 
-.el-table thead {
-    color: #e9eaec;
-}
 
-.el-table th.el-table__cell {
-    background-color: #20283c;
-}
-
-.el-pager li {
-    background: #20283c;
-}
-
-.el-pager li.active {
-    color: #409EFF;
-}
-
-.el-pagination button:disabled {
-    color: #ffffffca;
-    background-color: #20283c;
-}
-
-.el-table__footer-wrapper,
-.el-table__header-wrapper {
-    background-color: #20283c;
+.el-select {
+    width: 100%;
 }
 
 .el-select-dropdown {
@@ -807,5 +857,99 @@ export default {
 
 .crrc-tag-blue .crrc-tag-badge {
     background-color: #2186cf;
+}
+</style>
+<style>
+.panel .el-divider {
+    background-color: #303645;
+}
+
+.panel .el-dialog {
+    padding: 0;
+}
+
+.panel .el-dialog__header {
+    display: none;
+}
+
+.panel .el-dialog__body {
+    height: 70dvh;
+    padding: 0;
+}
+
+.panel .el-table tr {
+    background-color: #181f30;
+    color: #aeb1b7;
+}
+
+.panel.el-table thead {
+    color: #e9eaec;
+}
+
+.panel .el-table th.el-table__cell {
+    background-color: #20283c;
+}
+
+.panel .el-table__footer-wrapper,
+.el-table__header-wrapper {
+    background-color: #20283c;
+}
+
+.panel .el-table__body tr.current-row:hover>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
+    background-color: #005db4;
+}
+
+.panel .el-table__body tr.current-row>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
+    background-color: #005db4;
+}
+
+.panel .el-table td.el-table__cell,
+.el-table th.el-table__cell.is-leaf {
+    border-bottom: 1px solid #3a404f;
+    font-size: 12px;
+}
+
+.panel .el-table__body tr:hover>td.el-table__cell {
+    background-color: transparent;
+}
+
+.panel .el-pager li {
+    background-color: #181f30;
+    color: #aeb1b7;
+}
+
+.panel .el-pager li.active {
+    color: #2186cf;
+}
+
+.panel .el-pagination button:disabled {
+    background-color: transparent;
+    color: #525764;
+}
+
+.panel .el-pagination .btn-next,
+.el-pagination .btn-prev {
+    background-color: transparent;
+    color: #aeb1b7;
+}
+
+.panel .el-table,
+.el-table__expanded-cell {
+    background-color: transparent;
+}
+
+.panel .el-table::before {
+    height: 0;
+}
+
+.panel .cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 </style>
