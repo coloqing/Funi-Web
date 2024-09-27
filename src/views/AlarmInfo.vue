@@ -269,8 +269,8 @@
             <el-row>
                 <div class="signal-panel">
                     <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
-                        <SignalCom :signal_name="'A' + item" signal_value="50A" :color="getColor(index)"
-                            :initCheckList="signals">
+                        <SignalCom :signal_name="'A' + item" :signal_value="getSignalsVal(index)"
+                            :color="getColor(index)">
                         </SignalCom>
                     </div>
                     <div class="add-signal-btn" @click="modSignals">
@@ -282,7 +282,7 @@
             <div>
                 <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
             </div>
-            <el-divider></el-divider>
+            <!-- <el-divider></el-divider>
             <el-row :gutter="20">
                 <el-col :span="8">
                     <span>电网电压</span>
@@ -298,12 +298,12 @@
             </el-row>
             <div>
                 <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
-            </div>
+            </div> -->
         </div>
 
 
         <el-dialog :visible.sync="dialogVisible" class="selector">
-            <SignalSelector @cancel="cancel" @comfirm="comfirm" />
+            <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="signals" />
         </el-dialog>
     </div>
 
@@ -474,6 +474,9 @@ export default {
             },
         }
     },
+    beforeMount() {
+        this.getSignalsData()
+    },
     mounted() {
         var temp = [{
             value: '',
@@ -494,7 +497,6 @@ export default {
 
         this.tableData = alarmList(1, 7)
         this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
-        this.getSignalsData()
 
     },
     methods: {
@@ -505,6 +507,9 @@ export default {
             }
 
             this.signal_option.series = data
+        },
+        getSignalsVal(i) {
+            return String(this.signal_option.series[i].data[0][1])
         },
 
         handleSizeChange(val) {
@@ -539,7 +544,8 @@ export default {
         },
         comfirm(val) {
             this.dialogVisible = false
-            console.log(val)
+            this.signals = val
+            this.getSignalsData()
         },
         getColor(i) {
             return colors(i)
@@ -646,7 +652,7 @@ export default {
 </style>
 
 <style lang="less">
-.el-row {
+.panel .el-row {
     margin-bottom: 1dvh;
 
     &:last-child {
@@ -654,26 +660,26 @@ export default {
     }
 }
 
-.el-select .el-input__inner {
+.panel .el-select .el-input__inner {
     background-color: #181f30 !important;
     border: 1px solid rgba(255, 255, 255, .15);
 }
 
 
-.el-range-editor.el-input__inner {
+.panel .el-range-editor.el-input__inner {
     height: 2rem;
     /* width: 39%; */
     background: transparent;
     border: #33384c solid 1px;
 }
 
-.el-input__inner {
+.panel .el-input__inner {
     background-color: #181f30;
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
 
-.el-input.is-disabled .el-input__inner {
+.panel .el-input.is-disabled .el-input__inner {
     background-color: #181f30;
     border-color: rgba(255, 255, 255, .15);
     color: #ffffffa6;
@@ -753,26 +759,6 @@ export default {
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
-
-
-.el-select {
-    width: 100%;
-}
-
-.el-select-dropdown {
-
-    border: 1px solid rgba(255, 255, 255, .15);
-    background-color: #181f30;
-}
-
-.el-popper .popper__arrow {
-    visibility: hidden;
-}
-
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
-    background-color: #223147;
-}
 </style>
 
 <style scoped>
@@ -832,7 +818,27 @@ export default {
     background-color: #2186cf;
 }
 </style>
+
 <style>
+.el-select {
+    width: 100%;
+}
+
+.el-select-dropdown {
+
+    border: 1px solid rgba(255, 255, 255, .15);
+    background-color: #181f30;
+}
+
+.el-popper .popper__arrow {
+    visibility: hidden;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+    background-color: #223147;
+}
+
 .panel .el-divider {
     background-color: #303645;
 }

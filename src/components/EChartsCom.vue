@@ -26,11 +26,11 @@ export default {
         option: {
             handler(newVal, oldVal) {
                 this.option = newVal;
-                this.bar_echarts.setOption(this.option)
+                this.bar_echarts.clear();
+                this.bar_echarts.setOption(newVal)
             },
             deep: true
         },
-
     }
 }
 </script>

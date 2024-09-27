@@ -57,6 +57,8 @@ export default {
         var sigs = signals()
         this.signals = sigs;
         this.checkList = this.initCheckList
+        console.log('mounted', this.checkList, this.initCheckList);
+
     },
     methods: {
         remove(val) {
@@ -70,15 +72,6 @@ export default {
         },
         comfirm() {
             this.$emit('comfirm', this.checkList);
-        }
-    },
-    watch: {
-        initCheckList: {
-            handler(newVal, oldVal) {
-                this.option = newVal;
-                this.checkList = this.initCheckList
-            },
-            deep: true
         }
     }
 }

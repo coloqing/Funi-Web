@@ -31,16 +31,20 @@
               <div class="forewarn body_forewarn">70</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link to="/TrainClass" class="router_link"
-                  >查看详情</router-link
-                >
+                <router-link to="/TrainClass" class="router_link">查看详情</router-link>
               </div>
             </div>
           </div>
         </div>
         <!-- 辅变系统 -->
-        <div class="line_Tcenter font_size26w" style=" display: flex ;flex-direction: column; " >
-         <div>辅变系统</div>
+        <div class="line_Tcenter font_size26w" style=" display: flex ;flex-direction: column; ">
+          <div style="display: flex;justify-content: space-between;padding:  0 10px;">
+            <div>辅变系统</div>
+            <div> <el-select v-model="trainValue" placeholder="11号线">
+                <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select></div>
+          </div>
           <AssistChange></AssistChange>
         </div>
 
@@ -50,7 +54,7 @@
           <div class="line_alarm">
             <!-- 报警title -->
             <div class="alarm_title">
-              <div class="recording font_size20">报警记录</div>
+              <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
                 <div class="alarm_time1">近7天</div>
@@ -58,13 +62,8 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker
-                v-model="value1"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              >
+              <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期">
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -90,9 +89,7 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link"
-                    >查看详情</router-link
-                  >
+                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
                 </div>
               </div>
             </div>
@@ -101,7 +98,7 @@
           <div class="line_alarm train_margin">
             <!-- 预警title -->
             <div class="alarm_title">
-              <div class="recording font_size20">报警记录</div>
+              <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
                 <div class="alarm_time1">近7天</div>
@@ -109,13 +106,8 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker
-                v-model="value1"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              >
+              <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
+                end-placeholder="结束日期">
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -141,9 +133,7 @@
                 <div class="forewarn body_forewarn">15:20:32</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link"
-                    >查看详情</router-link
-                  >
+                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
                 </div>
               </div>
             </div>
@@ -156,13 +146,8 @@
           <div class="bott_title_left">车辆预警报警统计</div>
           <div class="bott_title_right">
             <!-- 年月日选择器 -->
-            <el-date-picker
-              v-model="value1"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            >
+            <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
+              end-placeholder="结束日期">
             </el-date-picker>
           </div>
         </div>
@@ -172,11 +157,7 @@
           <div class="line_warning1">
             <div class="alarm_echarts_title font_size20">报警预警趋势</div>
             <!-- <div ref="alarm_echarts" class="alarm_echarts"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="alarm_echarts_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></EChartsCom>
           </div>
 
           <el-divider direction="vertical" style="height: 100%" />
@@ -184,21 +165,13 @@
           <div class="line_warning2">
             <div class="history_alarm_title">历史报警分布统计</div>
             <!-- <div ref="history_alarm" class="history_alarm" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="history_alarm_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_alarm_option"></EChartsCom>
           </div>
           <!-- 历史预警发布统计 -->
           <div class="line_warning3">
             <div class="history_forewarn_title">历史预警发布统计</div>
             <!-- <div ref="history_forewarn" class="history_forewarn" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="history_forewarn_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_forewarn_option"></EChartsCom>
           </div>
           <!-- 报警预警top10 -->
           <div class="line_warning4">
@@ -303,14 +276,19 @@ export default {
         ],
       },
       top10_option: {},
+      trainValue: '11号线',
+      trainOptions: [{
+        value: '11号线',
+        label: '11号线'
+      }],
     };
   },
   // 初始化之前
-  beforeCreate() {},
+  beforeCreate() { },
   // 初始化之后
-  created() {},
+  created() { },
   // 挂载前
-  beforeMount() {},
+  beforeMount() { },
   // 挂载后
   mounted() {
     this.init_my_charts();
@@ -917,7 +895,7 @@ body {
       width: 25%;
       height: 100%;
 
-      > div {
+      >div {
         box-sizing: border-box;
         padding: 0 0.625rem;
       }
@@ -929,7 +907,7 @@ body {
       .state {
         width: 25%;
 
-        > .state_border {
+        >.state_border {
           border: #555b69 solid 1px;
           padding: 0.3vw 0;
           max-width: 4vw;
@@ -1032,7 +1010,7 @@ body {
         .state {
           width: 20%;
 
-          > .state_border {
+          >.state_border {
             width: 3.5vw;
             height: 1.5vw;
             box-sizing: border-box;
@@ -1142,6 +1120,7 @@ body {
 
       // 预警body
       .train_margin {
+
         // margin-top: 35px;
         // 预警title
         .alarm_title {
@@ -1317,13 +1296,7 @@ body {
   line-height: 0vw;
 }
 
-.line
-  .line_block
-  .line_top
-  .line_Tbott
-  .line_alarm
-  .alarm_title
-  .el-range-editor.el-input__inner {
+.line .line_block .line_top .line_Tbott .line_alarm .alarm_title .el-range-editor.el-input__inner {
   height: 1.8vw !important;
   width: 39%;
   background: transparent;
@@ -1338,9 +1311,26 @@ body {
   float: right;
   line-height: 0vw;
 }
+
+.el-select-dropdown {
+
+  border: 1px solid rgba(255, 255, 255, .15);
+  background-color: #181f30;
+}
+
+.el-popper .popper__arrow {
+  visibility: hidden;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background-color: #223147;
+}
+
+.line_Tcenter .el-select .el-input__inner {
+  background-color: #0b1121 !important;
+  border: 0;
+  color: #0084ffa6;
+  width: 100px;
+}
 </style>
-
-
-
-
-
