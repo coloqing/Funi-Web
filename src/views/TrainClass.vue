@@ -27,6 +27,9 @@
         <LifetimeCom />
       </div>
     </div>
+<!-- git config --global --unset http.proxy
+git config --global --unset https.proxy -->
+
     <!-- 列车状态实时监视 33.6-->
     <div class="train_center">
       <!-- 车厢选择 -->

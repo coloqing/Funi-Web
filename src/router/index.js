@@ -7,10 +7,27 @@ import Test from "../views/Test.vue";
 import AlarmInfo from "@/views/AlarmInfo.vue";
 import HomePic from "@/views/HomePic.vue";
 import TrainPic from "@/views/TrainPic.vue";
+// import Background from "@/views/Background.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+// 后台
+// {  
+//   path: '/',  
+//   component: Layout,  
+//   redirect: '/dashboard',  
+//   children: [  
+//     // {  
+//     //   path: "/Background",
+//     //   name: "Background",
+//     //   component: Background,
+//     //   meta: { title: 'Dashboard', icon: 'dashboard' }  
+//     // },  
+//   ]  
+// },  
+// 其他非布局路由
+
   {
     path: "/",
     name: "home",
@@ -46,6 +63,7 @@ const routes = [
     name: "TrainPic",
     component: TrainPic,
   },
+
 ];
 
 const router = new VueRouter({
