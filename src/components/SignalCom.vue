@@ -63,6 +63,7 @@ export default {
         height: 5dvh;
         background-color: var(--color);
         margin-right: 0.3dvw;
+        flex: 0 0 auto;
     }
 
     .right-panel {

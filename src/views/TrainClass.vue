@@ -1,7 +1,7 @@
 <template>
   <div class="train">
-    <div>
-      <el-select v-model="value" placeholder="请选择">
+    <div style="display: flex; justify-content: flex-end;">
+      <!-- <el-select v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -9,7 +9,7 @@
           :value="item.value"
         >
         </el-option>
-      </el-select>
+      </el-select> -->
       <el-button @click="goback">返回</el-button>
     </div>
     <!-- 顶部实时预警/报警 12.5-->
@@ -64,12 +64,8 @@
           </div>
           <!-- 选项透明膜 -->
           <div class="train_item" @click="sideCard">
-            <div
-              :class="card.isActive ? 'visibilit' : 'Card'"
-              v-for="(card, index) in cards"
-              :key="card.id"
-              :data-id="card.id"
-            ></div>
+            <div :class="card.isActive ? 'visibilit' : 'Card'" v-for="(card, index) in cards" :key="card.id"
+              :data-id="card.id"></div>
           </div>
         </div>
       </div>
@@ -77,7 +73,7 @@
       <div class="train_center_canvas">
         <!-- <img style="width: 100vw;" src="../../public/img/map.png" alt="" /> -->
         <!-- <canvas ref="circuit_fig" ></canvas> -->
-      <CanvasCircuit />
+        <CanvasCircuit />
       </div>
 
       <div class="train-signal">
@@ -95,25 +91,21 @@
           <i class="el-icon-time"></i>数据时间: {{ data_time }}
         </div>
         <div class="signal-panels">
-          <div class="singal-item" v-for="i in 30">
-            <SignalCom
-              :signal_name="'A1-充电机输出电流传感器BC11'"
-              signal_value="50A"
-              :color="'#ac3577'"
-            >
+          <!-- <div class="singal-item" v-for="i in 30">
+            <SignalCom :signal_name="'A1-充电机输出电流传感器BC11'" signal_value="50A" :color="'#ac3577'">
+            </SignalCom>
+          </div> -->
+          <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
+            <SignalCom :signal_name="'A' + item" :signal_value="getSignalsVal(index)" :color="getColor(index)">
             </SignalCom>
           </div>
-          <div class="add-signal-btn">
+          <div class="add-signal-btn" @click="modSignals">
             <div><i class="el-icon-plus"></i></div>
             <span> &nbsp;编辑信号量</span>
           </div>
         </div>
         <div>
-          <EChartsCom
-            :width="'100%'"
-            :height="'40dvh'"
-            :option="singal_option"
-          ></EChartsCom>
+          <EChartsCom :width="'100%'" :height="'40dvh'" :option="signal_option"></EChartsCom>
         </div>
       </div>
     </div>
@@ -127,12 +119,8 @@
         <div class="indicators">
           <!-- title -->
           <div class="indicators_title font_size26w">
-            <div
-              v-for="(item, index) in indicators_cards"
-              :key="index"
-              :class="item.isActive ? 'border' : ''"
-              @click="indicators_togg(index)"
-            >
+            <div v-for="(item, index) in indicators_cards" :key="index" :class="item.isActive ? 'border' : ''"
+              @click="indicators_togg(index)">
               {{ item.name }}
             </div>
           </div>
@@ -176,13 +164,8 @@
       <!-- 弹出层 -->
       <div class="pop_ups">
         <!-- 弹出层 -->
-        <el-dialog
-          class="indicator_curves"
-          :visible.sync="dialogVisible"
-          width="80%"
-          :close-on-click-modal="false"
-          @close="dialogVisible = false"
-        >
+        <el-dialog class="indicator_curves" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false"
+          @close="dialogVisible = false">
           <!-- 关键指标曲线 -->
           <div class="curves_title font_size26w">
             <!-- 部件名称 -->
@@ -195,13 +178,8 @@
                 <div>近12月</div>
               </div> -->
               <div class="block">
-                <el-date-picker
-                  v-model="value1"
-                  type="daterange"
-                  range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                >
+                <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
+                  end-placeholder="结束日期">
                 </el-date-picker>
               </div>
             </div>
@@ -211,6 +189,10 @@
         </el-dialog>
       </div>
     </template>
+
+    <el-dialog :visible.sync="dialogVisible1" class="selector">
+      <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="signals" />
+    </el-dialog>
   </div>
 </template>
 
@@ -222,6 +204,8 @@ import SignalCom from "../components/SignalCom.vue";
 import EChartsCom from "@/components/EChartsCom.vue";
 import LifetimeCom from "@/components/LifetimeCom.vue";
 import CanvasCircuit from "@/components/CanvasCircuit.vue"
+import SignalSelector from '@/components/SignalSelector.vue';
+import { colors, lineData } from '@/api/api.js'
 
 export default {
   name: "train",
@@ -235,7 +219,8 @@ export default {
     SignalCom,
     EChartsCom,
     LifetimeCom,
-    CanvasCircuit
+    CanvasCircuit,
+    SignalSelector
   },
   data() {
     let min = 30;
@@ -243,29 +228,8 @@ export default {
     let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
     return {
       data_time: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-      singal_option: {
-        color: [
-          "#1f77b4", // 蓝色
-          "#ff7f0e", // 橙色
-          "#2ca02c", // 绿色
-          "#d62728", // 红色
-          "#9467bd", // 紫色
-          "#8c564b", // 棕色
-          "#e377c2", // 粉红色
-          "#7f7f7f", // 灰色
-          "#bcbd22", // 黄绿色
-          "#17becf", // 青色
-          "#d32f2f", // 深红色
-          "#1976d2", // 深蓝色
-          "#388e3c", // 深绿色
-          "#fbc02d", // 黄色
-          "#e64a19", // 深橙色
-          "#5e35b1", // 深紫色
-          "#0097a7", // 深青色
-          "#f06292", // 浅粉红色
-          "#795548", // 深棕色
-          "#c0ca33", // 浅黄绿色
-        ],
+      signal_option: {
+        color: colors(),
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -345,164 +309,12 @@ export default {
             },
           },
         ],
-        series: [
-          {
-            name: "电流",
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: 0,
-            data: [
-              ["2024/9/13 14:00:00", 53],
-              ["2024/9/13 14:00:01", 49],
-              ["2024/9/13 14:00:02", 53],
-              ["2024/9/13 14:00:03", 50],
-              ["2024/9/13 14:00:04", 53],
-              ["2024/9/13 14:00:05", 50],
-              ["2024/9/13 14:00:06", 48],
-              ["2024/9/13 14:00:07", 51],
-              ["2024/9/13 14:00:08", 48],
-              ["2024/9/13 14:00:09", 48],
-              ["2024/9/13 14:00:10", 53],
-              ["2024/9/13 14:00:11", 50],
-              ["2024/9/13 14:00:12", 50],
-              ["2024/9/13 14:00:13", 52],
-              ["2024/9/13 14:00:14", 54],
-              ["2024/9/13 14:00:15", 51],
-              ["2024/9/13 14:00:16", 52],
-              ["2024/9/13 14:00:17", 51],
-              ["2024/9/13 14:00:18", 53],
-              ["2024/9/13 14:00:19", 54],
-              ["2024/9/13 14:00:20", 54],
-              ["2024/9/13 14:00:21", 47],
-              ["2024/9/13 14:00:22", 51],
-              ["2024/9/13 14:00:23", 50],
-              ["2024/9/13 14:00:24", 54],
-              ["2024/9/13 14:00:25", 51],
-              ["2024/9/13 14:00:26", 51],
-              ["2024/9/13 14:00:27", 50],
-              ["2024/9/13 14:00:28", 53],
-              ["2024/9/13 14:00:29", 47],
-              ["2024/9/13 14:00:30", 47],
-              ["2024/9/13 14:00:31", 51],
-              ["2024/9/13 14:00:32", 54],
-              ["2024/9/13 14:00:33", 48],
-              ["2024/9/13 14:00:34", 53],
-              ["2024/9/13 14:00:35", 47],
-              ["2024/9/13 14:00:36", 54],
-              ["2024/9/13 14:00:37", 49],
-              ["2024/9/13 14:00:38", 51],
-              ["2024/9/13 14:00:39", 53],
-            ],
-          },
-          {
-            name: "电压",
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: 1,
-            data: this.generateTimeValuePairs("2024-09-13T14:00:00", 40, 1),
-          },
-          {
-            name: "短路接触器",
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: 2,
-            data: [
-              ["2024/9/13 14:00:00", 0],
-              ["2024/9/13 14:00:01", 0],
-              ["2024/9/13 14:00:02", 0],
-              ["2024/9/13 14:00:03", 0],
-              ["2024/9/13 14:00:04", 0],
-              ["2024/9/13 14:00:05", 0],
-              ["2024/9/13 14:00:06", 0],
-              ["2024/9/13 14:00:07", 0],
-              ["2024/9/13 14:00:08", 0],
-              ["2024/9/13 14:00:09", 0],
-              ["2024/9/13 14:00:10", 0],
-              ["2024/9/13 14:00:11", 0],
-              ["2024/9/13 14:00:12", 0],
-              ["2024/9/13 14:00:13", 0],
-              ["2024/9/13 14:00:14", 0],
-              ["2024/9/13 14:00:15", 0],
-              ["2024/9/13 14:00:16", 0],
-              ["2024/9/13 14:00:17", 0],
-              ["2024/9/13 14:00:18", 0],
-              ["2024/9/13 14:00:19", 0],
-              ["2024/9/13 14:00:20", 0],
-              ["2024/9/13 14:00:21", 0],
-              ["2024/9/13 14:00:22", 0],
-              ["2024/9/13 14:00:23", 0],
-              ["2024/9/13 14:00:24", 0],
-              ["2024/9/13 14:00:25", 0],
-              ["2024/9/13 14:00:26", 0],
-              ["2024/9/13 14:00:27", 0],
-              ["2024/9/13 14:00:28", 0],
-              ["2024/9/13 14:00:29", 0],
-              ["2024/9/13 14:00:30", 0],
-              ["2024/9/13 14:00:31", 0],
-              ["2024/9/13 14:00:32", 0],
-              ["2024/9/13 14:00:33", 0],
-              ["2024/9/13 14:00:34", 0],
-              ["2024/9/13 14:00:35", 0],
-              ["2024/9/13 14:00:36", 0],
-              ["2024/9/13 14:00:37", 0],
-              ["2024/9/13 14:00:38", 0],
-              ["2024/9/13 14:00:39", 0],
-            ],
-          },
-          {
-            name: "交流接触器",
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: 2,
-            data: [
-              ["2024/9/13 14:00:00", 1],
-              ["2024/9/13 14:00:01", 1],
-              ["2024/9/13 14:00:02", 1],
-              ["2024/9/13 14:00:03", 1],
-              ["2024/9/13 14:00:04", 1],
-              ["2024/9/13 14:00:05", 1],
-              ["2024/9/13 14:00:06", 1],
-              ["2024/9/13 14:00:07", 1],
-              ["2024/9/13 14:00:08", 1],
-              ["2024/9/13 14:00:09", 1],
-              ["2024/9/13 14:00:10", 1],
-              ["2024/9/13 14:00:11", 1],
-              ["2024/9/13 14:00:12", 1],
-              ["2024/9/13 14:00:13", 1],
-              ["2024/9/13 14:00:14", 1],
-              ["2024/9/13 14:00:15", 1],
-              ["2024/9/13 14:00:16", 1],
-              ["2024/9/13 14:00:17", 1],
-              ["2024/9/13 14:00:18", 1],
-              ["2024/9/13 14:00:19", 1],
-              ["2024/9/13 14:00:20", 1],
-              ["2024/9/13 14:00:21", 1],
-              ["2024/9/13 14:00:22", 1],
-              ["2024/9/13 14:00:23", 1],
-              ["2024/9/13 14:00:24", 1],
-              ["2024/9/13 14:00:25", 1],
-              ["2024/9/13 14:00:26", 1],
-              ["2024/9/13 14:00:27", 1],
-              ["2024/9/13 14:00:28", 1],
-              ["2024/9/13 14:00:29", 1],
-              ["2024/9/13 14:00:30", 1],
-              ["2024/9/13 14:00:31", 1],
-              ["2024/9/13 14:00:32", 1],
-              ["2024/9/13 14:00:33", 1],
-              ["2024/9/13 14:00:34", 1],
-              ["2024/9/13 14:00:35", 1],
-              ["2024/9/13 14:00:36", 1],
-              ["2024/9/13 14:00:37", 1],
-              ["2024/9/13 14:00:38", 1],
-              ["2024/9/13 14:00:39", 1],
-            ],
-          },
-        ],
+        series: [],
       },
+
+      dialogVisible1: false,
+      signals: ['1-逆变器V相电流', '1-LLC输出下半部电压', '8-斩波输出电压2'],
+
       // 列车车厢 透明膜点击
       cards: [
         { id: "A1", class: "Card", isActive: true },
@@ -864,6 +676,7 @@ export default {
         });
       }
     },
+
     // 查看部件详情
     instructions_togg() {
       this.dialogVisible = true;
@@ -881,6 +694,7 @@ export default {
     goback() {
       this.$router.back();
     },
+
     // 渲染电路图
     fun_circuitFig(w, h, x, y) {
       // 画布宽度 高度 圆心坐标x y
@@ -1070,17 +884,17 @@ export default {
         "DC",
         dashed1 + 12 * 1,
         (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        (y - rectangle_overflow)
       );
       // AC
       ctx.fillText(
         "AC",
         rectangle_w - 12 * 2,
         center_r2_y +
-          rectangle_overflow -
-          (y - rectangle_overflow) -
-          (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        rectangle_overflow -
+        (y - rectangle_overflow) -
+        (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
+        (y - rectangle_overflow)
       );
 
       //线圈
@@ -1589,9 +1403,9 @@ export default {
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
-          2 +
-          (capacitor_topX + hu_radius2) -
-          (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
+        2 +
+        (capacitor_topX + hu_radius2) -
+        (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -1785,8 +1599,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.stroke();
@@ -1816,15 +1630,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y - lj_h
       );
       ctx.stroke();
@@ -1832,9 +1646,9 @@ export default {
       ctx.fillText(
         "输出接触器",
         lj_w / 2 +
-          (rectangle4_xu_x + rectangle4_xu_w) -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 -
-          (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
+        (rectangle4_xu_x + rectangle4_xu_w) -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 -
+        (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
         rectangle4_xu_y - lj_h - 12
       );
 
@@ -1843,9 +1657,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y
       );
       ctx.lineTo(rectangle4_xu_x + rectangle4_xu_w, rectangle4_xu_y);
@@ -1873,8 +1687,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y + rectangle3_xu_ + jianju);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.stroke();
@@ -1902,15 +1716,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
@@ -1920,9 +1734,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
@@ -1956,8 +1770,8 @@ export default {
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.stroke();
@@ -1985,15 +1799,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
@@ -2002,9 +1816,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
@@ -2221,7 +2035,7 @@ export default {
       // 三角形顶点
       let vertex_x =
         ((black_spots_x - (voltmeter_top2_x + voltmeter_top2_w)) / 2) *
-          (1 + 0.4) +
+        (1 + 0.4) +
         (voltmeter_top2_x + voltmeter_top2_w);
       let vertex_y = black_spots_y;
       // 竖
@@ -2258,7 +2072,7 @@ export default {
       let black_spots_x2 = black_spots_x;
       let black_spots_y2 =
         ((rectangle3_xu_y - radius - (black_spots_y + radius)) / 2) *
-          (1 - 0.4) +
+        (1 - 0.4) +
         black_spots_y +
         radius;
       // 变阻器icon2
@@ -2385,6 +2199,33 @@ export default {
         );
       };
     },
+
+    modSignals() {
+      this.dialogVisible1 = true
+    },
+    cancel() {
+      this.dialogVisible1 = false
+    },
+    comfirm(val) {
+      this.dialogVisible1 = false
+      this.signals = val
+      this.getSignalsData()
+    },
+    getColor(i) {
+      return colors(i)
+    },
+    getSignalsData() {
+      var data = []
+      for (let i = 0; i < this.signals.length; i++) {
+        data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550))
+      }
+      this.signal_option.series = data
+      console.log('series', this.signal_option.series);
+
+    },
+    getSignalsVal(i) {
+      return String(this.signal_option.series[i].data[0][1])
+    },
   },
   created() {
     this.total;
@@ -2395,6 +2236,9 @@ export default {
         return sum + item.parts.length;
       }, 0);
     },
+  },
+  beforeMount() {
+    this.getSignalsData()
   },
   // 挂载后
   mounted() {
@@ -2428,7 +2272,7 @@ export default {
     justify-content: space-between;
     padding-bottom: 1vw;
 
-    > div {
+    >div {
       width: 33.3%;
       height: 100%;
       box-sizing: border-box;
@@ -2502,14 +2346,14 @@ export default {
           height: 40%;
           // font-size: 1vw;
 
-          > div {
+          >div {
             flex: 1;
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
 
-            > img {
+            >img {
               width: 1vw;
               margin-left: 0.5vw;
             }
@@ -2527,7 +2371,7 @@ export default {
           justify-content: space-between;
           align-items: center;
 
-          > div {
+          >div {
             background: rgb(0, 0, 0, 0.8);
             opacity: 0.2;
             flex: 1;
@@ -2635,7 +2479,7 @@ export default {
           justify-content: left;
           margin: 0.5vw 0;
 
-          > div {
+          >div {
             // width: 10vw;
             padding: 10px 0;
             margin: 0 10px;
@@ -2660,31 +2504,31 @@ export default {
 
           .indicators_thead,
           .indicators_tbody {
-            > th:nth-child(1) {
+            >th:nth-child(1) {
               width: 15.7%;
             }
 
-            > th:nth-child(2) {
+            >th:nth-child(2) {
               width: 23.9%;
             }
 
-            > th:nth-child(3) {
+            >th:nth-child(3) {
               width: 23.8%;
             }
 
-            > th:nth-child(4) {
+            >th:nth-child(4) {
               width: 11.6%;
             }
 
-            > th:nth-child(5) {
+            >th:nth-child(5) {
               width: 11.6%;
             }
 
-            > th:nth-child(6) {
+            >th:nth-child(6) {
               width: 13.4%;
             }
 
-            > th {
+            >th {
               background-color: #20283c;
               border: 1px solid #3a404f;
               padding: 0.8vw 0;
@@ -2757,7 +2601,7 @@ export default {
           justify-content: space-evenly;
           align-items: center;
 
-          > div {
+          >div {
             margin: 0 0.4vw;
             // font-size: 1vw;/
           }
@@ -2831,5 +2675,15 @@ export default {
   font-size: 1vw;
   height: 2.5vw;
   line-height: 2.5vw;
+}
+</style>
+<style>
+.selector .el-dialog__header {
+  display: none;
+}
+
+.selector .el-dialog__body {
+  height: 70dvh;
+  padding: 0;
 }
 </style>
