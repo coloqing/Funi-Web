@@ -61,23 +61,23 @@ git config --global --unset https.proxy -->
               <img src="../../public/img/jinggao.png" alt="" />
             </div>
             <div class="train_nick2">
-              <div>A2</div>
+              <div>B1</div>
               <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick3">
-              <div>A3</div>
+              <div>C1</div>
               <img src="../../public/img/weixian.png" alt="" />
             </div>
             <div class="train_nick4">
-              <div>A4</div>
+              <div>C2</div>
               <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick5">
-              <div>A5</div>
+              <div>B2</div>
               <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick6">
-              <div>A6</div>
+              <div>A2</div>
               <img src="../../public/img/tongguo.png" alt="" />
             </div>
           </div>
@@ -337,11 +337,11 @@ export default {
       // 列车车厢 透明膜点击
       cards: [
         { id: "A1", class: "Card", isActive: true },
+        { id: "B1", class: "Card", isActive: false },
+        { id: "C1", class: "Card", isActive: false },
+        { id: "C2", class: "Card", isActive: false },
+        { id: "B2", class: "Card", isActive: false },
         { id: "A2", class: "Card", isActive: false },
-        { id: "A3", class: "Card", isActive: false },
-        { id: "A4", class: "Card", isActive: false },
-        { id: "A5", class: "Card", isActive: false },
-        { id: "A6", class: "Card", isActive: false },
       ],
       // 被点击车厢
       index: "A1",
@@ -2363,7 +2363,7 @@ export default {
       height: 25%;
       box-sizing: border-box;
       display: flex;
-      justify-content: left;
+      justify-content: center;
       align-items: center;
 
       // title

@@ -37,7 +37,7 @@ export default {
       // 各个点的名称
       // ======================================
       // 绘制线的颜色
-      ctx.strokeStyle = "#95979d";
+      ctx.strokeStyle = "white";
       // 默认配置
       ctx.lineCap = "butt";
       // 圆的半径，即小圆点的大小
@@ -71,7 +71,7 @@ export default {
       let dashed1 = center_r + 320;
       ctx.lineTo(dashed1, y);
       // 虚线的配置
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.stroke();
       // 电感器 水平移动距离
       let Inductors_level = center_r + 90;
@@ -124,14 +124,14 @@ export default {
       ctx.beginPath();
       ctx.moveTo(center_r, center_r2_y);
       ctx.lineTo(dashed2, center_r2_y);
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.stroke();
 
       // 虚线3
       ctx.beginPath();
       ctx.moveTo(x + 30, y);
       ctx.lineTo(x + 30, center_r2_y);
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.stroke();
       // 电压表 水平移动距离
       let ammeter1_level = x + 30;
@@ -208,7 +208,7 @@ export default {
       );
 
       //线圈
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 线圈长度
       let coil_w = rectangle_w + 60;
       let coil_h = 30;
@@ -245,7 +245,7 @@ export default {
       );
       ctx.stroke();
       // 线圈2
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // bott
       ctx.beginPath();
       ctx.moveTo(rectangle_w, center_r2_y);
@@ -325,7 +325,7 @@ export default {
         );
         ctx.stroke();
         // 弧虚线top1.1
-        ctx.setLineDash([8, 10]);
+        ctx.setLineDash([10,3]);
         // 长度
         var coil_xu_top1_1 = coil_rtop_x + 50;
         ctx.beginPath();
@@ -395,7 +395,7 @@ export default {
         var hu_top1_2 = coil_xu_bott1_1 + diode_img_w;
         // 长度
         var hu_top1_2w = 50;
-        ctx.setLineDash([8, 10]);
+        ctx.setLineDash([10,3]);
         ctx.beginPath();
         // 弧虚线top1.2
         ctx.moveTo(hu_top1_2, coil_rtop_y - arc_r);
@@ -415,7 +415,7 @@ export default {
       ctx.beginPath();
       ctx.arc(top_xu_x, top_xu_y, radius, 0, 2 * Math.PI);
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 虚线
       // 虚线高度
       let top_xu_h = 60;
@@ -479,7 +479,7 @@ export default {
       ctx.lineTo(rectangle3_x, rectangle3_y + rectangle3_h);
       ctx.stroke();
       // 横向虚线1=============
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 虚线1起点
       let rectangle3_xu_x = rectangle3_x + rectangle3_w;
       // 往下移动距离
@@ -756,7 +756,7 @@ export default {
       // 往上移动的距离
       let voltmeter_top1_h = 70;
       let voltmeter_top1_w = 60;
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(voltmeter_top1_x, voltmeter_top1_y - radius);
       ctx.lineTo(
@@ -798,7 +798,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 电压表2 左边圆心坐标
       // 电表间距
       let voltmeter_jianju = 22;
@@ -815,7 +815,7 @@ export default {
       // 往上移动的距离
       let voltmeter_top2_h = 70;
       let voltmeter_top2_w = 60;
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(voltmeter_top2_x, voltmeter_top2_y - radius);
       ctx.lineTo(
@@ -857,7 +857,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
 
       // ===================底部矩形===================
       ctx.setLineDash([]);
@@ -897,7 +897,7 @@ export default {
       ctx.lineTo(rectangle4_x, rectangle4_y + rectangle4_h);
       ctx.stroke();
       // 虚线1起点
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       let rectangle4_xu_x = rectangle4_x + rectangle4_w;
       // 往下移动距离
       // let rectangle3_xu_ = 25;
@@ -963,7 +963,7 @@ export default {
       );
 
       // 横向虚线1.2=============
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
@@ -985,7 +985,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.fillText(
         "U",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
@@ -1038,7 +1038,7 @@ export default {
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
 
       // 横向虚线2.2=============
       ctx.beginPath();
@@ -1066,7 +1066,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.fillText(
         "V",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
@@ -1121,7 +1121,7 @@ export default {
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 横向虚线3.2=============
       ctx.beginPath();
       ctx.moveTo(
@@ -1147,7 +1147,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.fillText(
         "W",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
@@ -1175,7 +1175,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.fillText(
         "X",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
@@ -1195,7 +1195,7 @@ export default {
       let voltmeter_bott1_h =
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * (3 + 5 / 3);
       let voltmeter_bott1_w = 65;
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(voltmeter_bott1_x, voltmeter_bott1_y - radius);
       ctx.lineTo(voltmeter_bott1_x, voltmeter_bott1_h);
@@ -1230,7 +1230,7 @@ export default {
         2 * Math.PI
       );
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // // 电压表2 左边圆心坐标=======================
       let voltmeter_bott2_x =
         voltmeter_bott1_x + voltmeter_bott1_w + voltmeter_jianju;
@@ -1245,7 +1245,7 @@ export default {
       // // 往上移动的距离
       let voltmeter_bott2_h = voltmeter_bott1_h;
       let voltmeter_bott2_w = voltmeter_bott1_w;
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(voltmeter_bott2_x, voltmeter_bott2_y + radius);
       ctx.lineTo(voltmeter_bott2_x, voltmeter_bott2_h);
@@ -1294,7 +1294,7 @@ export default {
       // // // 往上移动的距离
       let voltmeter_bott3_h = voltmeter_bott1_h;
       let voltmeter_bott3_w = voltmeter_bott2_w;
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(voltmeter_bott3_x, voltmeter_bott3_y + radius);
       ctx.lineTo(voltmeter_bott3_x, voltmeter_bott3_h);
@@ -1340,7 +1340,7 @@ export default {
       ctx.fillStyle = "#95979d";
       ctx.fill(); // 填充圆
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 变阻器icon1
       // 三角形顶点
       let vertex_x =
@@ -1371,9 +1371,9 @@ export default {
       ctx.fillStyle = "#95979d";
       ctx.fill(); // 填充圆
       ctx.stroke();
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       // 连接线
-      ctx.setLineDash([8, 10]);
+      ctx.setLineDash([10,3]);
       ctx.beginPath();
       ctx.moveTo(black_spots_x, black_spots_y + radius);
       ctx.lineTo(black_spots_x, rectangle3_xu_y - radius);
@@ -1512,7 +1512,7 @@ export default {
   },
   // 挂载后
   mounted() {
-    this.fun_circuitFig(1400, 700, 50, 300);
+    this.fun_circuitFig(1600, 800, 50, 300);
   },
 };
 </script>
