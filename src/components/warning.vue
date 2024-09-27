@@ -31,22 +31,22 @@
             <div class="alarm_body font_size18">
                 <div class="train_body_list" v-for="n in 13" :key="n">
                     <!-- 车号-->
-                    <div class="train_number body_train_number">07073074</div>
+                    <div class="train_number body_train_number">11001002</div>
                     <!-- 设备状态-->
                     <div class="state body_state">
-                        <div class="state_border">A5</div>
+                        <div class="state_border">A2</div>
                     </div>
                     <!-- 报警数-->
                     <div class="alarm body_alarm">
-                        0
+                        内部生命信号异常
                     </div>
                     <!--预警数-->
                     <div class="forewarn body_forewarn">
-                        70
+                        2024-09-20 13:49:44
                     </div>
                     <!--操作 -->
                     <div class="operate body_operate">
-                        <router-link to="/AlarmInfo" @click="" class="router_link">详情</router-link>
+                        <router-link to="/AlarmInfo" class="router_link">详情</router-link>
 
                     </div>
                 </div>
@@ -88,11 +88,11 @@ export default {
         // overflow: hidden;
         // font-size: 1vw;
         .train_number {
-            width: 25%;
+            width: 15%;
         }
 
         .state {
-            width: 25%;
+            width: 15%;
 
             >.state_border {
                 width: 2.5rem;
@@ -108,15 +108,15 @@ export default {
         }
 
         .alarm {
-            width: 25%;
+            width: 30%;
         }
 
         .forewarn {
-            width: 25%;
+            width: 30%;
         }
 
         .operate {
-            width: 25%;
+            width: 10%;
         }
 
         // 报警title

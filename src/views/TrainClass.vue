@@ -1,16 +1,32 @@
 <template>
   <div class="train">
-    <div style="display: flex; justify-content: flex-end;">
-      <!-- <el-select v-model="value" placeholder="请选择">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select> -->
-      <el-button @click="goback">返回</el-button>
+    <div class="train-select">
+      <div class="svg">
+        <div>
+          <svg viewBox="156.059 225.515 91.041 59.736" xmlns="http://www.w3.org/2000/svg" width="30px">
+            <rect style="stroke: rgb(0, 0, 0); stroke-miterlimit: 3.87; stroke-width: 0px; fill: rgb(66, 173, 93);"
+              x="156.059" y="225.515" width="88.38" height="59.736" rx="2" ry="2" />
+            <rect x="244.439" y="235.686" width="2.661" height="10.561"
+              style="stroke-width: 0px; stroke: rgb(66, 173, 93); paint-order: stroke; fill: rgb(66, 173, 93);" />
+            <rect x="244.422" y="263.414" width="2.661" height="10.561"
+              style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(66, 173, 93);" />
+            <rect style="stroke: rgb(0, 0, 0); fill: rgb(39, 53, 83); stroke-miterlimit: 3.87; stroke-width: 0px;"
+              x="160.912" y="229.93" width="78.908" height="51.677" rx="2.231" ry="2.231" />
+            <text style="fill: rgb(66, 173, 93); font-family: Arial, sans-serif; font-size: 28px; white-space: pre;"
+              x="224.754" y="258.002"
+              transform="matrix(1.3642630577087402, 0, 0, 1.2998440265655518, -136.27794493487204, -67.0629607616197)">SIV</text>
+          </svg>
+        </div>
+        <div>
+          <el-select v-model="trainValue" placeholder="11001002">
+            <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="back-btn">
+        <el-button @click="goback">返回</el-button>
+      </div>
     </div>
     <!-- 顶部实时预警/报警 12.5-->
     <div class="train_top">
@@ -404,6 +420,20 @@ export default {
       options: null,
       // 图表
       chartRef: null,
+
+      trainValue: '',
+      trainOptions: [{
+        value: '11005006',
+        label: '11005006'
+      },
+      {
+        value: '11001002',
+        label: '11001002'
+      },
+      {
+        value: '11003004',
+        label: '11003004'
+      }],
     };
   },
   methods: {
@@ -696,6 +726,7 @@ export default {
     },
 
     // 渲染电路图
+
     fun_circuitFig(w, h, x, y) {
       // 画布宽度 高度 圆心坐标x y
       // 电压表
@@ -2264,6 +2295,25 @@ export default {
   color: white;
   overflow: auto;
 
+  .train-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0f1e3f;
+    height: 70px;
+
+    .svg {
+      background-color: #273553;
+      display: flex;
+      padding: 10px 0;
+      align-items: center;
+
+      :last-child {
+        margin-left: 2px;
+      }
+    }
+  }
+
   // 顶部实时预警/报警
   .train_top {
     height: 32.5%;
@@ -2622,7 +2672,7 @@ export default {
 }
 </style>
 
-<style>
+<style scoped>
 /* 引入的element 弹窗 右边X */
 .train .el-dialog__headerbtn .el-dialog__close {
   font-size: 2vw;
@@ -2685,5 +2735,27 @@ export default {
 .selector .el-dialog__body {
   height: 70dvh;
   padding: 0;
+}
+
+.train .el-input__inner {
+  background-color: #273553;
+  border: 0;
+  font-size: 22px;
+  padding: 0;
+  margin: 0;
+  width: 120px;
+}
+
+.train .el-popper .el-select-dropdown {
+
+  /* border: 1px solid rgba(255, 255, 255, .15); */
+  /* border: 0 !important; */
+  background-color: #181f30;
+
+}
+
+.train .el-select-dropdown__item.hover,
+.train .el-select-dropdown__item:hover {
+  background-color: #223147;
 }
 </style>

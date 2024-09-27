@@ -70,11 +70,11 @@ export default {
         // overflow: hidden;
         // font-size: 1vw;
         .train_number {
-            width: 10%;
+            width: 15%;
         }
 
         .dev-name {
-            width: 40%;
+            width: 30%;
         }
 
         .usage {

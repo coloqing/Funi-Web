@@ -652,7 +652,7 @@ export default {
 </style>
 
 <style lang="less">
-.el-row {
+.panel .el-row {
     margin-bottom: 1dvh;
 
     &:last-child {
@@ -660,26 +660,26 @@ export default {
     }
 }
 
-.el-select .el-input__inner {
+.panel .el-select .el-input__inner {
     background-color: #181f30 !important;
     border: 1px solid rgba(255, 255, 255, .15);
 }
 
 
-.el-range-editor.el-input__inner {
+.panel .el-range-editor.el-input__inner {
     height: 2rem;
     /* width: 39%; */
     background: transparent;
     border: #33384c solid 1px;
 }
 
-.el-input__inner {
+.panel .el-input__inner {
     background-color: #181f30;
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
 
-.el-input.is-disabled .el-input__inner {
+.panel .el-input.is-disabled .el-input__inner {
     background-color: #181f30;
     border-color: rgba(255, 255, 255, .15);
     color: #ffffffa6;
@@ -759,26 +759,6 @@ export default {
     border: 1px solid rgba(255, 255, 255, .15);
     color: #ffffffa6;
 }
-
-
-.el-select {
-    width: 100%;
-}
-
-.el-select-dropdown {
-
-    border: 1px solid rgba(255, 255, 255, .15);
-    background-color: #181f30;
-}
-
-.el-popper .popper__arrow {
-    visibility: hidden;
-}
-
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
-    background-color: #223147;
-}
 </style>
 
 <style scoped>
@@ -838,7 +818,27 @@ export default {
     background-color: #2186cf;
 }
 </style>
+
 <style>
+.el-select {
+    width: 100%;
+}
+
+.el-select-dropdown {
+
+    border: 1px solid rgba(255, 255, 255, .15);
+    background-color: #181f30;
+}
+
+.el-popper .popper__arrow {
+    visibility: hidden;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+    background-color: #223147;
+}
+
 .panel .el-divider {
     background-color: #303645;
 }
