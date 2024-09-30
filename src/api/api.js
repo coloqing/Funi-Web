@@ -1,5 +1,8 @@
 const Mock = require("mockjs");
 const moment = require("moment");
+const axios = require("axios");
+
+const baseURL = "http://localhost:5272/api";
 
 export function test() {
   var data = Mock.mock({
@@ -2713,4 +2716,18 @@ export function lineData(name, yAxisIndex, startTime, min, max) {
     temp.data.push([t, v]);
   }
   return temp;
+}
+
+export function trainState() {
+  return axios
+    .get(baseURL + "/train/state")
+    .then(function (response) {
+      return response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(function () {
+      // 总是会执行
+    });
 }

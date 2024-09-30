@@ -18,17 +18,17 @@
           </div>
           <!-- 列表身体 -->
           <div class="train_body font_size18">
-            <div class="train_body_list" v-for="n in 13" :key="n">
+            <div class="train_body_list" v-for="item in state" :key="item.trainNum">
               <!-- 车号-->
-              <div class="train_number body_train_number">07073074</div>
+              <div class="train_number body_train_number">{{ item.trainNum }}</div>
               <!-- 设备状态-->
               <div class="state body_state">
-                <div class="state_border font_size24">离线</div>
+                <div class="state_border font_size24">{{ stateText(item.state) }}</div>
               </div>
               <!-- 报警数-->
-              <div class="alarm body_alarm">0</div>
+              <div class="alarm body_alarm">{{ item.alarm }}</div>
               <!--预警数-->
-              <div class="forewarn body_forewarn">70</div>
+              <div class="forewarn body_forewarn">{{ item.warning }}</div>
               <!--操作 -->
               <div class="operate body_operate">
                 <router-link to="/TrainClass" class="router_link">查看详情</router-link>
@@ -192,6 +192,8 @@
 import * as echarts from "echarts";
 import EChartsCom from "@/components/EChartsCom.vue";
 import AssistChange from "@/components/AssistChange.vue";
+import { getState } from "@/api/train"
+
 export default {
   name: "HomeView",
   components: {
@@ -200,6 +202,8 @@ export default {
   },
   data() {
     return {
+      state: [],
+
       value1: "",
       // 报警预警趋势
       alarm_echarts: null,
@@ -283,12 +287,21 @@ export default {
       }],
     };
   },
+  computed: {
+
+  },
   // 初始化之前
   beforeCreate() { },
   // 初始化之后
   created() { },
   // 挂载前
-  beforeMount() { },
+  beforeMount() {
+    getState().then(response => {
+      this.state = response.data.data;
+    });
+
+
+  },
   // 挂载后
   mounted() {
     this.init_my_charts();
@@ -315,6 +328,14 @@ export default {
     });
   },
   methods: {
+    stateText(state) {
+      const statusMap = {
+        0: '离线',
+        1: '库内',
+        2: '正线'
+      };
+      return statusMap[state + 1] || 'Unknown';
+    },
     get_alarm_charts_option() {
       let op = {
         legend: {
