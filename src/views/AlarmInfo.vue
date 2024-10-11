@@ -6,7 +6,7 @@
                     <el-col :span="12">
                         <div>线路号</div>
                         <div>
-                            <el-select v-model="lineValue" placeholder="请选择" size="mini">
+                            <el-select v-model="lineValue" placeholder="请选择" size="mini" @change="lineValueChange">
                                 <el-option v-for="item in lineOptions" :key="item.value" :label="item.label"
                                     :value="item.value">
                                 </el-option>
@@ -103,18 +103,18 @@
                             highlight-current-row>
                             <el-table-column type="selection">
                             </el-table-column>
-                            <el-table-column prop="info.faultName" label="预警名称">
+                            <el-table-column prop="name" label="预警名称">
                             </el-table-column>
-                            <el-table-column prop="info.subsystem" label="子系统" width="80">
+                            <el-table-column prop="subSystem" label="子系统" width="80">
                             </el-table-column>
                             <el-table-column label="状态" width="90">
                                 <template slot-scope="scope">
-                                    <div v-if="scope.row.info.type == 0"
+                                    <div v-if="scope.row.state == 0"
                                         class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
                                         <span class="crrc-tag-status-dot crrc-tag-badge "></span>
                                         未消除
                                     </div>
-                                    <div v-if="scope.row.info.type == 1"
+                                    <div v-if="scope.row.state == 1"
                                         class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
                                         <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
                                         车载消除
@@ -123,13 +123,13 @@
                             </el-table-column>
                             <el-table-column label="开始时间">
                                 <template slot-scope="scope">
-                                    {{ scope.row.evaluateDetecttime ? formatTimestamp(scope.row.evaluateDetecttime) :
+                                    {{ scope.row.createTime ? scope.row.createTime :
                                         '--' }}
                                 </template>
                             </el-table-column>
                             <el-table-column label="结束时间">
                                 <template slot-scope="scope">
-                                    {{ scope.row.evaluateOcstime ? formatTimestamp(scope.row.evaluateOcstime) : '--' }}
+                                    {{ scope.row.endTime ? scope.row.endTime : '--' }}
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -314,6 +314,7 @@ import EChartsCom from '@/components/EChartsCom.vue';
 import moment from 'moment';
 import { getLineTrains, alarmList, colors, lineData } from '@/api/api.js'
 import SignalSelector from '@/components/SignalSelector.vue';
+import { getLines, getTrains, getAlarmList } from '@/api/alarmInfo';
 
 export default {
     components: {
@@ -475,7 +476,10 @@ export default {
         }
     },
     beforeMount() {
-        this.getSignalsData()
+        this.getSignalsData();
+        this.getLinesData();
+        this.getTrainsData();
+        this.getAlarmListData();
     },
     mounted() {
         var temp = [{
@@ -500,6 +504,50 @@ export default {
 
     },
     methods: {
+        //获取线路数据
+        getLinesData() {
+            getLines().then(response => {
+                var data = response.data.data;
+                var ldata = []
+                for (let index = 0; index < data.length; index++) {
+                    const element = data[index];
+                    ldata.push({
+                        value: element.lineId,
+                        label: element.lineId
+                    })
+                }
+                this.lineOptions = ldata;
+            });
+        },
+
+        lineValueChange() {
+            this.getTrainsData();
+        },
+
+        //获取列车数据
+        getTrainsData() {
+            getTrains(this.lineValue).then(response => {
+                var data = response.data.data;
+                var ldata = []
+                for (let index = 0; index < data.length; index++) {
+                    const element = data[index];
+                    ldata.push({
+                        value: element.name,
+                        label: element.name
+                    })
+                }
+                this.trainOptions = ldata;
+            });
+        },
+
+        //获取预警列表数据
+        getAlarmListData() {
+            getAlarmList(this.currentPageValue, this.pageSize).then(response => {
+                var data = response.data;
+                this.tableData = data
+            });
+        },
+
         getSignalsData() {
             var data = []
             for (let i = 0; i < this.signals.length; i++) {
@@ -514,11 +562,11 @@ export default {
 
         handleSizeChange(val) {
             this.pageSize = val
-            this.tableData = alarmList(1, this.pageSize)
+            this.getAlarmListData();
         },
         handleCurrentChange(val) {
             this.currentPageValue = val
-            this.tableData = alarmList(this.currentPageValue, this.pageSize)
+            this.getAlarmListData();
         },
         handleSelectionChange(val) {
             this.selectedRow = val
