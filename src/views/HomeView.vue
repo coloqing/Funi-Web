@@ -18,12 +18,29 @@
           </div>
           <!-- 列表身体 -->
           <div class="train_body font_size18">
-            <div class="train_body_list" v-for="item in state" :key="item.trainNum">
+            <div
+              class="train_body_list"
+              v-for="item in state"
+              :key="item.trainNum"
+            >
               <!-- 车号-->
-              <div class="train_number body_train_number">{{ item.trainNum }}</div>
+              <div class="train_number body_train_number">
+                {{ item.trainNum }}
+              </div>
               <!-- 设备状态 -->
               <div class="state body_state">
-                <div class="state_border font_size24" :class="item.state+1 === 2 ? 'crrc-tag-green' : item.state+1 === 0 ? 'crrc-tag-gray' :'crrc-tag-white'">{{ stateText(item.state) }}</div>
+                <div
+                  class="state_border font_size24"
+                  :class="
+                    item.state + 1 === 2
+                      ? 'crrc-tag-green'
+                      : item.state + 1 === 0
+                      ? 'crrc-tag-gray'
+                      : 'crrc-tag-white'
+                  "
+                >
+                  {{ stateText(item.state) }}
+                </div>
               </div>
               <!-- 报警数-->
               <div class="alarm body_alarm">{{ item.alarm }}</div>
@@ -31,19 +48,37 @@
               <div class="forewarn body_forewarn">{{ item.warning }}</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link to="/TrainClass" class="router_link">查看详情</router-link>
+                <router-link to="/TrainClass" class="router_link"
+                  >查看详情</router-link
+                >
               </div>
             </div>
           </div>
         </div>
         <!-- 辅变系统 -->
-        <div class="line_Tcenter font_size26w" style=" display: flex ;flex-direction: column; ">
-          <div style="display: flex;justify-content: space-between;padding:  0 10px;">
+        <div
+          class="line_Tcenter font_size26w"
+          style="display: flex; flex-direction: column"
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              padding: 0 10px;
+            "
+          >
             <div>辅变系统</div>
-            <div> <el-select v-model="trainValue" placeholder="11号线">
-                <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
+            <div>
+              <el-select v-model="trainValue" placeholder="11号线">
+                <el-option
+                  v-for="item in trainOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
-              </el-select></div>
+              </el-select>
+            </div>
           </div>
           <AssistChange></AssistChange>
         </div>
@@ -62,8 +97,13 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
-                end-placeholder="结束日期">
+              <el-date-picker
+                v-model="value1"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -78,20 +118,30 @@
             </div>
             <!-- 报警body -->
             <div class="alarm_body font_size18">
-              <div class="train_body_list" v-for="n in 13" :key="n">
+              <div
+                class="train_body_list"
+                v-for="(item, n) in alarm_data"
+                title="这是一个段落的提示文本"
+                :key="n"
+              >
                 <!-- 车号-->
-                <div class="train_number body_train_number">07073074</div>
+                <div class="train_number body_train_number">
+                  {{ item.trainNumber }}
+                </div>
                 <!-- 设备状态-->
-                <div class="state body_alarm">B1车</div>
+                <div class="state body_alarm">{{ item.carriageNumber }}</div>
                 <!-- 报警数-->
-                <div class="alarm body_alarm">电机1滤网堵塞</div>
+                <div class="alarm body_alarm">{{ item.diagnoseLogic }}</div>
                 <!--预警数-->
-                <div class="forewarn body_forewarn">15:20:32</div>
+                <div class="forewarn body_forewarn">{{ Time(item.createTime) }}</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
+                  <router-link to="/AlarmInfo" class="router_link"
+                    >查看详情</router-link
+                  >
                 </div>
               </div>
+              <div class="null" v-if="alarm_data">暂无数据~</div>
             </div>
           </div>
           <!-- 预警记录 -->
@@ -106,8 +156,13 @@
                 <div class="alarm_time3">近12个月</div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
-                end-placeholder="结束日期">
+              <el-date-picker
+                v-model="value1"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">历史分析</div>
@@ -115,25 +170,34 @@
             <!-- 列表头部 -->
             <div class="alarm_header font_size20">
               <div class="train_number header_train_number">车号</div>
-              <div class="state header_state">B1车</div>
+              <div class="state header_state">车厢</div>
               <div class="alarm header_alarm">预警名称</div>
               <div class="forewarn header_forewarn">发生时间</div>
               <div class="operate header_operate">操作</div>
             </div>
             <!-- 报警body -->
             <div class="alarm_body font_size18">
-              <div class="train_body_list" v-for="n in 3" :key="n">
+              <div
+                class="train_body_list"
+                v-for="(item, n) in forewarn_data"
+                :key="n"
+                :title="item.diagnoseLogic"
+              >
                 <!-- 车号-->
-                <div class="train_number body_train_number">07073074</div>
+                <div class="train_number body_train_number">
+                  {{ item.trainNumber }}
+                </div>
                 <!-- 设备状态-->
-                <div class="state body_alarm">B1车</div>
+                <div class="state body_alarm">{{ item.carriageNumber }}</div>
                 <!-- 报警数-->
-                <div class="alarm body_alarm">电机1滤网堵塞</div>
+                <div class="alarm body_alarm">{{ item.diagnoseLogic }}</div>
                 <!--预警数-->
-                <div class="forewarn body_forewarn">15:20:32</div>
+                <div class="forewarn body_forewarn">{{ Time(item.createTime) }}</div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link">查看详情</router-link>
+                  <router-link to="/AlarmInfo" class="router_link"
+                    >查看详情</router-link
+                  >
                 </div>
               </div>
             </div>
@@ -146,8 +210,13 @@
           <div class="bott_title_left">车辆预警报警统计</div>
           <div class="bott_title_right">
             <!-- 年月日选择器 -->
-            <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
-              end-placeholder="结束日期">
+            <el-date-picker
+              v-model="value1"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            >
             </el-date-picker>
           </div>
         </div>
@@ -157,7 +226,11 @@
           <div class="line_warning1">
             <div class="alarm_echarts_title font_size20">报警预警趋势</div>
             <!-- <div ref="alarm_echarts" class="alarm_echarts"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="alarm_echarts_option"
+            ></EChartsCom>
           </div>
 
           <el-divider direction="vertical" style="height: 100%" />
@@ -165,13 +238,21 @@
           <div class="line_warning2">
             <div class="history_alarm_title">历史报警分布统计</div>
             <!-- <div ref="history_alarm" class="history_alarm" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="history_alarm_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="history_alarm_option"
+            ></EChartsCom>
           </div>
           <!-- 历史预警发布统计 -->
           <div class="line_warning3">
             <div class="history_forewarn_title">历史预警发布统计</div>
             <!-- <div ref="history_forewarn" class="history_forewarn" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom :width="'100%'" :height="'92%'" :option="history_forewarn_option"></EChartsCom>
+            <EChartsCom
+              :width="'100%'"
+              :height="'92%'"
+              :option="history_forewarn_option"
+            ></EChartsCom>
           </div>
           <!-- 报警预警top10 -->
           <div class="line_warning4">
@@ -192,16 +273,22 @@
 import * as echarts from "echarts";
 import EChartsCom from "@/components/EChartsCom.vue";
 import AssistChange from "@/components/AssistChange.vue";
-import { getState } from "@/api/train"
+import { getState } from "@/api/train";
+import { getFaultWarn } from "@/api/homeView";
 
 export default {
   name: "HomeView",
   components: {
     EChartsCom,
-    AssistChange
+    AssistChange,
   },
   data() {
     return {
+      // 预警数据
+      forewarn_data: null,
+      // 报警数据
+      alarm_data: null,
+
       state: [],
 
       value1: "",
@@ -280,27 +367,31 @@ export default {
         ],
       },
       top10_option: {},
-      trainValue: '11号线',
-      trainOptions: [{
-        value: '11号线',
-        label: '11号线'
-      }],
+      trainValue: "11号线",
+      trainOptions: [
+        {
+          value: "11号线",
+          label: "11号线",
+        },
+      ],
     };
   },
-  computed: {
-
-  },
+  computed: {},
   // 初始化之前
-  beforeCreate() { },
+  beforeCreate() {},
   // 初始化之后
-  created() { },
+  created() {
+    // 开始获取数据------------
+    // 获取预警数据
+    this.fun_forewarn();
+    // 获取报警数据
+    this.fun_alarm();
+  },
   // 挂载前
   beforeMount() {
-    getState().then(response => {
+    getState().then((response) => {
       this.state = response.data.data;
     });
-
-
   },
   // 挂载后
   mounted() {
@@ -330,11 +421,19 @@ export default {
   methods: {
     stateText(state) {
       const statusMap = {
-        0: '离线',
-        1: '库内',
-        2: '正线'
+        0: "离线",
+        1: "库内",
+        2: "正线",
       };
-      return statusMap[state + 1] || 'Unknown';
+      return statusMap[state + 1] || "Unknown";
+    },
+    // 日期调整
+    Time(dateString) {  
+      const date = new Date(dateString);  
+      const year = date.getFullYear();  
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1  
+      const day = String(date.getDate()).padStart(2, '0');  
+      return `${year}-${month}-${day}`;  
     },
     get_alarm_charts_option() {
       let op = {
@@ -863,6 +962,41 @@ export default {
       let top10_option = this.get_top10_option();
       this.top10_option = top10_option;
     },
+
+    // 获取预警数据
+    fun_forewarn() {
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 2,
+      }).then((response) => {
+        console.log("获取预警数据：", response);
+        if (response.data.code === 200) {
+          this.forewarn_data = response.data.data;
+        } else {
+          console.error("预警数据获取失败");
+        }
+      });
+    },
+    // 获取报警数据
+    fun_alarm() {
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 1,
+      }).then((response) => {
+        console.log("获取报警数据：", response);
+        if (response.data.code === 200) {
+          this.alarm_data = response.data.data;
+        } else {
+          console.error("报警数据获取失败");
+        }
+      });
+    },
   },
 
   // DOM重新加载前
@@ -916,7 +1050,7 @@ body {
       width: 25%;
       height: 100%;
 
-      >div {
+      > div {
         box-sizing: border-box;
         padding: 0 0.625rem;
       }
@@ -928,7 +1062,7 @@ body {
       .state {
         width: 25%;
 
-        >.state_border {
+        > .state_border {
           // border: #555b69 solid 1px;
           padding: 0.3vw 0;
           max-width: 4vw;
@@ -989,7 +1123,6 @@ body {
           align-items: center;
           // height: 1.875rem;
           height: 2.9vw;
-
           // 设备状态
           .body_state {
             padding-left: 0.5rem;
@@ -1031,7 +1164,7 @@ body {
         .state {
           width: 15%;
 
-          >.state_border {
+          > .state_border {
             width: 3.5vw;
             height: 1.5vw;
             box-sizing: border-box;
@@ -1045,6 +1178,9 @@ body {
 
         .alarm {
           width: 35%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .forewarn {
@@ -1062,7 +1198,7 @@ body {
           align-items: center;
           height: 12%;
           width: 100%;
-
+          padding: 5px 0px;
           // 报警记录
           .recording {
             // flex: 2;
@@ -1109,14 +1245,16 @@ body {
           height: 12%;
           // min-height: 25px;
           border-top: 0.25rem solid #181f32;
-          box-sizing: border-box;
+          // box-sizing: border-box;
+          padding: 5px 10px;
         }
 
         // 报警/预警body
         .alarm_body {
           // background-color: #181f31;
           background-color: #192138;
-          height: 76%;
+          // height: 76%;
+          height: 68%;
           color: #989eae;
           overflow-y: auto;
 
@@ -1124,7 +1262,8 @@ body {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 3vw;
+            height: 2vw;
+            cursor: pointer;
 
             // 设备状态
             .body_state {
@@ -1141,7 +1280,6 @@ body {
 
       // 预警body
       .train_margin {
-
         // margin-top: 35px;
         // 预警title
         .alarm_title {
@@ -1317,7 +1455,13 @@ body {
   line-height: 0vw;
 }
 
-.line .line_block .line_top .line_Tbott .line_alarm .alarm_title .el-range-editor.el-input__inner {
+.line
+  .line_block
+  .line_top
+  .line_Tbott
+  .line_alarm
+  .alarm_title
+  .el-range-editor.el-input__inner {
   height: 1.8vw !important;
   width: 39%;
   background: transparent;
@@ -1334,8 +1478,7 @@ body {
 }
 
 .el-select-dropdown {
-
-  border: 1px solid rgba(255, 255, 255, .15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   background-color: #181f30;
 }
 
