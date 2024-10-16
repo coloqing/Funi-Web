@@ -10,8 +10,8 @@
         <div class="divi"></div>
         <div class="signals">
             <el-checkbox-group v-model="checkList" class="signal-item-container">
-                <el-checkbox class="signal-item" v-bind:label="item.trainCoach + '-' + item.signalName"
-                    v-for=" item in signals.filter(item => item.signalName.includes(searchValue))"
+                <el-checkbox class="signal-item" v-bind:label="item.name"
+                    v-for=" item in signals.filter(item => item.name.includes(searchValue))"
                     v-bind:key="item.id"></el-checkbox>
             </el-checkbox-group>
         </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { signals } from "@/api/api.js"
+import { getSignals } from "@/api/signalSelector";
 
 export default {
     props: {
@@ -53,14 +53,23 @@ export default {
             checkList: []
         }
     },
+    beforeMount() {
+        this.getSignalsData();
+    },
     mounted() {
-        var sigs = signals()
-        this.signals = sigs;
+        // var sigs = signals()
+        // this.signals = sigs;
         this.checkList = this.initCheckList
-        console.log('mounted', this.checkList, this.initCheckList);
-
+        console.log('mounted', this.signals, this.initCheckList);
     },
     methods: {
+        getSignalsData() {
+            getSignals().then(response => {
+                var data = response.data.data;
+
+                this.signals = data
+            });
+        },
         remove(val) {
             this.checkList = this.checkList.filter(item => item !== val)
         },
