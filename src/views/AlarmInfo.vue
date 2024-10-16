@@ -659,7 +659,10 @@ export default {
         margin-bottom: 0;
     }
 }
-
+// 时间框颜色
+.el-input__inner{
+background-color: #181f30 !important;
+}
 .panel .el-select .el-input__inner {
     background-color: #181f30 !important;
     border: 1px solid rgba(255, 255, 255, .15);

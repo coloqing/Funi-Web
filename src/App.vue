@@ -125,4 +125,25 @@ body {
 .font_size24 {
   font-size: 1.1vw; //24
 }
+
+// 列车列表--设备状态
+// 绿色
+.crrc-tag-green {
+  color: #42ad5d;
+  background-color: #132a1c;
+  border: 1px solid #42ad5d;
+}
+// 离线
+.crrc-tag-gray {
+  color: #999;
+  background-color: #bfbfbf1a;
+  border: solid 1px #999 ;
+}
+// 白色
+.crrc-tag-white {
+  color: white;
+  background-color: #bfbfbf1a;
+  border: solid 1px white ;
+}
+
 </style>

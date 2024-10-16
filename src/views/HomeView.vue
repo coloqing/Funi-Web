@@ -21,9 +21,9 @@
             <div class="train_body_list" v-for="item in state" :key="item.trainNum">
               <!-- 车号-->
               <div class="train_number body_train_number">{{ item.trainNum }}</div>
-              <!-- 设备状态-->
+              <!-- 设备状态 -->
               <div class="state body_state">
-                <div class="state_border font_size24">{{ stateText(item.state) }}</div>
+                <div class="state_border font_size24" :class="item.state+1 === 2 ? 'crrc-tag-green' : item.state+1 === 0 ? 'crrc-tag-gray' :'crrc-tag-white'">{{ stateText(item.state) }}</div>
               </div>
               <!-- 报警数-->
               <div class="alarm body_alarm">{{ item.alarm }}</div>
@@ -929,7 +929,7 @@ body {
         width: 25%;
 
         >.state_border {
-          border: #555b69 solid 1px;
+          // border: #555b69 solid 1px;
           padding: 0.3vw 0;
           max-width: 4vw;
           box-sizing: border-box;
@@ -1029,7 +1029,7 @@ body {
         }
 
         .state {
-          width: 20%;
+          width: 15%;
 
           >.state_border {
             width: 3.5vw;
@@ -1044,7 +1044,7 @@ body {
         }
 
         .alarm {
-          width: 30%;
+          width: 35%;
         }
 
         .forewarn {

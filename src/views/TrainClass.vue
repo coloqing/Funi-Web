@@ -19,7 +19,8 @@
         </div>
         <div>
           <el-select v-model="trainValue" placeholder="11001002">
-            <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
+            <!-- 离线 -1  库内 0  正线 1 ali -->
+            <el-option v-for="item in trainOptions" :class="item.state === 0 ? 'text-green': item.state === -1 ?'text-gray':'text-white'" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
@@ -427,15 +428,18 @@ export default {
       trainValue: '',
       trainOptions: [{
         value: '11005006',
-        label: '11005006'
+        label: '11005006',
+        state:0
       },
       {
         value: '11001002',
-        label: '11001002'
+        label: '11001002',
+        state:1
       },
       {
         value: '11003004',
-        label: '11003004'
+        label: '11003004',
+        state:-1
       }],
     };
   },
@@ -2292,6 +2296,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+// 线路状态颜色
+// 库内
+.text-green {
+  color: #42ad5d;
+}
+// 离线
+.text-gray {
+  color: #999;
+}
+// 正线
+.text-white {
+  color: white;
+}
+
 .train {
   width: 100%;
   height: 100%;
