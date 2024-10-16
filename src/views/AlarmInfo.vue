@@ -52,7 +52,8 @@
                         <div>时间</div>
                         <div>
                             <el-date-picker v-model="timerangeValue" type="datetimerange" range-separator="至"
-                                start-placeholder="开始日期" end-placeholder="结束日期">
+                                start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss"
+                                format="yyyy-MM-dd HH:mm:ss">
                             </el-date-picker>
                         </div>
                     </el-col>
@@ -76,8 +77,8 @@
                 <el-row :gutter="20">
                     <el-col :span="12" :offset="12">
                         <div style="display: flex;justify-content: end;">
-                            <el-button size="mini" type="primary">查询</el-button>
-                            <el-button size="mini">重置</el-button>
+                            <el-button size="mini" type="primary" @click="query">查询</el-button>
+                            <el-button size="mini" @click="reset">重置</el-button>
                         </div>
                     </el-col>
                 </el-row>
@@ -151,15 +152,14 @@
                 <el-col :span="16">
                     <div style="display: flex;align-items: center;">
                         <div>
-                            <h2>{{ currentRow.info.faultName }}</h2>
+                            <h2>{{ currentRow.name }}</h2>
                         </div>
-                        <div v-if="currentRow.info.type == 0"
+                        <div v-if="currentRow.state == 0"
                             class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge "></span>
                             未消除
                         </div>
-                        <div v-if="currentRow.info.type == 1"
-                            class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
+                        <div v-if="currentRow.state == 1" class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
                             <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
                             车载消除
                         </div>
@@ -174,30 +174,30 @@
 
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>线路：{{ currentRow.lineName }}</span>
+                    <span>线路：{{ currentRow.lineId }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车型：{{ currentRow.trainType }}</span>
+                    <span>车型：{{ currentRow.trainModel }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车号：{{ currentRow.trainNo }}</span>
+                    <span>车号：{{ currentRow.trainNumber }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>车厢：{{ currentRow.unevaluateTraincoach }}</span>
+                    <span>车厢：{{ currentRow.carriageNumber }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="6">
-                    <span>子系统：{{ currentRow.info.subsystem }}</span>
+                    <span>子系统：{{ currentRow.subSystem }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警等级：{{ currentRow.info.level }}</span>
+                    <span>预警等级：{{ currentRow.grade }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>预警码：{{ currentRow.evaluateCode }}</span>
+                    <span>预警码：{{ currentRow.code }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>发生时间：{{ currentRow.evaluateDetecttime ? formatTimestamp(currentRow.evaluateDetecttime) :
+                    <span>发生时间：{{ currentRow.createTime ? currentRow.createTime :
                         '--' }}</span>
                 </el-col>
             </el-row>
@@ -205,12 +205,12 @@
                 <div style="display: flex;">
                     <div class="diagnosis">
                         <div class="diagnosis-title">诊断逻辑</div>
-                        <div class="content">{{ currentRow.info.diagnoseLogic }}</div>
+                        <div class="content">{{ currentRow.diagnoseLogic }}</div>
                     </div>
                     <div class="operate">
                         <div class="operate-title">操作处置建议</div>
                         <div class="content">
-                            {{ currentRow.info.solution }}
+                            {{ currentRow.solution }}
                         </div>
                     </div>
                 </div>
@@ -269,8 +269,7 @@
             <el-row>
                 <div class="signal-panel">
                     <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
-                        <SignalCom :signal_name="'A' + item" :signal_value="getSignalsVal(index)"
-                            :color="getColor(index)">
+                        <SignalCom :signal_name="item" :signal_value="getSignalsVal(index)" :color="getColor(index)">
                         </SignalCom>
                     </div>
                     <div class="add-signal-btn" @click="modSignals">
@@ -371,7 +370,7 @@ export default {
 
             tableData: {},
             selectedRow: [],
-            currentRow: { info: {} },
+            currentRow: {},
             options: [{
                 value: '11',
                 label: '11'
@@ -390,7 +389,7 @@ export default {
             }],
             value: '',
 
-            signals: ['1-逆变器V相电流', '1-LLC输出下半部电压', '8-斩波输出电压2'],
+            signals: ['输出总功率', '输入总功率', '输入电流1'],
 
             signal_option: {
                 color: colors(),
@@ -482,25 +481,6 @@ export default {
         this.getAlarmListData();
     },
     mounted() {
-        var temp = [{
-            value: '',
-            label: '全部'
-        }]
-
-        var lineTrains = getLineTrains().array
-
-        for (let i = 0; i < lineTrains.length; i++) {
-            const item = lineTrains[i];
-            temp.push({
-                value: item.number,
-                label: item.number
-            })
-        }
-
-        this.trainOptions = temp
-
-        this.tableData = alarmList(1, 7)
-        this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
 
     },
     methods: {
@@ -509,6 +489,10 @@ export default {
             getLines().then(response => {
                 var data = response.data.data;
                 var ldata = []
+                ldata.push({
+                    value: '',
+                    label: '全部'
+                })
                 for (let index = 0; index < data.length; index++) {
                     const element = data[index];
                     ldata.push({
@@ -520,15 +504,20 @@ export default {
             });
         },
 
+        // 更改线路时触发
         lineValueChange() {
             this.getTrainsData();
         },
 
         //获取列车数据
         getTrainsData() {
-            getTrains(this.lineValue).then(response => {
+            getTrains(this.lineValue, 1, 10000).then(response => {
                 var data = response.data.data;
                 var ldata = []
+                ldata.push({
+                    value: '',
+                    label: '全部'
+                })
                 for (let index = 0; index < data.length; index++) {
                     const element = data[index];
                     ldata.push({
@@ -542,10 +531,37 @@ export default {
 
         //获取预警列表数据
         getAlarmListData() {
-            getAlarmList(this.currentPageValue, this.pageSize).then(response => {
+            // getAlarmList(null, null, null, null, null, null, null, this.currentPageValue, this.pageSize).then(response => {
+            //     var data = response.data;
+            //     this.tableData = data
+            // });
+            this.query()
+        },
+
+        query() {
+            var t = this.timerangeValue.split(",");
+            var st = ''
+            var et = ''
+            if (t.length > 0) {
+                st = t[0]
+                et = t[1]
+            }
+            getAlarmList(this.lineValue, this.trainValue, this.stateValue, st, et, this.alarmNameValue, this.alarmTypeValue, this.currentPageValue, this.pageSize).then(response => {
                 var data = response.data;
                 this.tableData = data
+
+                if (data.data.length > 0)
+                    this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
             });
+        },
+        reset() {
+            this.lineValue = '全部'
+            this.trainValue = '全部'
+            this.subSysValue = '全部'
+            this.stateValue = '全部'
+            this.timerangeValue = ''
+            this.alarmNameValue = ''
+            this.alarmTypeValue = ''
         },
 
         getSignalsData() {
@@ -560,6 +576,7 @@ export default {
             return String(this.signal_option.series[i].data[0][1])
         },
 
+        // 更改每页行数触发
         handleSizeChange(val) {
             this.pageSize = val
             this.getAlarmListData();
@@ -568,12 +585,16 @@ export default {
             this.currentPageValue = val
             this.getAlarmListData();
         },
+
+        // 勾选记录触发
         handleSelectionChange(val) {
             this.selectedRow = val
         },
+
+        // 选中行时触发
         handleRowChange(val) {
             if (!val)
-                rerutn
+                return
             this.currentRow = val
         },
 
