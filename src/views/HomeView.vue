@@ -48,7 +48,7 @@
               <div class="forewarn body_forewarn">{{ item.warning }}</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link to="/TrainClass" class="router_link"
+                <router-link :to="{path:'/TrainClass',query:{trainNum:item.trainNum}}" class="router_link"
                   >查看详情</router-link
                 >
               </div>
@@ -138,7 +138,7 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link"
+                  <router-link :to="{ path: '/AlarmInfo', query: { trainNum: item.trainNumber ,carriage:item.carriageNumber,state:0}}" class="router_link"
                     >查看详情</router-link
                   >
                 </div>
@@ -199,11 +199,12 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link to="/AlarmInfo" class="router_link"
+                  <router-link  :to="{ path: '/AlarmInfo', query: { trainNum: item.trainNumber ,carriage:item.carriageNumber,state:1}}" class="router_link"
                     >查看详情</router-link
                   >
                 </div>
               </div>
+              <div class="null" v-if="forewarn_data">暂无数据~</div>
             </div>
           </div>
         </div>
@@ -278,7 +279,12 @@ import * as echarts from "echarts";
 import EChartsCom from "@/components/EChartsCom.vue";
 import AssistChange from "@/components/AssistChange.vue";
 import { getState } from "@/api/train";
-import { getFaultWarn, getTop10 } from "@/api/homeView";
+import {
+  getFaultWarn,
+  getTop10,
+  getCyc,
+  getFaultWarnAdd,
+} from "@/api/homeView";
 
 export default {
   name: "HomeView",
@@ -439,7 +445,7 @@ export default {
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     },
-    get_alarm_charts_option() {
+    get_alarm_charts_option(data) {
       let op = {
         legend: {
           textStyle: {
@@ -449,13 +455,14 @@ export default {
         tooltip: {},
         color: ["#7093b3", "#e69e4e"],
         dataset: {
-          source: [
-            ["类型", "预警", "故障"],
-            ["2024-06", 43.3, 85.8],
-            ["2024-07", 83.1, 73.4],
-            ["2024-08", 86.4, 65.2],
-            ["2024-09", 72.4, 53.9],
-          ],
+          source: data
+          // source: [
+          //   ["类型", "预警", "故障"],
+          //   ["2024-06", 43.3, 85.8],
+          //   ["2024-07", 83.1, 73.4],
+          //   ["2024-08", 86.4, 65.2],
+          //   ["2024-09", 72.4, 53.9],
+          // ],
         },
         xAxis: { type: "category" },
         yAxis: {},
@@ -464,7 +471,7 @@ export default {
       return op;
     },
 
-    get_history_alarm_option() {
+    get_history_alarm_option(data) {
       let op = {
         legend: {
           textStyle: {
@@ -474,13 +481,14 @@ export default {
         tooltip: {},
         color: ["#da1e28", "#fc7b1e"],
         dataset: {
-          source: [
-            ["类型", "预警", "故障"],
-            ["2024-06", 3, 0],
-            ["2024-07", 40, 1],
-            ["2024-08", 12, 0],
-            ["2024-09", 5, 0],
-          ],
+          source: data,
+          // source: [
+          //   ["类型", "预警", "故障"],
+          //   ["2024-06", 3, 0],
+          //   ["2024-07", 40, 1],
+          //   ["2024-08", 12, 0],
+          //   ["2024-09", 5, 0],
+          // ],
         },
         xAxis: { type: "category" },
         yAxis: {},
@@ -492,7 +500,7 @@ export default {
       return op;
     },
 
-    get_history_forewarn_option() {
+    get_history_forewarn_option(data) {
       let op = {
         tooltip: {
           trigger: "item",
@@ -501,10 +509,11 @@ export default {
           {
             type: "pie",
             radius: [50, 100],
-            data: [
-              { value: 1048, name: "已处置率" },
-              { value: 735, name: "未处置率" },
-            ],
+            data: data,
+            // data: [
+            //   { value: 1048, name: "已处置率" },
+            //   { value: 735, name: "未处置率" },
+            // ],
             color: ["#7093b3", "#e69e4e"],
             emphasis: {
               itemStyle: {
@@ -519,7 +528,7 @@ export default {
       return op;
     },
 
-    get_top10_option(trainNumbers,counts) {
+    get_top10_option(trainNumbers, counts) {
       let op = {
         tooltip: {
           trigger: "axis",
@@ -554,7 +563,7 @@ export default {
           axisTick: {
             show: false, // 不显示 Y 轴的刻度线
           },
-          data:trainNumbers
+          data: trainNumbers,
           // data: [
           //   "101102",
           //   "101103",
@@ -956,14 +965,18 @@ export default {
     },
 
     init_my_charts() {
-      let alarm_charts_option = this.get_alarm_charts_option();
-      this.alarm_echarts_option = alarm_charts_option;
+      // 调用接口 获取报警预警趋势 并进行echart渲染
+      // let alarm_charts_option = this.get_alarm_charts_option();
+      // this.alarm_echarts_option = alarm_charts_option;
+      // 获取 故障预警统计
+      this.get_caultWarn_add();
+      // let history_alarm_option = this.get_history_alarm_option();
+      // this.history_alarm_option = history_alarm_option;
 
-      let history_alarm_option = this.get_history_alarm_option();
-      this.history_alarm_option = history_alarm_option;
-
-      let history_forewarn_option = this.get_history_forewarn_option();
-      this.history_forewarn_option = history_forewarn_option;
+      // 调用接口 获取 历史预警分布统计 并进行echart渲染
+      this.get_cyc();
+      // let history_forewarn_option = this.get_history_forewarn_option();
+      // this.history_forewarn_option = history_forewarn_option;
 
       // 调用接口 获取报警预警top10数据 并进行echart渲染
       this.get_top10();
@@ -971,19 +984,59 @@ export default {
     // 获取数据并渲染图表
     get_top10() {
       getTop10().then((response) => {
-        console.log("获取top10数据:", response);
+        // console.log("获取top10数据:", response);
         if (response.data.code === 200) {
-          let tmp = response.data.data
-          let trainNumbers = []
-          let counts = []
+          let tmp = response.data.data;
+          let trainNumbers = [];
+          let counts = [];
           for (let i = 0; i < tmp.length; i++) {
-            trainNumbers.push(tmp[i].trainNumber)
-            counts.push(tmp[i].count)
+            trainNumbers.push(tmp[i].trainNumber);
+            counts.push(tmp[i].count);
           }
-          let top10_option = this.get_top10_option(trainNumbers,counts);
+          let top10_option = this.get_top10_option(trainNumbers, counts);
           this.top10_option = top10_option;
         } else {
           console.error("获取top10数据失败");
+        }
+      });
+    },
+    // 获取历史预警分布统计
+    get_cyc() {
+      getCyc().then((response) => {
+        // console.log("获取历史预警分布统计:", response);
+        if (response.data.code === 200) {
+          let tmp = response.data.data;
+          let history_forewarn = [];
+          history_forewarn.push(
+            { value: tmp.dispose, name: "已处置率" },
+            { value: tmp.noDispose, name: "未处置率" }
+          );
+          let history_forewarn_option =
+            this.get_history_forewarn_option(history_forewarn);
+          this.history_forewarn_option = history_forewarn_option;
+        } else {
+          console.error("获取历史预警分布统计 失败");
+        }
+      });
+    },
+    // 获取 故障预警统计
+    get_caultWarn_add() {
+      getFaultWarnAdd().then((response) => {
+        // console.log("获取故障预警统计:", response);
+        if (response.data.code === 200) {
+          let tmp = response.data.data;
+          let history_alarm = [["类型", "预警", "故障"]];
+          // let counts = [];
+          for (let i = 0; i < tmp.length; i++) {
+            history_alarm.push([tmp[i].time, tmp[i].warnNum, tmp[i].faultNum]);
+          }
+          let history_alarm_option = this.get_history_alarm_option(history_alarm);
+          this.history_alarm_option = history_alarm_option;
+          // 报警预警趋势
+          let alarm_charts_option = this.get_alarm_charts_option(history_alarm);
+          this.alarm_echarts_option = alarm_charts_option;
+        } else {
+          console.error("获取故障预警统计 失败");
         }
       });
     },
@@ -997,7 +1050,7 @@ export default {
         sortType: "desc",
         alarmType: 2,
       }).then((response) => {
-        console.log("获取预警数据：", response);
+        // console.log("获取预警数据：", response);
         if (response.data.code === 200) {
           this.forewarn_data = response.data.data;
         } else {
@@ -1014,7 +1067,7 @@ export default {
         sortType: "desc",
         alarmType: 1,
       }).then((response) => {
-        console.log("获取报警数据：", response);
+        // console.log("获取报警数据：", response);
         if (response.data.code === 200) {
           this.alarm_data = response.data.data;
         } else {

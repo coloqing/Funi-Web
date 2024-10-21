@@ -58,7 +58,7 @@
                         </div>
                     </el-col>
                     <el-col :span="12">
-                        <div>预警名称</div>
+                        <div>{{type === '0' ? '报警名称' : '预警名称'}}</div>
                         <div>
                             <el-input size="mini" placeholder="请输入" v-model="alarmNameValue" clearable>
                             </el-input>
@@ -67,7 +67,7 @@
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="12">
-                        <div>预警类型</div>
+                        <div>{{type === '0' ? '报警类型' : '预警类型'}}</div>
                         <div>
                             <el-input size="mini" placeholder="请输入" v-model="alarmTypeValue" clearable>
                             </el-input>
@@ -323,6 +323,8 @@ export default {
     },
     data() {
         return {
+            // 0报警  1预警 
+            type:null,
             lineValue: '',
             lineOptions: [{
                 value: '',
@@ -475,6 +477,20 @@ export default {
         }
     },
     beforeMount() {
+        // 获取当前 线路、车号、预警/报警 
+        console.log('当前参数:',this.$route.query);
+        // 线路
+        this.lineValue = this.$route.query.trainNum.slice(0, 2)
+        console.log(this.lineValue);
+        // 车号
+        this.trainValue = this.$route.query.trainNum
+        console.log(this.trainValue);
+        // 预警/报警
+        this.type = this.$route.query.state
+        console.log(this.type);
+
+
+
         this.getSignalsData();
         this.getLinesData();
         this.getTrainsData();
