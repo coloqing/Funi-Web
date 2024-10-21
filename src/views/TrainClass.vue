@@ -20,7 +20,9 @@
         <div>
           <el-select v-model="trainValue" placeholder="11001002">
             <!-- 离线 -1  库内 0  正线 1 ali -->
-            <el-option v-for="item in trainOptions" :class="item.state === 0 ? 'text-green': item.state === -1 ?'text-gray':'text-white'" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="item in trainOptions"
+              :class="item.state === 0 ? 'text-green' : item.state === -1 ? 'text-gray' : 'text-white'"
+              :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
@@ -44,7 +46,7 @@
         <LifetimeCom />
       </div>
     </div>
-<!-- git config --global --unset http.proxy
+    <!-- git config --global --unset http.proxy
 git config --global --unset https.proxy -->
 
     <!-- 列车状态实时监视 33.6-->
@@ -226,6 +228,7 @@ import LifetimeCom from "@/components/LifetimeCom.vue";
 import CanvasCircuit from "@/components/CanvasCircuit.vue"
 import SignalSelector from '@/components/SignalSelector.vue';
 import { colors, lineData } from '@/api/api.js'
+import { indicatorInfo } from '@/api/trainClass'
 
 export default {
   name: "train",
@@ -361,55 +364,109 @@ export default {
       indicators_content: [
         {
           system: "辅助变流器1",
+          components: [
+            {
+              name: 'U相输出电流传感器',
+              indicators: [
+                {
+                  name: '电压偏置因子[-5,5]',
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: '传感器零飘值[-5,5]',
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: '电压波动因子[-5,5]',
+                  metric_values: "-3.17",
+                  state: 1,
+                }
+              ]
+            }
+          ]
+        },
+        {
+          system: "辅助变流器1",
           parts: [
             {
-              parts_: "网压传感器",
+              parts_: "V相输出电流传感器",
               performance_metrics: "电压偏置因子[-5,5]",
               metric_values: "-3.17",
               state: 1,
             },
             {
-              parts_: "网压传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
+              parts_: "V相输出电流传感器",
+              performance_metrics: "传感器零飘值[-5,5]",
               metric_values: "-3.17",
               state: 0,
             },
             {
-              parts_: "网压传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
+              parts_: "W相输出电流传感器",
+              performance_metrics: "电压波动因子[-5,5]",
               metric_values: "-3.17",
               state: 0,
             },
           ],
         },
         {
-          system: "辅助变流器1",
+          system: "充电机1",
           parts: [
             {
-              parts_: "网压传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
+              parts_: "W相输出电流传感器",
+              performance_metrics: "传感器零飘值[-5,5]",
               metric_values: "-3.17",
-              state: 0,
+              state: 1,
             },
-          ],
-        },
-        {
-          system: "辅助变流器1",
-          parts: [
             {
-              parts_: "网压传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
+              parts_: "W相输出电流传感器",
+              performance_metrics: "电流偏置因子[-5,5]",
               metric_values: "-3.17",
               state: 0,
             },
             {
-              parts_: "网压传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
+              parts_: "输入电流传感器",
+              performance_metrics: "传感器零飘值[-5,5]",
+              metric_values: "-3.17",
+              state: 1,
+            },
+            {
+              parts_: "输入电流传感器",
+              performance_metrics: "电流偏置因子[-5,5]",
               metric_values: "-3.17",
               state: 0,
-            },
+            }
           ],
         },
+        // {
+        //   system: "辅助变流器1",
+        //   parts: [
+        //     {
+        //       parts_: "网压传感器",
+        //       performance_metrics: "电压偏置因子[-5,5]",
+        //       metric_values: "-3.17",
+        //       state: 0,
+        //     },
+        //   ],
+        // },
+        // {
+        //   system: "辅助变流器1",
+        //   parts: [
+        //     {
+        //       parts_: "网压传感器",
+        //       performance_metrics: "电压偏置因子[-5,5]",
+        //       metric_values: "-3.17",
+        //       state: 0,
+        //     },
+        //     {
+        //       parts_: "网压传感器",
+        //       performance_metrics: "电压偏置因子[-5,5]",
+        //       metric_values: "-3.17",
+        //       state: 0,
+        //     },
+        //   ],
+        // },
       ],
       // 指标表格parts长度
       parts_long: null,
@@ -429,17 +486,17 @@ export default {
       trainOptions: [{
         value: '11005006',
         label: '11005006',
-        state:0
+        state: 0
       },
       {
         value: '11001002',
         label: '11001002',
-        state:1
+        state: 1
       },
       {
         value: '11003004',
         label: '11003004',
-        state:-1
+        state: -1
       }],
     };
   },
@@ -2264,6 +2321,61 @@ export default {
     getSignalsVal(i) {
       return String(this.signal_option.series[i].data[0][1])
     },
+
+    getIndicatorInfo(trainId, trainNum) {
+      indicatorInfo(trainId, trainNum).then(response => {
+        console.log(response)
+
+        var data = response.data.data
+
+        this.setIndicatorsCards(data.devices)
+
+        //this.setIndicatorsContent(data.deviceDM)
+      })
+    },
+
+    setIndicatorsCards(data) {
+      this.indicators_cards = [
+        { id: 0, class: "Card", name: "全部", isActive: true }
+      ]
+
+      for (let index = 0; index < data.length; index++) {
+        const item = data[index];
+        this.indicators_cards.push({ id: item.id, class: "Card", name: item.name, isActive: false })
+      }
+    },
+
+    setIndicatorsContent(data) {
+      this.indicators_content = []
+      for (let index = 0; index < data.length; index++) {
+        var device = data[index];
+
+        var content = {
+          system: device.name,
+          parts: [
+          ],
+        }
+
+        for (let i = 0; i < device.components.length; i++) {
+          var component = device.components[i];
+
+          for (let y = 0; y < component.indicators.length; y++) {
+            var indicator = component.indicators[y];
+
+            content.parts.push({
+              parts_: component.name,
+              performance_metrics: indicator.name + "[" + indicator.min + "," + indicator.max + "]",
+              metric_values: "-3.17",
+              state: 1,
+            })
+          }
+        }
+
+        this.indicators_content.push(content)
+      }
+      console.log(this.indicators_content);
+
+    }
   },
   created() {
     this.total;
@@ -2277,6 +2389,7 @@ export default {
   },
   beforeMount() {
     this.getSignalsData()
+    this.getIndicatorInfo(1)
   },
   // 挂载后
   mounted() {
@@ -2301,10 +2414,12 @@ export default {
 .text-green {
   color: #42ad5d;
 }
+
 // 离线
 .text-gray {
   color: #999;
 }
+
 // 正线
 .text-white {
   color: white;
