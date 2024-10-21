@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         getSignalsData() {
-            getSignals().then(response => {
+            getSignals(1, 1000).then(response => {
                 var data = response.data.data;
 
                 this.signals = data
