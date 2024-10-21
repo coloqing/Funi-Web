@@ -1,12 +1,12 @@
 import request from "@/api/service";
-
+// 获取线路号
 export function getLines() {
   return request({
     url: "/lines",
     method: "get",
   });
 }
-
+// 获取列车号
 export function getTrains(lineId, page, pagesize) {
   return request({
     url: "/train",
