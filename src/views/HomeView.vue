@@ -133,7 +133,9 @@
                 <!-- 报警数-->
                 <div class="alarm body_alarm">{{ item.diagnoseLogic }}</div>
                 <!--预警数-->
-                <div class="forewarn body_forewarn">{{ Time(item.createTime) }}</div>
+                <div class="forewarn body_forewarn">
+                  {{ Time(item.createTime) }}
+                </div>
                 <!--操作 -->
                 <div class="operate body_operate">
                   <router-link to="/AlarmInfo" class="router_link"
@@ -192,7 +194,9 @@
                 <!-- 报警数-->
                 <div class="alarm body_alarm">{{ item.diagnoseLogic }}</div>
                 <!--预警数-->
-                <div class="forewarn body_forewarn">{{ Time(item.createTime) }}</div>
+                <div class="forewarn body_forewarn">
+                  {{ Time(item.createTime) }}
+                </div>
                 <!--操作 -->
                 <div class="operate body_operate">
                   <router-link to="/AlarmInfo" class="router_link"
@@ -274,7 +278,7 @@ import * as echarts from "echarts";
 import EChartsCom from "@/components/EChartsCom.vue";
 import AssistChange from "@/components/AssistChange.vue";
 import { getState } from "@/api/train";
-import { getFaultWarn } from "@/api/homeView";
+import { getFaultWarn, getTop10 } from "@/api/homeView";
 
 export default {
   name: "HomeView",
@@ -428,12 +432,12 @@ export default {
       return statusMap[state + 1] || "Unknown";
     },
     // 日期调整
-    Time(dateString) {  
-      const date = new Date(dateString);  
-      const year = date.getFullYear();  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1  
-      const day = String(date.getDate()).padStart(2, '0');  
-      return `${year}-${month}-${day}`;  
+    Time(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // 月份从0开始，需要加1
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     },
     get_alarm_charts_option() {
       let op = {
@@ -515,7 +519,7 @@ export default {
       return op;
     },
 
-    get_top10_option() {
+    get_top10_option(trainNumbers,counts) {
       let op = {
         tooltip: {
           trigger: "axis",
@@ -550,18 +554,19 @@ export default {
           axisTick: {
             show: false, // 不显示 Y 轴的刻度线
           },
-          data: [
-            "101102",
-            "101103",
-            "101104",
-            "101105",
-            "101106",
-            "101107",
-            "101108",
-            "101109",
-            "101110",
-            "101111",
-          ], // 这里假设了一些类别名称
+          data:trainNumbers
+          // data: [
+          //   "101102",
+          //   "101103",
+          //   "101104",
+          //   "101105",
+          //   "101106",
+          //   "101107",
+          //   "101108",
+          //   "101109",
+          //   "101110",
+          //   "101111",
+          // ], // 这里假设了一些类别名称
         },
         series: [
           {
@@ -580,7 +585,8 @@ export default {
               focus: "series",
             },
             // barMaxWidth: '15',
-            data: [866, 740, 638, 610, 544, 477, 410, 390, 351, 288].reverse(), // 这里是您的数据
+            data: counts,
+            // data: [866, 740, 638, 610, 544, 477, 410, 390, 351, 288].reverse(), // 这里是您的数据
           },
         ],
       };
@@ -959,8 +965,27 @@ export default {
       let history_forewarn_option = this.get_history_forewarn_option();
       this.history_forewarn_option = history_forewarn_option;
 
-      let top10_option = this.get_top10_option();
-      this.top10_option = top10_option;
+      // 调用接口 获取报警预警top10数据 并进行echart渲染
+      this.get_top10();
+    },
+    // 获取数据并渲染图表
+    get_top10() {
+      getTop10().then((response) => {
+        console.log("获取top10数据:", response);
+        if (response.data.code === 200) {
+          let tmp = response.data.data
+          let trainNumbers = []
+          let counts = []
+          for (let i = 0; i < tmp.length; i++) {
+            trainNumbers.push(tmp[i].trainNumber)
+            counts.push(tmp[i].count)
+          }
+          let top10_option = this.get_top10_option(trainNumbers,counts);
+          this.top10_option = top10_option;
+        } else {
+          console.error("获取top10数据失败");
+        }
+      });
     },
 
     // 获取预警数据
@@ -1253,18 +1278,15 @@ body {
         .alarm_body {
           // background-color: #181f31;
           background-color: #192138;
-          // height: 76%;
           height: 68%;
           color: #989eae;
           overflow-y: auto;
-
           .train_body_list {
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 2vw;
             cursor: pointer;
-
             // 设备状态
             .body_state {
               padding-left: 0.5rem;
