@@ -126,6 +126,9 @@ body {
   align-items: center;
   height: 100%;
 }
+.none{
+  border-bottom: 0px !important;
+}
 // 列车列表--设备状态
 // 绿色
 .crrc-tag-green {

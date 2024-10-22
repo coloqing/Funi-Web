@@ -4132,7 +4132,11 @@
               y="395"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos">
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants" >
+                <span _ngcontent-eda-c392="" class="crrc-fc-green">{{auxiliary_variants.normal}}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              </div>
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-else>
                 <span _ngcontent-eda-c392="" class="crrc-fc-green">3</span
                 ><span _ngcontent-eda-c392="" class="crrc-fc-heading">/3</span>
               </div>
@@ -4143,7 +4147,11 @@
               y="485"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos">
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants">
+                <span _ngcontent-eda-c392="" class="crrc-fc-red"> {{auxiliary_variants.alarm}}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              </div>
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-else>
                 <span _ngcontent-eda-c392="" class="crrc-fc-red"> 0</span
                 ><span _ngcontent-eda-c392="" class="crrc-fc-heading">/3</span>
               </div>
@@ -4154,7 +4162,11 @@
               y="400"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos">
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants">
+                <span _ngcontent-eda-c392="" class="crrc-fc-orange">{{auxiliary_variants.warning}}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              </div>
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-else >
                 <span _ngcontent-eda-c392="" class="crrc-fc-orange">0</span
                 ><span _ngcontent-eda-c392="" class="crrc-fc-heading">/3</span>
               </div>
@@ -4169,6 +4181,15 @@
                 _ngcontent-eda-c392=""
                 class="fault-trainnos crrc-fc-heading"
                 style="font-size: 72px"
+                v-if="auxiliary_variants"
+              >
+                {{auxiliary_variants.online + '/' +auxiliary_variants.total}}
+              </div>
+              <div
+                _ngcontent-eda-c392=""
+                class="fault-trainnos crrc-fc-heading"
+                style="font-size: 72px"
+                v-else
               >
                 3/55
               </div>
@@ -4222,6 +4243,47 @@
     </svg>
   </div>
 </template>
+<script>
+import {
+  getTrainStateCount,
+} from "@/api/homeView";
+export default {
+  name: 'assistChange',
+  // props: {
+  //   states: Object
+  // },
+
+  data() {
+    return {
+      auxiliary_variants:null
+    }
+  },
+  methods: {
+    // 获取辅变系统
+    get_trainStateCount() {
+      getTrainStateCount().then((response) => {
+        // this.state = response.data.data;
+        this.auxiliary_variants = response.data.data;
+        console.log("获取辅变系统数据", response);
+      });
+    },
+
+  },
+  created() {
+    console.log('状态',this.states);
+        // 获取辅变系统
+        this.get_trainStateCount();
+  },
+  computed: {
+
+
+  },
+  // 挂载后
+  mounted() {
+
+  }
+}
+</script>
 <!-- ================== -->
 <!-- 电池动画 -->
 <style>
