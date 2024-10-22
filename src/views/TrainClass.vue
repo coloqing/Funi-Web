@@ -142,7 +142,7 @@ git config --global --unset https.proxy -->
             </SignalCom>
           </div> -->
           <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
-            <SignalCom :signal_name="'A' + item" :signal_value="getSignalsVal(index)" :color="getColor(index)">
+            <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
             </SignalCom>
           </div>
           <div class="add-signal-btn" @click="modSignals">
@@ -238,7 +238,7 @@ git config --global --unset https.proxy -->
     </template>
 
     <el-dialog :visible.sync="dialogVisible1" class="selector">
-      <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="signals" />
+      <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="sigletonSignal" />
     </el-dialog>
   </div>
 </template>
@@ -254,7 +254,8 @@ import CanvasCircuit from "@/components/CanvasCircuit.vue";
 import SignalSelector from "@/components/SignalSelector.vue";
 import { colors, lineData } from "@/api/api.js";
 import { getState } from "@/api/train";
-import { indicatorInfo } from "@/api/trainClass"
+import { indicatorInfo, signalVal } from "@/api/trainClass"
+import { getSignals } from "@/api/signalSelector";
 
 // import { getFaultWarn } from "@/api/trainClass";
 export default {
@@ -364,7 +365,7 @@ export default {
       },
 
       dialogVisible1: false,
-      signals: ["1-逆变器V相电流", "1-LLC输出下半部电压", "8-斩波输出电压2"],
+      signals: [],
 
       // 列车车厢 透明膜点击
       cards: [
@@ -539,6 +540,8 @@ export default {
 
       trainValue: "",
       trainOptions: [],
+
+      deviceDM: []
     };
   },
   methods: {
@@ -855,8 +858,25 @@ export default {
     },
     comfirm(val) {
       this.dialogVisible1 = false;
-      this.signals = val;
-      this.getSignalsData();
+      //this.signals = val;
+      console.log('valvalvlav', val);
+      var newSignals = []
+      signalVal(1, '', '', '', true).then(response => {
+        var data = response.data.data;
+
+        for (let i = 0; i < val.length; i++) {
+          const item = val[i];
+          item.value = data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)]
+          newSignals.push(item)
+        }
+
+        this.signals = newSignals
+
+        this.initSignalData();
+      })
+
+      //['直流输出电流', '输入电压', '逆变器输出总功率', 'L3相电流', 'L2相电压', '逆变上母线电压']
+
     },
     getColor(i) {
       return colors(i);
@@ -867,21 +887,87 @@ export default {
         data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550));
       }
       this.signal_option.series = data;
-      console.log("series", this.signal_option.series);
     },
-    getSignalsVal(i) {
-      return String(this.signal_option.series[i].data[0][1]);
+
+    initSignalData() {
+      var codes = this.signals
+        .map(obj => obj.code)
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .join(',')
+
+      signalVal(1, codes, '2024-10-22 00:00:00.000', '2024-10-22 00:01:00.000', false).then(response => {
+        var data = [];
+
+        for (let i = 0; i < this.signals.length; i++) {
+          var signal = this.signals[i]
+          var axis = 0
+          if (signal.name.includes('电压'))
+            axis = 1
+          else if (signal.name.includes('电流'))
+            axis = 0
+          else axis = 2
+
+          var temp = {
+            name: signal.name,
+            type: "line",
+            showSymbol: true,
+            smooth: false,
+            yAxisIndex: axis,
+            sample: "auto",
+            data: response.data.data.map(x => [x.createTime, x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)]]),
+          };
+
+          data.push(temp)
+        }
+        this.signal_option.series = data;
+      })
+    },
+
+    updateSignalData() {
+      var codes = this.signals
+        .map(obj => obj.code)
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .join(',')
+
+      signalVal(1, codes, '', '', true).then(response => {
+        var data = [];
+
+        for (let i = 0; i < this.signals.length; i++) {
+          var signal = this.signals[i]
+          var axis = 0
+          if (signal.name.includes('电压'))
+            axis = 1
+          else if (signal.name.includes('电流'))
+            axis = 0
+          else axis = 2
+
+          var temp = {
+            name: signal.name,
+            type: "line",
+            showSymbol: true,
+            smooth: false,
+            yAxisIndex: axis,
+            sample: "auto",
+            data: response.data.data.map(x => [x.createTime, x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)]]),
+          };
+
+          data.push(temp)
+        }
+        this.signal_option.series = data;
+      })
     },
 
     getIndicatorInfo(trainId, trainNum) {
       indicatorInfo(trainId, trainNum).then(response => {
-        console.log(response)
-
         var data = response.data.data
+
+        this.deviceDM = data.deviceDM;
 
         this.setIndicatorsCards(data.devices)
 
         this.setIndicatorsContent(data.deviceDM)
+
+        this.setInitSignals(data.deviceDM)
       })
     },
 
@@ -926,6 +1012,37 @@ export default {
       }
       console.log(this.indicators_content);
 
+    },
+
+    setInitSignals(deviceDM) {
+      getSignals(1, 1000).then(response => {
+        var data = response.data.data;
+
+        this.signals = []
+
+        for (let i = 0; i < deviceDM.length; i++) {
+          var device = deviceDM[i];
+
+          for (let y = 0; y < device.components.length; y++) {
+            var component = device.components[y];
+
+            this.signals.push({
+              name: data.find(obj => obj.code === component.signalCode).name,
+              code: component.signalCode,
+              value: component.signalValue,
+              signalName: data.find(obj => obj.code === component.signalCode).name
+            })
+          }
+        }
+
+        this.signals = this.signals.filter((signal, index, self) =>
+          index === self.findIndex((u) => (
+            u.name === signal.name
+          ))
+        );
+
+        this.initSignalData()
+      });
     }
   },
   created() {
@@ -942,6 +1059,9 @@ export default {
         return sum + item.parts.length;
       }, 0);
     },
+    sigletonSignal() {
+      return this.signals.map(x => x.signalName).filter((value, index, self) => self.indexOf(value) === index)
+    }
   },
   beforeMount() {
     this.getSignalsData()

@@ -10,3 +10,17 @@ export function indicatorInfo(trainId, trainNum) {
     },
   });
 }
+
+export function signalVal(trainNum, code, startTime, endTime, isTop1) {
+  return request({
+    url: "/Train/SignalVal",
+    method: "get",
+    params: {
+      trainNum,
+      code,
+      startTime,
+      endTime,
+      isTop1,
+    },
+  });
+}

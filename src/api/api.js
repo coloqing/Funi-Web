@@ -2682,6 +2682,10 @@ export function colors(i) {
     "#c0ca33", // 浅黄绿色
   ];
 
+  while (i >= data.length) {
+    i -= data.length;
+  }
+
   if (i >= 0) {
     return data[i];
   }

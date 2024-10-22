@@ -22,7 +22,7 @@
 export default {
     props: {
         signal_name: String,
-        signal_value: String,
+        signal_value: Number,
         color: String
     },
     computed: {

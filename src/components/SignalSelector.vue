@@ -57,16 +57,12 @@ export default {
         this.getSignalsData();
     },
     mounted() {
-        // var sigs = signals()
-        // this.signals = sigs;
         this.checkList = this.initCheckList
-        console.log('mounted', this.signals, this.initCheckList);
     },
     methods: {
         getSignalsData() {
             getSignals(1, 1000).then(response => {
                 var data = response.data.data;
-
                 this.signals = data
             });
         },
@@ -80,7 +76,19 @@ export default {
             this.$emit('cancel');
         },
         comfirm() {
-            this.$emit('comfirm', this.checkList);
+            var result = []
+            for (let i = 0; i < this.checkList.length; i++) {
+                const item = this.checkList[i];
+
+                result.push({
+                    name: item,
+                    code: this.signals.find(obj => obj.name === item).code,
+                    value: 0,
+                    signalName: item
+                })
+
+            }
+            this.$emit('comfirm', result);
         }
     }
 }
