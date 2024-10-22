@@ -141,7 +141,7 @@ git config --global --unset https.proxy -->
             <SignalCom :signal_name="'A1-充电机输出电流传感器BC11'" signal_value="50A" :color="'#ac3577'">
             </SignalCom>
           </div> -->
-          <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
+          <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
             <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
             </SignalCom>
           </div>
@@ -193,7 +193,7 @@ git config --global --unset https.proxy -->
                   <td>
                     <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
                       item.state === 0 ? "异常" : "正常"
-                    }}</span>
+                      }}</span>
                   </td>
                   <td class="detail">
                     <span @click="instructions_togg">查看详情</span>
@@ -858,7 +858,6 @@ export default {
     },
     comfirm(val) {
       this.dialogVisible1 = false;
-      //this.signals = val;
       console.log('valvalvlav', val);
       var newSignals = []
       signalVal(1, '', '', '', true).then(response => {
@@ -874,21 +873,10 @@ export default {
 
         this.initSignalData();
       })
-
-      //['直流输出电流', '输入电压', '逆变器输出总功率', 'L3相电流', 'L2相电压', '逆变上母线电压']
-
     },
     getColor(i) {
       return colors(i);
     },
-    getSignalsData() {
-      var data = [];
-      for (let i = 0; i < this.signals.length; i++) {
-        data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550));
-      }
-      this.signal_option.series = data;
-    },
-
     initSignalData() {
       var codes = this.signals
         .map(obj => obj.code)
@@ -905,7 +893,6 @@ export default {
             axis = 1
           else if (signal.name.includes('电流'))
             axis = 0
-          else axis = 2
 
           var temp = {
             name: signal.name,
@@ -1041,6 +1028,8 @@ export default {
           ))
         );
 
+        console.log('signals', this.signals)
+
         this.initSignalData()
       });
     }
@@ -1064,7 +1053,7 @@ export default {
     }
   },
   beforeMount() {
-    this.getSignalsData()
+    //this.getSignalsData()
     this.getIndicatorInfo(1)
   },
   // 挂载后

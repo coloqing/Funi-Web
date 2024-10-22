@@ -58,7 +58,7 @@
                         </div>
                     </el-col>
                     <el-col :span="12">
-                        <div>{{type === '0' ? '报警名称' : '预警名称'}}</div>
+                        <div>{{ type === '0' ? '报警名称' : '预警名称' }}</div>
                         <div>
                             <el-input size="mini" placeholder="请输入" v-model="alarmNameValue" clearable>
                             </el-input>
@@ -67,7 +67,7 @@
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="12">
-                        <div>{{type === '0' ? '报警类型' : '预警类型'}}</div>
+                        <div>{{ type === '0' ? '报警类型' : '预警类型' }}</div>
                         <div>
                             <el-input size="mini" placeholder="请输入" v-model="alarmTypeValue" clearable>
                             </el-input>
@@ -268,8 +268,8 @@
             </el-row>
             <el-row>
                 <div class="signal-panel">
-                    <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
-                        <SignalCom :signal_name="item" :signal_value="getSignalsVal(index)" :color="getColor(index)">
+                    <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
+                        <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
                         </SignalCom>
                     </div>
                     <div class="add-signal-btn" @click="modSignals">
@@ -302,7 +302,7 @@
 
 
         <el-dialog :visible.sync="dialogVisible" class="selector">
-            <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="signals" />
+            <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="sigletonSignal" />
         </el-dialog>
     </div>
 
@@ -314,6 +314,7 @@ import moment from 'moment';
 import { getLineTrains, alarmList, colors, lineData } from '@/api/api.js'
 import SignalSelector from '@/components/SignalSelector.vue';
 import { getLines, getTrains, getAlarmList } from '@/api/alarmInfo';
+import { indicatorInfo, signalVal } from "@/api/trainClass"
 
 export default {
     components: {
@@ -324,7 +325,7 @@ export default {
     data() {
         return {
             // 0报警  1预警 
-            type:null,
+            type: null,
             lineValue: '',
             lineOptions: [{
                 value: '',
@@ -391,7 +392,12 @@ export default {
             }],
             value: '',
 
-            signals: ['输出总功率', '输入总功率', '输入电流1'],
+            signals: [{
+                code: "i_DC_Out",
+                name: "直流输出电流",
+                signalName: "直流输出电流",
+                value: 87
+            }],
 
             signal_option: {
                 color: colors(),
@@ -478,7 +484,7 @@ export default {
     },
     beforeMount() {
         // 获取当前 线路、车号、预警/报警 
-        console.log('当前参数:',this.$route.query);
+        console.log('当前参数:', this.$route.query);
         // 线路
         this.lineValue = this.$route.query.trainNum.slice(0, 2)
         console.log(this.lineValue);
@@ -491,13 +497,19 @@ export default {
 
 
 
-        this.getSignalsData();
+        //this.getSignalsData();
         this.getLinesData();
         this.getTrainsData();
         this.getAlarmListData();
+        this.initSignalData();
     },
     mounted() {
 
+    },
+    computed: {
+        sigletonSignal() {
+            return this.signals.map(x => x.signalName).filter((value, index, self) => self.indexOf(value) === index)
+        }
     },
     methods: {
         //获取线路数据
@@ -629,12 +641,56 @@ export default {
         },
         comfirm(val) {
             this.dialogVisible = false
-            this.signals = val
-            this.getSignalsData()
+            var newSignals = []
+            signalVal(1, '', '', '', true).then(response => {
+                var data = response.data.data;
+
+                for (let i = 0; i < val.length; i++) {
+                    const item = val[i];
+                    item.value = data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)]
+                    newSignals.push(item)
+                }
+
+                this.signals = newSignals
+
+                this.initSignalData();
+            })
         },
         getColor(i) {
             return colors(i)
-        }
+        },
+        initSignalData() {
+            var codes = this.signals
+                .map(obj => obj.code)
+                .filter((value, index, self) => self.indexOf(value) === index)
+                .join(',')
+
+            signalVal(1, codes, '2024-10-22 00:00:00.000', '2024-10-22 00:01:00.000', false).then(response => {
+                var data = [];
+
+                for (let i = 0; i < this.signals.length; i++) {
+                    var signal = this.signals[i]
+                    var axis = 0
+                    if (signal.name.includes('电压'))
+                        axis = 1
+                    else if (signal.name.includes('电流'))
+                        axis = 0
+
+                    var temp = {
+                        name: signal.name,
+                        type: "line",
+                        showSymbol: true,
+                        smooth: false,
+                        yAxisIndex: axis,
+                        sample: "auto",
+                        data: response.data.data.map(x => [x.createTime, x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)]]),
+                    };
+
+                    data.push(temp)
+                }
+                this.signal_option.series = data;
+            })
+        },
     }
 }
 </script>
@@ -744,10 +800,12 @@ export default {
         margin-bottom: 0;
     }
 }
+
 // 时间框颜色
-.el-input__inner{
-background-color: #181f30 !important;
+.el-input__inner {
+    background-color: #181f30 !important;
 }
+
 .panel .el-select .el-input__inner {
     background-color: #181f30 !important;
     border: 1px solid rgba(255, 255, 255, .15);
