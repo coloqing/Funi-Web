@@ -321,10 +321,10 @@
                             </el-col>
                             <el-col :span="12">
                                 <div style="
-                    display: flex;
-                    justify-content: end;
-                    align-items: center;
-                  ">
+                                    display: flex;
+                                    justify-content: end;
+                                    align-items: center;
+                                  ">
                                     <div>
                                         <span>时间范围：</span>
                                     </div>
@@ -343,8 +343,8 @@
                         </el-row>
                         <el-row>
                             <div class="signal-panel">
-                                <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
-                                    <SignalCom :signal_name="item" :signal_value="getSignalsVal(index)"
+                                <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
+                                    <SignalCom :signal_name="item.name" :signal_value="item.value"
                                         :color="getColor(index)">
                                     </SignalCom>
                                 </div>
@@ -559,16 +559,18 @@ export default {
     },
     beforeMount() {
         // 获取当前 线路、车号、预警/报警 
-        console.log('当前参数:', this.$route.query);
-        // 线路
-        this.lineValue = this.$route.query.trainNum.slice(0, 2)
-        console.log(this.lineValue);
+        // console.log('当前参数:', this.$route.query);
+        if(this.$route.query.trainNum){
+            // 线路
+            this.lineValue = this.$route.query.trainNum.slice(0, 2)
+            // console.log(this.lineValue);
+        }
         // 车号
         this.trainValue = this.$route.query.trainNum
-        console.log(this.trainValue);
+        // console.log(this.trainValue);
         // 预警/报警
         this.type = this.$route.query.state
-        console.log(this.type);
+        // console.log(this.type);
 
 
 
@@ -639,6 +641,7 @@ export default {
             //     this.tableData = data
             // });
             this.query();
+            // console.log('选中的ref',this.$refs.alarmTable);
         },
 
         query() {
@@ -662,10 +665,10 @@ export default {
             ).then((response) => {
                 var data = response.data;
                 this.tableData = data;
-                console.log(this.$refs.alarmTable);
+                // console.log(this.$refs.alarmTable);
 
-                // if (data.data.length > 0)
-                //     this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
+                if (data.data.length > 0)
+                    this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
             });
         },
         reset() {
@@ -686,9 +689,9 @@ export default {
 
             this.signal_option.series = data;
         },
-        getSignalsVal(i) {
-            return String(this.signal_option.series[i].data[0][1]);
-        },
+        // getSignalsVal(i) {
+        //     return String(this.signal_option.series[i].data[0][1]);
+        // },
 
         // 更改每页行数触发
         handleSizeChange(val) {
@@ -730,7 +733,7 @@ export default {
         comfirm(val) {
             this.dialogVisible = false
             var newSignals = []
-            signalVal(1, '', '', '', true).then(response => {
+            signalVal(11001002, '', '', '', true).then(response => {
                 var data = response.data.data;
 
                 for (let i = 0; i < val.length; i++) {
@@ -753,7 +756,7 @@ export default {
                 .filter((value, index, self) => self.indexOf(value) === index)
                 .join(',')
 
-            signalVal(1, codes, '2024-10-23 00:00:00.000', '2024-10-23 00:01:00.000', false).then(response => {
+                signalVal(11001002, codes, '2024-10-23 11:50:00.000', '2024-10-23 11:52:00.000', false).then(response => {
                 var data = [];
 
                 for (let i = 0; i < this.signals.length; i++) {
