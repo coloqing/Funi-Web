@@ -878,7 +878,7 @@ export default {
     }
 
     /* 信号量弹出层 */
-    .pop_ups .panel .el-dialog__body {
+     .panel .pop_ups .el-dialog__body {
         background-color: #181f30;
         padding: 0px;
     }
@@ -1070,7 +1070,10 @@ export default {
 .el-select {
     width: 100%;
 }
-
+.panel .el-dialog__body {
+    /* height: 70dvh; */
+    padding: 0;
+}
 .el-select-dropdown {
     border: 1px solid rgba(255, 255, 255, 0.15);
     background-color: #181f30;

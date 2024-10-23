@@ -10,15 +10,12 @@
       <div class="train_top_alert">
         <warning :msg="1" />
       </div>
-
     </div>
     <!-- 列车状态实时监视 33.6-->
     <div class="train_center">
       <!-- 车厢选择 -->
-      <div class="train_center_title ">
-        <div class="train_title_name font_size20">
-          车厢选择
-        </div>
+      <div class="train_center_title">
+        <div class="train_title_name font_size20">车厢选择</div>
         <div class="train_title_black">
           <!-- 顶部图片 -->
           <div class="train_title_img"></div>
@@ -26,35 +23,37 @@
           <div class="train_title_nick font_size18">
             <div class="train_nick1">
               <div>A1</div>
-              <img src="../../public/img/jinggao.png" alt="">
+              <img src="../../public/img/jinggao.png" alt="" />
             </div>
             <div class="train_nick2">
               <div>A2</div>
-              <img src="../../public/img/tongguo.png" alt="">
+              <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick3">
               <div>A3</div>
-              <img src="../../public/img/weixian.png" alt="">
+              <img src="../../public/img/weixian.png" alt="" />
             </div>
             <div class="train_nick4">
               <div>A4</div>
-              <img src="../../public/img/tongguo.png" alt="">
+              <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick5">
               <div>A5</div>
-              <img src="../../public/img/tongguo.png" alt="">
+              <img src="../../public/img/tongguo.png" alt="" />
             </div>
             <div class="train_nick6">
               <div>A6</div>
-              <img src="../../public/img/tongguo.png" alt="">
+              <img src="../../public/img/tongguo.png" alt="" />
             </div>
-
           </div>
           <!-- 选项透明膜 -->
           <div class="train_item" @click="sideCard">
-            <div :class="card.isActive ? 'visibilit' : 'Card'" v-for="(card, index) in cards" :key="card.id"
-              :data-id="card.id">
-            </div>
+            <div
+              :class="card.isActive ? 'visibilit' : 'Card'"
+              v-for="(card, index) in cards"
+              :key="card.id"
+              :data-id="card.id"
+            ></div>
           </div>
         </div>
       </div>
@@ -62,50 +61,59 @@
       <div class="train_center_canvas">
         {{ index }}
       </div>
-
-
     </div>
     <!-- 关键指标展示 53.9-->
     <div class="train_bott">
       <!-- 关键指标展示 -->
       <div class="train_indicators">
         <!-- 图太模糊 不知道是啥 -->
-        <div class="indicators_top">
-
-        </div>
+        <div class="indicators_top"></div>
         <!-- 指标表格 -->
         <div class="indicators">
           <!-- title -->
           <div class="indicators_title font_size26w">
-            <div v-for="(item, index) in indicators_cards" :key="index" :class="item.isActive ? 'border' : ''"
-              @click="indicators_togg(index)">{{
-          item.name }}</div>
-
+            <div
+              v-for="(item, index) in indicators_cards"
+              :key="index"
+              :class="item.isActive ? 'border' : ''"
+              @click="indicators_togg(index)"
+            >
+              {{ item.name }}
+            </div>
           </div>
           <!-- list -->
           <table class="indicators_table">
             <thead>
               <tr class="indicators_thead font_size26w">
-                <th v-for="(item, index) in indicators_title" :key="index">{{ item }}</th>
+                <th v-for="(item, index) in indicators_title" :key="index">
+                  {{ item }}
+                </th>
               </tr>
             </thead>
             <tbody class="indicators_tbody">
               <template v-for="(item1, index1) in indicators_content">
                 <tr v-for="(item, index) in item1.parts" class="font_size20">
-                  <td :rowspan="6" v-if="index === 0 && index1 === 0">{{ item1.system }}</td>
-                  <td :rowspan="item1.parts.length" v-if="index === 0">{{ item.parts_ }}</td>
+                  <td :rowspan="6" v-if="index === 0 && index1 === 0">
+                    {{ item1.system }}
+                  </td>
+                  <td :rowspan="item1.parts.length" v-if="index === 0">
+                    {{ item.parts_ }}
+                  </td>
                   <td>{{ item.performance_metrics }}</td>
                   <td>{{ item.metric_values }}</td>
                   <td>
-                    <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{ item.state === 0 ? '异常' : '正常' }}</span>
+                    <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
+                      item.state === 0 ? "异常" : "正常"
+                    }}</span>
                   </td>
-                  <td class="detail"><span @click="instructions_togg">查看详情</span></td>
+                  <td class="detail">
+                    <span @click="instructions_togg">查看详情</span>
+                  </td>
                 </tr>
               </template>
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
     <!-- 弹出的折线图 -->
@@ -113,8 +121,13 @@
       <!-- 弹出层 -->
       <div class="pop_ups">
         <!-- 弹出层 -->
-        <el-dialog class="indicator_curves" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="false"
-          @close="dialogVisible = false">
+        <el-dialog
+          class="indicator_curves"
+          :visible.sync="dialogVisible"
+          width="80%"
+          :close-on-click-modal="false"
+          @close="dialogVisible = false"
+        >
           <!-- 关键指标曲线 -->
           <div class="curves_title font_size26w">
             <!-- 部件名称 -->
@@ -127,32 +140,35 @@
                 <div>近12月</div>
               </div>
               <div class="block">
-                <el-date-picker v-model="value1" type="daterange" range-separator="-" start-placeholder="开始日期"
-                  end-placeholder="结束日期">
+                <el-date-picker
+                  v-model="value1"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                >
                 </el-date-picker>
               </div>
             </div>
-
           </div>
           <!-- ECharts 图表容器 -->
           <div ref="chartRef" class="chartref"></div>
         </el-dialog>
       </div>
     </template>
-
   </div>
 </template>
 
 <script>
 import { warning } from "../components/train.vue";
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 export default {
-  name: 'train',
+  name: "train",
   props: {
-    msg: String
+    msg: String,
   },
   comments: {
-    warning
+    warning,
   },
   data() {
     return {
@@ -166,9 +182,9 @@ export default {
         { id: "A6", class: "Card", isActive: false },
       ],
       // 被点击车厢
-      index: 'A1',
+      index: "A1",
       // 指标表格 title
-      indicators_title: ['系统', '部件', '性能指标', '指标值', '状态', '操作'],
+      indicators_title: ["系统", "部件", "性能指标", "指标值", "状态", "操作"],
       // 全部零件
       indicators_cards: [
         { id: "A1", class: "Card", name: "全部53/10", isActive: true },
@@ -181,38 +197,68 @@ export default {
       // 指标表格 body
       indicators_content: [
         {
-          system: '辅助变流器1',
+          system: "辅助变流器1",
           parts: [
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 1 },
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 1,
+            },
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 0,
+            },
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 0,
+            },
           ],
         },
         {
-          system: '辅助变流器1',
+          system: "辅助变流器1",
           parts: [
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 0,
+            },
           ],
         },
         {
-          system: '辅助变流器1',
+          system: "辅助变流器1",
           parts: [
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-            { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 0,
+            },
+            {
+              parts_: "网压传感器",
+              performance_metrics: "电压偏置因子[-5,5]",
+              metric_values: "-3.17",
+              state: 0,
+            },
           ],
-        }
+        },
       ],
       // 指标表格parts长度
       parts_long: null,
       // 弹窗
       dialogVisible: false,
-      searchQuery: '',
-      chart: null, // 用于保存 ECharts 实例  
+      searchQuery: "",
+      chart: null, // 用于保存 ECharts 实例
       // 时间选择
-      value1: '',
+      value1: "",
       // 图表
-      chartRef: null
-    }
+      chartRef: null,
+    };
   },
   methods: {
     // 列车车厢选择
@@ -221,58 +267,85 @@ export default {
       const clickedCard = e.target.closest(".Card");
       if (clickedCard) {
         // console.log(clickedCard.dataset.id);
-        this.index = clickedCard.dataset.id
+        this.index = clickedCard.dataset.id;
         this.cards.forEach((ele, i) => {
-          ele.isActive = false
-        })
+          ele.isActive = false;
+        });
         this.cards.forEach((ele, i) => {
           if (ele.id === clickedCard.dataset.id) {
-            ele.isActive = true
+            ele.isActive = true;
           }
-
-        })
-
+        });
       }
     },
     // 指标选择
     indicators_togg(e) {
       this.indicators_cards.forEach((element, i) => {
-        element.isActive = false
+        element.isActive = false;
         if (i === this.indicators_cards.length - 1) {
-          this.indicators_cards[e].isActive = true
+          this.indicators_cards[e].isActive = true;
           // 修改tbody的值
-          this.indicators_content = [{
-            system: '辅助变流器' + (e + 1),
-            parts: [
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
-            ],
-          },
-          {
-            system: '辅助变流器' + (e + 1),
-            parts: [
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-              // { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
-            ],
-          },
-          {
-            system: '辅助变流器' + (e + 1),
-            parts: [
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 },
-              { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
-            ],
-          }
+          this.indicators_content = [
+            {
+              system: "辅助变流器" + (e + 1),
+              parts: [
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+              ],
+            },
+            {
+              system: "辅助变流器" + (e + 1),
+              parts: [
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+                // { parts_: '网压传感器', performance_metrics: '电压偏置因子[-5,5]', metric_values: '-3.17', state: 0 }
+              ],
+            },
+            {
+              system: "辅助变流器" + (e + 1),
+              parts: [
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+                {
+                  parts_: "网压传感器",
+                  performance_metrics: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 0,
+                },
+              ],
+            },
           ];
-
         }
       });
-
     },
     // 指标曲线图
     echarts_() {
       //  根据屏幕宽度调整 文字大小
-      console.log('进行');
+      console.log("进行");
       var e = document.body.clientWidth;
 
       this.chartRef = echarts.init(this.$refs.chartRef);
@@ -280,181 +353,175 @@ export default {
       this.chartRef.setOption({
         // 鼠标悬浮提示
         tooltip: {
-          trigger: 'axis',
-          itemHeight: e / 1920 * 10, // 图例项的高度，单位可以是像素或百分比（如 '10%'）  
-          itemWidth: e / 1920 * 10, // 图例项的宽度，单位同上  
+          trigger: "axis",
+          itemHeight: (e / 1920) * 10, // 图例项的高度，单位可以是像素或百分比（如 '10%'）
+          itemWidth: (e / 1920) * 10, // 图例项的宽度，单位同上
           textStyle: {
-            fontSize: e / 1920 * 20
-          }
+            fontSize: (e / 1920) * 20,
+          },
         },
         legend: {
-          data: ['预警', '故障'],
+          data: ["预警", "故障"],
           itemGap: 20, //图例间隔
-          itemHeight: e / 1920 * 10, // 图例项的高度，单位可以是像素或百分比（如 '10%'）  
-          itemWidth: e / 1920 * 10, // 图例项的宽度，单位同上  
-          textStyle: { // 图例文本的样式设置  
-            color: '#ffffff', // 设置图例文本颜色为白色  
-            fontSize: e / 1920 * 18
+          itemHeight: (e / 1920) * 10, // 图例项的高度，单位可以是像素或百分比（如 '10%'）
+          itemWidth: (e / 1920) * 10, // 图例项的宽度，单位同上
+          textStyle: {
+            // 图例文本的样式设置
+            color: "#ffffff", // 设置图例文本颜色为白色
+            fontSize: (e / 1920) * 18,
           },
-
         },
         grid: {
           // left: '3%',
           // right: '4%',
-          bottom: '3%',
-          top: '20%',
+          bottom: "3%",
+          top: "20%",
           containLabel: true,
-          splitLine: { // x轴网格线样式  
-            // show: true, // 显示网格线  
+          splitLine: {
+            // x轴网格线样式
+            // show: true, // 显示网格线
             lineStyle: {
-              color: '#282f41', // 设置网格颜色
-              type: 'solid', // 线条类型，默认为实线  
-            }
-          }
-        },
-        toolbox: {
-
-        },
-        xAxis: {
-          name: '时间(天)',
-          nameTextStyle: {
-            fontSize: e / 1920 * 16,
+              color: "#282f41", // 设置网格颜色
+              type: "solid", // 线条类型，默认为实线
+            },
           },
-          type: 'category',
+        },
+        toolbox: {},
+        xAxis: {
+          name: "时间(天)",
+          nameTextStyle: {
+            fontSize: (e / 1920) * 16,
+          },
+          type: "category",
           boundaryGap: false,
-          data: ['2023-09-25', '2023-10-03', '2023-10-11', '2023-10-19'],
+          data: ["2023-09-25", "2023-10-03", "2023-10-11", "2023-10-19"],
           axisLine: {
             lineStyle: {
               // color: "red",
               color: "#757984",
-            }
+            },
           },
           axisLabel: {
-            fontSize: e / 1920 * 16,
-            interval: 0, // 显示所有标签 
-            margin: e / 1920 * 18
-          }
+            fontSize: (e / 1920) * 16,
+            interval: 0, // 显示所有标签
+            margin: (e / 1920) * 18,
+          },
         },
         yAxis: {
-          name: '°c',
+          name: "°c",
           nameTextStyle: {
-            fontSize: e / 1920 * 16,
+            fontSize: (e / 1920) * 16,
           },
-          type: 'value',
-          splitLine: { // x轴网格线样式  
-            show: true, // 显示网格线  
+          type: "value",
+          splitLine: {
+            // x轴网格线样式
+            show: true, // 显示网格线
             lineStyle: {
-              color: '#282f41',
-              type: 'solid', // 线条类型，默认为实线  
-              width: e / 1920 * 3
-            }
+              color: "#282f41",
+              type: "solid", // 线条类型，默认为实线
+              width: (e / 1920) * 3,
+            },
           },
           axisLabel: {
-            fontSize: e / 1920 * 16,
-            interval: 0, // 显示所有标签 
-            margin: e / 1920 * 18,
-          }
+            fontSize: (e / 1920) * 16,
+            interval: 0, // 显示所有标签
+            margin: (e / 1920) * 18,
+          },
         },
         series: [
           {
-            name: '预警',
-            type: 'line',
+            name: "预警",
+            type: "line",
             smooth: true, // 变为曲线
             // stack: 'Total',
-            symbolSize: e / 1920 * 8,
+            symbolSize: (e / 1920) * 8,
             // label: {
-            //   show: true, // 开启标签显示  
-            //   position: 'top', // 设置标签位置在数据点的上方 
+            //   show: true, // 开启标签显示
+            //   position: 'top', // 设置标签位置在数据点的上方
             //   color: 'red',
             //   fontSize: e / 1920 * 18
             // },
 
-
-            lineStyle: { // 设置线的样式  
-              color: '#882d3c', // 线的颜色  
-              width: e / 1920 * 3
-
+            lineStyle: {
+              // 设置线的样式
+              color: "#882d3c", // 线的颜色
+              width: (e / 1920) * 3,
             },
             itemStyle: {
-              color: 'red',
-              borderWidth: e / 1920 * 5, // 正常状态下数据点的边框宽度  
-              borderHeight: e / 1920 * 5, // 正常状态下数据点的边框宽度  
+              color: "red",
+              borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
+              borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
             },
-            data: [0, 8, 0, 0]
+            data: [0, 8, 0, 0],
           },
           {
-            name: '故障',
-            type: 'line',
+            name: "故障",
+            type: "line",
             smooth: true, // 变为曲线
             axisLabel: {
-              fontSize: e / 1920 * 18, // y轴刻度标签的字体大小  
-
+              fontSize: (e / 1920) * 18, // y轴刻度标签的字体大小
             },
             // stack: 'Total',
-            symbolSize: e / 1920 * 8,
+            symbolSize: (e / 1920) * 8,
             // label: {
-            //   show: true, // 开启标签显示  
-            //   position: 'top', // 设置标签位置在数据点的上方  
+            //   show: true, // 开启标签显示
+            //   position: 'top', // 设置标签位置在数据点的上方
             //   color: '#da8157',
             //   fontSize: e / 1920 * 18
             // },
-            lineStyle: { // 设置线的样式  
-              // color: '#e48555' // 线的颜色  
-              width: e / 1920 * 3
-
+            lineStyle: {
+              // 设置线的样式
+              // color: '#e48555' // 线的颜色
+              width: (e / 1920) * 3,
             },
             itemStyle: {
-              color: '#da8157',
-              borderWidth: e / 1920 * 5, // 正常状态下数据点的边框宽度  
-              borderHeight: e / 1920 * 5, // 正常状态下数据点的边框宽度  
+              color: "#da8157",
+              borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
+              borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
             },
-            data: [0, 4, 0, 0]
-          }
+            data: [0, 4, 0, 0],
+          },
         ],
-
-      })
+      });
     },
     // 查看部件详情
     instructions_togg() {
-      this.dialogVisible = true
+      this.dialogVisible = true;
       if (this.chartRef) {
         this.chartRef.dispose();
         this.chartRef = null;
       }
       let checkChartRef = setInterval(() => {
         if (this.$refs.chartRef) {
-          clearInterval(checkChartRef)
-          this.echarts_()
+          clearInterval(checkChartRef);
+          this.echarts_();
         }
       }, 30);
-    }
-
+    },
   },
   created() {
-    this.total
+    this.total;
   },
   computed: {
     total() {
       this.parts_long = this.indicators_content.reduce((sum, item) => {
         return sum + item.parts.length;
       }, 0);
-
     },
-
   },
   // 挂载后
   mounted() {
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       if (this.dialogVisible) {
         if (this.chartRef) {
           this.chartRef.dispose();
           this.chartRef = null;
         }
-        this.echarts_()
+        this.echarts_();
       }
     });
-  }
-}
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -464,7 +531,7 @@ export default {
   height: 100%;
   color: white;
 
-  // 顶部实时预警/报警 
+  // 顶部实时预警/报警
   .train_top {
     height: 32.5%;
     background-color: #0b1121;
@@ -472,7 +539,7 @@ export default {
     justify-content: space-between;
     padding-bottom: 1vw;
 
-    >div {
+    > div {
       width: 50%;
       height: 100%;
       box-sizing: border-box;
@@ -486,8 +553,6 @@ export default {
     // 预警
     .train_top_alert {
       padding-left: 0.5vw;
-
-
     }
   }
 
@@ -534,7 +599,6 @@ export default {
           background-image: url(../../public/img/train.jpg);
           background-repeat: no-repeat;
           background-size: 100% auto;
-
         }
 
         // 车厢名
@@ -544,19 +608,18 @@ export default {
           height: 40%;
           // font-size: 1vw;
 
-          >div {
+          > div {
             flex: 1;
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
 
-            >img {
+            > img {
               width: 1vw;
-              margin-left: 0.5vw
+              margin-left: 0.5vw;
             }
           }
-
         }
 
         // 透明膜
@@ -570,11 +633,11 @@ export default {
           justify-content: space-between;
           align-items: center;
 
-          >div {
-            background: rgb(0, 0, 0, .8);
+          > div {
+            background: rgb(0, 0, 0, 0.8);
             opacity: 0.2;
             flex: 1;
-            height: 100%
+            height: 100%;
           }
 
           .visibilit {
@@ -591,10 +654,7 @@ export default {
       justify-content: center;
       align-items: center;
       // font-size: 10vw;
-
     }
-
-
   }
 
   // 关键指标展示
@@ -630,7 +690,7 @@ export default {
           justify-content: left;
           margin: 0.5vw 0;
 
-          >div {
+          > div {
             // width: 10vw;
             padding: 10px 0;
             margin: 0 10px;
@@ -655,31 +715,31 @@ export default {
 
           .indicators_thead,
           .indicators_tbody {
-            >th:nth-child(1) {
-              width: 15.7%
+            > th:nth-child(1) {
+              width: 15.7%;
             }
 
-            >th:nth-child(2) {
-              width: 23.9%
+            > th:nth-child(2) {
+              width: 23.9%;
             }
 
-            >th:nth-child(3) {
-              width: 23.8%
+            > th:nth-child(3) {
+              width: 23.8%;
             }
 
-            >th:nth-child(4) {
+            > th:nth-child(4) {
               width: 11.6%;
             }
 
-            >th:nth-child(5) {
-              width: 11.6%
+            > th:nth-child(5) {
+              width: 11.6%;
             }
 
-            >th:nth-child(6) {
-              width: 13.4%
+            > th:nth-child(6) {
+              width: 13.4%;
             }
 
-            >th {
+            > th {
               background-color: #20283c;
               border: 1px solid #3a404f;
               padding: 0.8vw 0;
@@ -725,14 +785,18 @@ export default {
             }
           }
         }
-
-
       }
     }
   }
 
   // 弹窗
   .pop_ups {
+    .el-dialog{
+      .el-dialog__body {
+        padding: 0px 0px;
+      }
+
+    }
     .curves_title {
       // font-size: 1vw;
       display: flex;
@@ -742,7 +806,6 @@ export default {
       .curves_title_ri {
         display: flex;
         justify-content: right;
-        ;
         align-items: center;
 
         .choices {
@@ -750,7 +813,7 @@ export default {
           justify-content: space-evenly;
           align-items: center;
 
-          >div {
+          > div {
             margin: 0 0.4vw;
             // font-size: 1vw;/
           }
@@ -760,8 +823,6 @@ export default {
           width: 40%;
         }
       }
-
-
     }
 
     /* 图表 */
@@ -808,13 +869,12 @@ export default {
 .bott_title_right .el-date-editor .el-range-input {
   font-size: 0.6vw;
   background-color: transparent;
-
 }
 
 .train .el-date-editor .el-range__icon {
   font-size: 0.6vw;
   margin-left: -5px;
-  color: #C0C4CC;
+  color: #c0c4cc;
   float: left;
   line-height: 0vw;
 }

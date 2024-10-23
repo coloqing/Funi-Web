@@ -110,8 +110,9 @@ export default {
       );
       // 圆心 + 图片高度 + 文本行高 + 1
       ctx.fillText(
-        "--A",
-        sensor_level + electronic_w - (12 * 1 + 7.33 * 1) / 2,
+        this.schematics_data.i_DC_In_1 + 'A',
+        // "--A",
+        sensor_level + electronic_w - (12 * 0 + 7.33 * String(this.schematics_data.i_DC_In_1).length + 5*1) / 2,
         y + electronic_h + 14
       );
 
@@ -157,8 +158,9 @@ export default {
       );
       // console.log("圆点2的圆心", center_r2_y);
       ctx.fillText(
-        "--v",
-        ammeter1_level - electronic_w / 2 - (12 * 1 + 7.33 * 1) - 5,
+        this.schematics_data.u_DC_In +'V', 
+      // "--v",
+        ammeter1_level - electronic_w / 2 - (12 * 0 + 7.33 * String(this.schematics_data.u_DC_In).length + 5 * 1) - 5,
         center_r2_y - (center_r2_y - y) / 2 + 6
       );
       // 矩形
@@ -190,13 +192,15 @@ export default {
       );
       // ----°c
       ctx.fillText(
-        "----°c",
-        (rectangle_w - dashed1) / 2 + dashed1 - (12 * 0 + 7.33 * 3 + 5 * 0) / 2,
+        (this.schematics_data.t_HS_InConv_1||'----') + '°c',
+        // "----°c",
+        (rectangle_w - dashed1) / 2 + dashed1 - (12 * 0 + 7.33 * String(this.schematics_data.t_HS_InConv_1).length + 5 * 1) / 2,
         center_r2_y + rectangle_overflow + rectangle_jianju
       );
       ctx.fillText(
-        "----°c",
-        (rectangle_w - dashed1) / 2 + dashed1 - (12 * 0 + 7.33 * 3 + 5 * 0) / 2,
+        (this.schematics_data.t_HS_InConv_2||'----') + '°c',
+        // "----°c",
+        (rectangle_w - dashed1) / 2 + dashed1 - (12 * 0 + 7.33 * String(this.schematics_data.t_HS_InConv_1).length + 5 * 1) / 2,
         center_r2_y + rectangle_overflow + rectangle_jianju + 12 * 1.2
       );
       // DC  AC
@@ -506,7 +510,11 @@ export default {
       // 传感器6
       var sensor6_x = rectangle3_xu_x + rectangle3_xu_w - 310;
       // 相电流传感器
-      ctx.fillText("--A", sensor6_x + (electronic_w / 2) * 3, sensor6_y - 12);
+      ctx.fillText(
+        this.schematics_data.i_DC_Out + 'V',
+        // "--A",
+         sensor6_x + (electronic_w / 2) * 3, sensor6_y - 12);
+
       // 传感器5
       // 图片中心位置
       var sensor5_x = rectangle3_xu_x + rectangle3_xu_w - 310;
@@ -517,7 +525,10 @@ export default {
         sensor5_x + (electronic_w / 2) * 3,
         sensor5_y - 12
       );
-      ctx.fillText("--A", sensor5_x + (electronic_w / 2) * 3, sensor5_y + 12);
+      ctx.fillText(
+        this.schematics_data.i_Battery + 'V',
+        // "--A",
+         sensor5_x + (electronic_w / 2) * 3, sensor5_y + 12);
       // 增加虚线1 和 虚线2 的宽度
       var jianju = 10;
       // 横向虚线2=============
@@ -718,7 +729,8 @@ export default {
       ctx.stroke();
       // ----°c
       ctx.fillText(
-        "----°c",
+        this.schematics_data.t_Battery + 'V',
+        // "--sds--°c",
         (capacitor_topX +
           capacitor_w -
           hu_radius2 -
@@ -794,8 +806,9 @@ export default {
         top1_voltmeter_imgY - electronic_h / 2 - 12
       );
       ctx.fillText(
-        "--V",
-        top1_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_DC_Out + 'V',
+        // "--V",
+        top1_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_DC_Out).length + 5 * 1) / 2,
         top1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -853,8 +866,9 @@ export default {
         top2_voltmeter_imgY - electronic_h / 2 - 12
       );
       ctx.fillText(
-        "--V",
-        top2_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_Battery + 'V',
+        // "--V",
+        top2_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_Battery).length  + 5 * 2) / 2,
         top2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -892,7 +906,8 @@ export default {
         rectangle4_y + rectangle4_h - 12
       );
       ctx.fillText(
-        "----°c",
+        (this.schematics_data.t_HS_Inv_1) + '°c',
+        // "----°c",
         (rectangle4_x + rectangle4_w - rectangle4_x) / 4 + rectangle4_x,
         rectangle4_y + rectangle4_h + 12
       );
@@ -939,8 +954,9 @@ export default {
         sensor2_y - 12
       );
       ctx.fillText(
-        "--A",
-        sensor2_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L1 + 'A', 
+        // "--A",
+        sensor2_x + (electronic_w / 2) * 3 + (12 * 2 + 7.33 *String(this.schematics_data.i_L1).length + 5 * 1) / 2,
         sensor2_y - 12 * 2.2
       );
       // 连接点1
@@ -948,7 +964,9 @@ export default {
       var lj_w = 30;
       ctx.setLineDash([]);
       ctx.beginPath();
-      ctx.moveTo(
+      // 连接点1
+      if (this.schematics_data.inConv_DIGIN === 1) { //连接
+        ctx.moveTo(
         rectangle4_xu_x +
           rectangle4_xu_w -
           (rectangle4_xu_x + rectangle4_xu_w) / 5,
@@ -959,9 +977,25 @@ export default {
           rectangle4_xu_w -
           (rectangle4_xu_x + rectangle4_xu_w) / 5 +
           lj_w,
-        rectangle4_xu_y - lj_h
+        rectangle4_xu_y
       );
       ctx.stroke();
+      }else{ // 不连接
+        ctx.moveTo(
+          rectangle4_xu_x +
+            rectangle4_xu_w -
+            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_y
+        );
+        ctx.lineTo(
+          rectangle4_xu_x +
+            rectangle4_xu_w -
+            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+            lj_w,
+          rectangle4_xu_y - lj_h
+        );
+        ctx.stroke();
+      }
       //
       ctx.fillText(
         "输出接触器",
@@ -1027,8 +1061,9 @@ export default {
         sensor3_y - 12
       );
       ctx.fillText(
-        "--A",
-        sensor3_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L2 + 'A',  
+        // "--A",
+        sensor3_x + (electronic_w / 2) * 3 + (12 * 2 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) / 2,
         sensor3_y - 12 * 2.2
       );
       // 连接点2
@@ -1110,8 +1145,9 @@ export default {
         sensor4_y + 12
       );
       ctx.fillText(
-        "--A",
-        sensor4_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L3 + 'V',  
+        // "--A",
+        sensor4_x + (electronic_w / 2) * 3 + (12 * 2 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) / 2,
         sensor4_y + 12 * 2.2
       );
       // 连接点3
@@ -1226,8 +1262,9 @@ export default {
         bott1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott1_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L1 + 'V', 
+        // "--V",
+        bott1_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) / 2,
         bott1_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       ctx.setLineDash([]);
@@ -1276,8 +1313,9 @@ export default {
         bott2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott2_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L2 + 'V',  
+        // "--V",
+        bott2_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) / 2,
         bott2_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // 小圆
@@ -1325,8 +1363,9 @@ export default {
         bott3_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott3_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L3 + 'V',  
+        // "--V",
+        bott3_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) / 2,
         bott3_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // // 小圆
@@ -1663,9 +1702,9 @@ export default {
       );
       // console.log("圆点2的圆心", center_r2_y);
       ctx.fillText(
-        this.schematics_data.u_DC_In,
+        this.schematics_data.u_DC_In + 'V',
         // "--v",
-        ammeter1_level - electronic_w / 2 - (12 * 0 + 7.33 * String(this.schematics_data.u_DC_In).length) - 5,
+        ammeter1_level - electronic_w / 2 - (12 * 0 + 7.33 * String(this.schematics_data.u_DC_In).length + 5 * 1) - 5,
         center_r2_y - (center_r2_y - y) / 2 + 6
       );
       // 矩形
@@ -2015,7 +2054,10 @@ export default {
       // 传感器6
       var sensor6_x = rectangle3_xu_x + rectangle3_xu_w - 310;
       // 相电流传感器
-      ctx.fillText("--A", sensor6_x + (electronic_w / 2) * 3, sensor6_y - 12);
+      ctx.fillText(
+        this.schematics_data.i_DC_Out+'V' ,
+      // "--A",
+         sensor6_x + (electronic_w / 2) * 3, sensor6_y - 12);
       // 传感器5
       // 图片中心位置
       var sensor5_x = rectangle3_xu_x + rectangle3_xu_w - 310;
@@ -2026,7 +2068,10 @@ export default {
         sensor5_x + (electronic_w / 2) * 3,
         sensor5_y - 12
       );
-      ctx.fillText("--A", sensor5_x + (electronic_w / 2) * 3, sensor5_y + 12);
+      ctx.fillText(
+        this.schematics_data.i_Battery +'V' , 
+      // "--A",
+         sensor5_x + (electronic_w / 2) * 3, sensor5_y + 12);
       // 增加虚线1 和 虚线2 的宽度
       var jianju = 10;
       // 横向虚线2=============
@@ -2227,14 +2272,15 @@ export default {
       ctx.stroke();
       // ----°c
       ctx.fillText(
-        "----°c",
+        this.schematics_data.t_Battery + 'V',
+        // "----°c",
         (capacitor_topX +
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
           2 +
           (capacitor_topX + hu_radius2) -
-          (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
+          (12 * 0 + 7.33 * String(this.schematics_data.t_Battery).length + 5 * 1) / 2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -2303,8 +2349,9 @@ export default {
         top1_voltmeter_imgY - electronic_h / 2 - 12
       );
       ctx.fillText(
-        "--V",
-        top1_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_DC_Out + 'V',  
+      // "--V",
+        top1_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_DC_Out).length + 5 * 1) / 2,
         top1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -2362,8 +2409,9 @@ export default {
         top2_voltmeter_imgY - electronic_h / 2 - 12
       );
       ctx.fillText(
-        "--V",
-        top2_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_Battery + 'V',
+      // "--V",
+        top2_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_Battery).length  + 5 * 2) / 2,
         top2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -2401,7 +2449,8 @@ export default {
         rectangle4_y + rectangle4_h - 12
       );
       ctx.fillText(
-        "--sb--°c",
+        (this.schematics_data.t_HS_Inv_1) + '°c',
+      // "----°c",
         (rectangle4_x + rectangle4_w - rectangle4_x) / 4 + rectangle4_x,
         rectangle4_y + rectangle4_h + 12
       );
@@ -2448,8 +2497,9 @@ export default {
         sensor2_y - 12
       );
       ctx.fillText(
-        "--A",
-        sensor2_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L1 + 'V',
+      // "--A",
+        sensor2_x + (electronic_w / 2) * 3 + (12 * 3 + 7.33 * String(this.schematics_data.i_L1).length + 5 * 1) / 2,
         sensor2_y - 12 * 2.2
       );
       // 连接点1
@@ -2457,7 +2507,10 @@ export default {
       var lj_w = 30;
       ctx.setLineDash([]);
       ctx.beginPath();
-      ctx.moveTo(
+
+      // 连接点1
+      if (this.schematics_data.inConv_DIGIN === 1) { //连接
+        ctx.moveTo(
         rectangle4_xu_x +
           rectangle4_xu_w -
           (rectangle4_xu_x + rectangle4_xu_w) / 5,
@@ -2468,9 +2521,28 @@ export default {
           rectangle4_xu_w -
           (rectangle4_xu_x + rectangle4_xu_w) / 5 +
           lj_w,
-        rectangle4_xu_y - lj_h
+        rectangle4_xu_y
       );
       ctx.stroke();
+      }else{ // 不连接
+        ctx.moveTo(
+          rectangle4_xu_x +
+            rectangle4_xu_w -
+            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_y
+        );
+        ctx.lineTo(
+          rectangle4_xu_x +
+            rectangle4_xu_w -
+            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+            lj_w,
+          rectangle4_xu_y - lj_h
+        );
+        ctx.stroke();
+      }
+
+
+
       //
       ctx.fillText(
         "输出接触器",
@@ -2536,8 +2608,9 @@ export default {
         sensor3_y - 12
       );
       ctx.fillText(
-        "--A",
-        sensor3_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L2 + 'V',
+        // "--A",
+        sensor3_x + (electronic_w / 2) * 3 + (12 * 3 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) / 2,
         sensor3_y - 12 * 2.2
       );
       // 连接点2
@@ -2619,8 +2692,9 @@ export default {
         sensor4_y + 12
       );
       ctx.fillText(
-        "--A",
-        sensor4_x + (electronic_w / 2) * 3 + (12 * 4 + 7.33 * 0 + 5 * 0) / 2,
+        this.schematics_data.i_L3 + 'V',  
+      // "--A",
+        sensor4_x + (electronic_w / 2) * 3 + (12 * 3 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) / 2,
         sensor4_y + 12 * 2.2
       );
       // 连接点3
@@ -2735,8 +2809,9 @@ export default {
         bott1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott1_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L1 + 'V',  
+      // "--V",
+        bott1_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) / 2,
         bott1_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       ctx.setLineDash([]);
@@ -2785,8 +2860,9 @@ export default {
         bott2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott2_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L2 + 'V',  
+      // "--V",
+        bott2_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) / 2,
         bott2_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // 小圆
@@ -2834,8 +2910,9 @@ export default {
         bott3_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.fillText(
-        "--V",
-        bott3_voltmeter_imgX - (12 * 0 + 7.33 * 1 + 5 * 2) / 2,
+        this.schematics_data.u_L3 + 'V',  
+      // "--V",
+        bott3_voltmeter_imgX - (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) / 2,
         bott3_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // // 小圆
@@ -4779,7 +4856,9 @@ export default {
         if (response.data.code === 200) {
           this.schematics_data= response.data.data[0]
           console.log('查询结果',response);
-          this.fun_circuitFig(1800, 900, 280, 200);
+          // this.fun_circuitFig(1800, 900, 280, 200);
+       this.fun_circuitFig1(1600, 800, 50, 300);
+
         }else{
           console.error('电路图数据 接口查询失败');
         }
@@ -4792,7 +4871,6 @@ export default {
   },
   // 挂载后
   mounted() {
-    // this.fun_circuitFig1(1600, 800, 50, 300);
     this.signal_val()
   },
 };
