@@ -24,3 +24,15 @@ export function signalVal(trainNum, code, startTime, endTime, isTop1) {
     },
   });
 }
+
+// 获取电路图数据
+export function SignalVal() {
+  return request({
+    url: "/Train/SignalVal",
+    method: "get",
+    params: {
+      trainNum: 1,
+      isTop1: true,
+    },
+  });
+}

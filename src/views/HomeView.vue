@@ -48,7 +48,12 @@
               <div class="forewarn body_forewarn">{{ item.warning }}</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link :to="{path:'/TrainClass',query:{trainNum:item.trainNum}}" class="router_link"
+                <router-link
+                  :to="{
+                    path: '/TrainClass',
+                    query: { trainNum: item.trainNum },
+                  }"
+                  class="router_link"
                   >查看详情</router-link
                 >
               </div>
@@ -80,6 +85,7 @@
               </el-select>
             </div>
           </div>
+          <!-- <AssistChange  :states="auxiliary_variants" :key="0" v-if="auxiliary_variants.alarm"></AssistChange> -->
           <AssistChange></AssistChange>
         </div>
 
@@ -92,21 +98,54 @@
               <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
-                <div class="alarm_time1">近7天</div>
-                <div class="alarm_time2">近30天</div>
-                <div class="alarm_time3">近12个月</div>
+                <div
+                  class="alarm_time1"
+                  data-item="7"
+                  @click="alarm_time"
+                  :class="{ active_time: alarmTime === '7' }"
+                >
+                  近7天
+                </div>
+                <div
+                  class="alarm_time2"
+                  data-item="30"
+                  @click="alarm_time"
+                  :class="{ active_time: alarmTime === '30' }"
+                >
+                  近30天
+                </div>
+                <div
+                  class="alarm_time3"
+                  data-item="12"
+                  @click="alarm_time"
+                  :class="{ active_time: alarmTime === '12' }"
+                >
+                  近12个月
+                </div>
               </div>
               <!-- 年月日选择器 -->
               <el-date-picker
-                v-model="value1"
+                v-model="alarm_value"
                 type="daterange"
                 range-separator="-"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @blur="get_alarm_time"
               >
               </el-date-picker>
               <!-- 历史分析 -->
-              <div class="alarm_history font_size16">历史分析</div>
+              <div class="alarm_history font_size16">                <router-link
+                  :to="{
+                    path: '/AlarmInfo',
+                    query: {
+                      state: 0,
+                    },
+                  }"
+                  class="router_link"
+                  >历史分析</router-link
+                ></div>
             </div>
             <!-- 列表头部 -->
             <div class="alarm_header font_size20">
@@ -138,12 +177,21 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link :to="{ path: '/AlarmInfo', query: { trainNum: item.trainNumber ,carriage:item.carriageNumber,state:0}}" class="router_link"
+                  <router-link
+                    :to="{
+                      path: '/AlarmInfo',
+                      query: {
+                        trainNum: item.trainNumber,
+                        carriage: item.carriageNumber,
+                        state: 0,
+                      },
+                    }"
+                    class="router_link"
                     >查看详情</router-link
                   >
                 </div>
               </div>
-              <div class="null" v-if="alarm_data">暂无数据~</div>
+              <div class="null" v-if="!alarm_data.length">暂无数据~</div>
             </div>
           </div>
           <!-- 预警记录 -->
@@ -153,21 +201,56 @@
               <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
-                <div class="alarm_time1">近7天</div>
-                <div class="alarm_time2">近30天</div>
-                <div class="alarm_time3">近12个月</div>
+                <div
+                  class="alarm_time1"
+                  :class="{ active_time: forewarnTime === '7' }"
+                  data-item="7"
+                  @click="forewarn_time"
+                >
+                  近7天
+                </div>
+                <div
+                  class="alarm_time2"
+                  :class="{ active_time: forewarnTime === '30' }"
+                  data-item="30"
+                  @click="forewarn_time"
+                >
+                  近30天
+                </div>
+                <div
+                  class="alarm_time3"
+                  :class="{ active_time: forewarnTime === '12' }"
+                  data-item="12"
+                  @click="forewarn_time"
+                >
+                  近12个月
+                </div>
               </div>
               <!-- 年月日选择器 -->
               <el-date-picker
-                v-model="value1"
+                v-model="forewarn_value"
                 type="daterange"
                 range-separator="-"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                @blur="get_forewarn_time"
               >
               </el-date-picker>
               <!-- 历史分析 -->
-              <div class="alarm_history font_size16">历史分析</div>
+              <div class="alarm_history font_size16">
+                <router-link
+                  :to="{
+                    path: '/AlarmInfo',
+                    query: {
+                      state: 1,
+                    },
+                  }"
+                  class="router_link"
+                  >历史分析</router-link
+                >
+              </div>
             </div>
             <!-- 列表头部 -->
             <div class="alarm_header font_size20">
@@ -199,12 +282,21 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link  :to="{ path: '/AlarmInfo', query: { trainNum: item.trainNumber ,carriage:item.carriageNumber,state:1}}" class="router_link"
+                  <router-link
+                    :to="{
+                      path: '/AlarmInfo',
+                      query: {
+                        trainNum: item.trainNumber,
+                        carriage: item.carriageNumber,
+                        state: 1,
+                      },
+                    }"
+                    class="router_link"
                     >查看详情</router-link
                   >
                 </div>
               </div>
-              <div class="null" v-if="forewarn_data">暂无数据~</div>
+              <div class="null" v-if="!forewarn_data.length">暂无数据~</div>
             </div>
           </div>
         </div>
@@ -221,6 +313,9 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              @blur="get_echarts_time"
             >
             </el-date-picker>
           </div>
@@ -284,10 +379,12 @@ import {
   getTop10,
   getCyc,
   getFaultWarnAdd,
+  getTrainStateCount,
 } from "@/api/homeView";
 
 export default {
   name: "HomeView",
+  props: {},
   components: {
     EChartsCom,
     AssistChange,
@@ -295,12 +392,23 @@ export default {
   data() {
     return {
       // 预警数据
-      forewarn_data: null,
+      forewarn_data: [],
       // 报警数据
-      alarm_data: null,
-
+      alarm_data: [],
+      //辅变系统信息
+      auxiliary_variants: null,
+      // 当前报警查询的时间
+      alarmTime: "7",
+      // 当前预警查询的时间
+      forewarnTime: "7",
+      // echarts 图表查询
+      echarts_time: {},
       state: [],
-
+      // 报警时间选择器
+      alarm_value: "",
+      // 预警时间选择器
+      forewarn_value: "",
+      // 车辆预警报警统计 时间选择器
       value1: "",
       // 报警预警趋势
       alarm_echarts: null,
@@ -396,6 +504,8 @@ export default {
     this.fun_forewarn();
     // 获取报警数据
     this.fun_alarm();
+    // 获取辅变系统
+    // this.get_trainStateCount();
   },
   // 挂载前
   beforeMount() {
@@ -455,7 +565,7 @@ export default {
         tooltip: {},
         color: ["#7093b3", "#e69e4e"],
         dataset: {
-          source: data
+          source: data,
           // source: [
           //   ["类型", "预警", "故障"],
           //   ["2024-06", 43.3, 85.8],
@@ -963,7 +1073,156 @@ export default {
         });
       }
     },
+    // 获取近几天
+    getRecentDays(days) {
+      const endDate = new Date();
+      const startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - days);
+      return this.formatDate(startDate);
+    },
+    // 获取近一年
+    getOneYear() {
+      const startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);
+      return this.formatDate(startDate);
+    },
+    // 结尾时间
+    formatDate(date) {
+      return (
+        date.getFullYear() +
+        "-" +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + date.getDate()).slice(-2) +
+        " " +
+        ("0" + date.getHours()).slice(-2) +
+        ":" +
+        ("0" + date.getMinutes()).slice(-2) +
+        ":" +
+        ("0" + date.getSeconds()).slice(-2)
+      );
+    },
+    // 获取当前时间
+    getCurrentTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = (now.getMonth() + 1).toString().padStart(2, "0");
+      const day = now.getDate().toString().padStart(2, "0");
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const seconds = now.getSeconds().toString().padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
 
+    // 报警 时间选择
+    alarm_time(event) {
+      this.alarm_value = "";
+      const time = event.target.dataset.item;
+      this.alarmTime = time;
+      const time_began = this.getCurrentTime();
+      let time_over;
+      console.log("预警：", time_began);
+      if (time == 12) {
+        time_over = this.getOneYear(time);
+      } else {
+        time_over = this.getRecentDays(time);
+      }
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 1,
+        startTime: time_over,
+        endTime: time_began,
+      }).then((response) => {
+        // console.log("获取报警数据：", response);
+        if (response.data.code === 200) {
+          this.alarm_data = response.data.data;
+        } else {
+          console.error("报警数据获取失败");
+        }
+      });
+    },
+    // 预警 时间选择
+    forewarn_time(event) {
+      this.forewarn_value = "";
+      const time = event.target.dataset.item;
+      this.forewarnTime = time;
+      const time_began = this.getCurrentTime();
+      let time_over;
+      console.log("预警：", time_began);
+      if (time == 12) {
+        time_over = this.getOneYear(time);
+      } else {
+        time_over = this.getRecentDays(time);
+      }
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 2,
+        startTime: time_over,
+        endTime: time_began,
+      }).then((response) => {
+        // console.log("获取预警数据：", response);
+        if (response.data.code === 200) {
+          this.forewarn_data = response.data.data;
+        } else {
+          console.error("预警数据获取失败");
+        }
+      });
+    },
+    // 自定义时间查询
+    get_alarm_time(data) {
+      let times = data.value;
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 1,
+        startTime: times[0],
+        endTime: times[1],
+      }).then((response) => {
+        // console.log("获取预警数据：", response);
+        if (response.data.code === 200) {
+          this.alarm_data = response.data.data;
+        } else {
+          console.error("报警数据获取失败");
+        }
+      });
+    },
+    get_forewarn_time(data) {
+      let times = data.value;
+      getFaultWarn({
+        pageIndex: 1,
+        pageRow: 10,
+        sortFile: "CreateTime",
+        sortType: "desc",
+        alarmType: 2,
+        startTime: times[0],
+        endTime: times[1],
+      }).then((response) => {
+        // console.log("获取预警数据：", response);
+        if (response.data.code === 200) {
+          this.forewarn_data = response.data.data;
+        } else {
+          console.error("预警数据获取失败");
+        }
+      });
+    },
+    get_echarts_time(data) {
+      let times = data.value;
+      this.echarts_time = {
+        startTime: times[0],
+        endTime: times[1],
+      };
+      this.get_top10();
+      this.get_cyc();
+      this.get_caultWarn_add();
+    },
     init_my_charts() {
       // 调用接口 获取报警预警趋势 并进行echart渲染
       // let alarm_charts_option = this.get_alarm_charts_option();
@@ -983,7 +1242,7 @@ export default {
     },
     // 获取数据并渲染图表
     get_top10() {
-      getTop10().then((response) => {
+      getTop10(this.echarts_time).then((response) => {
         // console.log("获取top10数据:", response);
         if (response.data.code === 200) {
           let tmp = response.data.data;
@@ -1002,7 +1261,7 @@ export default {
     },
     // 获取历史预警分布统计
     get_cyc() {
-      getCyc().then((response) => {
+      getCyc(this.echarts_time).then((response) => {
         // console.log("获取历史预警分布统计:", response);
         if (response.data.code === 200) {
           let tmp = response.data.data;
@@ -1021,7 +1280,7 @@ export default {
     },
     // 获取 故障预警统计
     get_caultWarn_add() {
-      getFaultWarnAdd().then((response) => {
+      getFaultWarnAdd(this.echarts_time).then((response) => {
         // console.log("获取故障预警统计:", response);
         if (response.data.code === 200) {
           let tmp = response.data.data;
@@ -1030,7 +1289,8 @@ export default {
           for (let i = 0; i < tmp.length; i++) {
             history_alarm.push([tmp[i].time, tmp[i].warnNum, tmp[i].faultNum]);
           }
-          let history_alarm_option = this.get_history_alarm_option(history_alarm);
+          let history_alarm_option =
+            this.get_history_alarm_option(history_alarm);
           this.history_alarm_option = history_alarm_option;
           // 报警预警趋势
           let alarm_charts_option = this.get_alarm_charts_option(history_alarm);
@@ -1043,12 +1303,17 @@ export default {
 
     // 获取预警数据
     fun_forewarn() {
+      const time = "7";
+      const time_began = this.getCurrentTime();
+      let time_over = this.getRecentDays(time);
       getFaultWarn({
         pageIndex: 1,
         pageRow: 10,
         sortFile: "CreateTime",
         sortType: "desc",
         alarmType: 2,
+        startTime: time_over,
+        endTime: time_began,
       }).then((response) => {
         // console.log("获取预警数据：", response);
         if (response.data.code === 200) {
@@ -1060,12 +1325,17 @@ export default {
     },
     // 获取报警数据
     fun_alarm() {
+      const time = "7";
+      const time_began = this.getCurrentTime();
+      let time_over = this.getRecentDays(time);
       getFaultWarn({
         pageIndex: 1,
         pageRow: 10,
         sortFile: "CreateTime",
         sortType: "desc",
         alarmType: 1,
+        startTime: time_over,
+        endTime: time_began,
       }).then((response) => {
         // console.log("获取报警数据：", response);
         if (response.data.code === 200) {
@@ -1296,6 +1566,12 @@ body {
             // min-width: 140px;
             box-sizing: border-box;
             // padding-right: 10px;
+            > div {
+              cursor: pointer;
+            }
+            .active_time {
+              color: #0084ffa6;
+            }
           }
 
           // 日期选择器
@@ -1308,6 +1584,8 @@ body {
 
           // 历史分析
           .alarm_history {
+            cursor: pointer;
+            color: #0084ffa6;
             // flex: 1;
             width: 12%;
             // min-width: 56px;

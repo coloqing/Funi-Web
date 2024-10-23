@@ -111,7 +111,7 @@ git config --global --unset https.proxy -->
           <!-- 选项透明膜 -->
           <div class="train_item" @click="sideCard">
             <div :class="card.isActive ? 'visibilit' : 'Card'" v-for="(card, index) in cards" :key="card.id"
-              :data-id="card.id"></div>
+              :data-id="card.id" :data-only="card.only"></div>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ git config --global --unset https.proxy -->
       <div class="train_center_canvas">
         <!-- <img style="width: 100vw;" src="../../public/img/map.png" alt="" /> -->
         <!-- <canvas ref="circuit_fig" ></canvas> -->
-        <CanvasCircuit />
+        <CanvasCircuit :id="vanvas_id" :key="vanvas_id" />
       </div>
 
       <div class="train-signal">
@@ -180,28 +180,79 @@ git config --global --unset https.proxy -->
               </tr>
             </thead>
             <tbody class="indicators_tbody">
-              <template v-for="(item1, index1) in indicators_content">
+              <template v-for="(item1, index1) in indicators_contents">
                 <tr v-for="(item, index) in item1.parts" class="font_size20">
                   <td :rowspan="item1.parts.length" v-if="index === 0">
                     {{ item1.system }}
                   </td>
-                  <td :rowspan="item1.parts.length" v-if="index === 0">
-                    {{ item.parts_ }}
-                  </td>
-                  <td>{{ item.performance_metrics }}</td>
-                  <td>{{ item.metric_values }}</td>
                   <td>
-                    <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
-                      item.state === 0 ? "异常" : "正常"
-                      }}</span>
+                    <!-- <td :rowspan="item1.parts.length" v-if="index === 0"> -->
+                    {{ item.name }}
                   </td>
-                  <td class="detail">
-                    <span @click="instructions_togg">查看详情</span>
+                  <td style="padding-left: 0px">
+                <tr v-for="(item3, index3) in item.indicators" style="border: 0px; display: flex; align-items: center">
+                  <td style="
+                          border: 0px;
+                          border-bottom: 1px solid #3a404f;
+                          width: 100%;
+                          padding: 0.8vw 0 0.8vw 0.8vw;
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                    {{ item3.name }}
                   </td>
                 </tr>
+                </td>
+                <!-- <td>{{ item.performance_metrics }}</td> -->
+                <!-- 指标值 -->
+                <td style="padding-left: 0px">
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
+                          border: 0px;
+                          border-bottom: 1px solid #3a404f;
+                          width: 100%;
+                          padding: 0.8vw 0 0.8vw 0.8vw;
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      {{ item3.metric_values }}
+                    </td>
+                  </tr>
+                </td>
+                <!-- 状态 -->
+                <td style="padding-left: 0px">
+                  <!-- <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
+                      item.state === 0 ? "异常" : "正常"
+                    }}</span> -->
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
+                          border: 0px;
+                          border-bottom: 1px solid #3a404f;
+                          width: 100%;
+                          padding: 0.8vw 0 0.8vw 0.8vw;
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{ item.state === 0 ? "异常" : "正常"
+                        }}</span>
+                    </td>
+                  </tr>
+                </td>
+                <td class="detail" style="padding-left: 0px">
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
+                          border: 0px;
+                          border-bottom: 1px solid #3a404f;
+                          width: 100%;
+                          padding: 0.8vw 0 0.8vw 0.8vw;
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      <span @click="instructions_togg">查看详情</span>
+                    </td>
+                  </tr>
+                </td>
+                </tr>
               </template>
-
-
             </tbody>
           </table>
         </div>
@@ -279,6 +330,7 @@ export default {
     let max = 40;
     let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
     return {
+      vanvas_id: 1,
       data_time: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       signal_option: {
         color: colors(),
@@ -369,12 +421,12 @@ export default {
 
       // 列车车厢 透明膜点击
       cards: [
-        { id: "A1", class: "Card", isActive: true },
-        { id: "B1", class: "Card", isActive: false },
-        { id: "C1", class: "Card", isActive: false },
-        { id: "C2", class: "Card", isActive: false },
-        { id: "B2", class: "Card", isActive: false },
-        { id: "A2", class: "Card", isActive: false },
+        { only: "1", id: "A1", class: "Card", isActive: true },
+        { only: "2", id: "B1", class: "Card", isActive: false },
+        { only: "3", id: "C1", class: "Card", isActive: false },
+        { only: "4", id: "C2", class: "Card", isActive: false },
+        { only: "5", id: "B2", class: "Card", isActive: false },
+        { only: "6", id: "A2", class: "Card", isActive: false },
       ],
       // 被点击车厢
       index: "A1",
@@ -391,31 +443,6 @@ export default {
       ],
       // 指标表格 body
       indicators_content: [
-        {
-          system: "辅助变流器1",
-          components: [
-            {
-              name: 'U相输出电流传感器',
-              indicators: [
-                {
-                  name: '电压偏置因子[-5,5]',
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: '传感器零飘值[-5,5]',
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: '电压波动因子[-5,5]',
-                  metric_values: "-3.17",
-                  state: 1,
-                }
-              ]
-            }
-          ]
-        },
         {
           system: "辅助变流器1",
           parts: [
@@ -465,65 +492,102 @@ export default {
               performance_metrics: "电流偏置因子[-5,5]",
               metric_values: "-3.17",
               state: 0,
-            }
+            },
           ],
         },
-        // {
-        //   system: "辅助变流器1",
-        //   parts: [
-        //     {
-        //       parts_: "网压传感器",
-        //       performance_metrics: "电压偏置因子[-5,5]",
-        //       metric_values: "-3.17",
-        //       state: 0,
-        //     },
-        //   ],
-        // },
-        // {
-        //   system: "辅助变流器1",
-        //   parts: [
-        //     {
-        //       parts_: "网压传感器",
-        //       performance_metrics: "电压偏置因子[-5,5]",
-        //       metric_values: "-3.17",
-        //       state: 0,
-        //     },
-        //     {
-        //       parts_: "网压传感器",
-        //       performance_metrics: "电压偏置因子[-5,5]",
-        //       metric_values: "-3.17",
-        //       state: 0,
-        //     },
-        //   ],
-        // },
       ],
-      // indicators_content: [
-      //   {
-      //     system: "辅助变流器1",
-      //     parts: [
-      //       {
-      //         name: "U相输出电流传感器",
-      //         indicators: [
-      //           {
-      //             name: "电压偏置因子[-5,5]",
-      //             metric_values: "-3.17",
-      //             state: 1,
-      //           },
-      //           {
-      //             name: "传感器零飘值[-5,5]",
-      //             metric_values: "-3.17",
-      //             state: 1,
-      //           },
-      //           {
-      //             name: "电压波动因子[-5,5]",
-      //             metric_values: "-3.17",
-      //             state: 1,
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //   },
-      // ],
+      indicators_contents: [
+        {
+          system: "辅助变流器1",
+          parts: [
+            {
+              name: "U相输出电流传感器",
+              indicators: [
+                {
+                  name: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "传感器零飘值[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "电压波动因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+              ],
+            },
+            {
+              name: "w相输出电流传感器",
+              indicators: [
+                {
+                  name: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "传感器零飘值[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "电压波动因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          system: "辅助变流器2",
+          parts: [
+            {
+              name: "U相输出电流传感器",
+              indicators: [
+                {
+                  name: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "传感器零飘值[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "电压波动因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+              ],
+            },
+            {
+              name: "w相输出电流传感器",
+              indicators: [
+                {
+                  name: "电压偏置因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "传感器零飘值[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+                {
+                  name: "电压波动因子[-5,5]",
+                  metric_values: "-3.17",
+                  state: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ],
       // 指标表格parts长度
       parts_long: null,
       // 弹窗
@@ -576,16 +640,22 @@ export default {
       // 获取点击对象
       const clickedCard = e.target.closest(".Card");
       if (clickedCard) {
-        // console.log(clickedCard.dataset.id);
         this.index = clickedCard.dataset.id;
-        this.cards.forEach((ele, i) => {
-          ele.isActive = false;
-        });
-        this.cards.forEach((ele, i) => {
-          if (ele.id === clickedCard.dataset.id) {
-            ele.isActive = true;
-          }
-        });
+        if (
+          clickedCard.dataset.only === "1" ||
+          clickedCard.dataset.only === "6"
+        ) {
+          // 重新获取数据
+          this.vanvas_id = Number(clickedCard.dataset.only)
+          this.cards.forEach((ele, i) => {
+            ele.isActive = false;
+          });
+          this.cards.forEach((ele, i) => {
+            if (ele.id === clickedCard.dataset.id) {
+              ele.isActive = true;
+            }
+          });
+        }
       }
     },
     // 指标选择
@@ -883,7 +953,7 @@ export default {
         .filter((value, index, self) => self.indexOf(value) === index)
         .join(',')
 
-      signalVal(1, codes, '2024-10-22 00:00:00.000', '2024-10-22 00:01:00.000', false).then(response => {
+      signalVal(1, codes, '2024-10-23 00:00:00.000', '2024-10-23 00:01:00.000', false).then(response => {
         var data = [];
 
         for (let i = 0; i < this.signals.length; i++) {
@@ -950,7 +1020,7 @@ export default {
 
         this.deviceDM = data.deviceDM;
 
-        this.setIndicatorsCards(data.devices)
+        this.setIndicatorsCards(data.devices);
 
         this.setIndicatorsContent(data.deviceDM)
 
@@ -960,25 +1030,29 @@ export default {
 
     setIndicatorsCards(data) {
       this.indicators_cards = [
-        { id: 0, class: "Card", name: "全部", isActive: true }
-      ]
+        { id: 0, class: "Card", name: "全部", isActive: true },
+      ];
 
       for (let index = 0; index < data.length; index++) {
         const item = data[index];
-        this.indicators_cards.push({ id: item.id, class: "Card", name: item.name, isActive: false })
+        this.indicators_cards.push({
+          id: item.id,
+          class: "Card",
+          name: item.name,
+          isActive: false,
+        });
       }
     },
 
     setIndicatorsContent(data) {
-      this.indicators_content = []
+      // this.indicators_content = []
       for (let index = 0; index < data.length; index++) {
         var device = data[index];
 
         var content = {
           system: device.name,
-          parts: [
-          ],
-        }
+          parts: [],
+        };
 
         for (let i = 0; i < device.components.length; i++) {
           var component = device.components[i];
@@ -988,14 +1062,20 @@ export default {
 
             content.parts.push({
               parts_: component.name,
-              performance_metrics: indicator.name + "[" + indicator.min + "," + indicator.max + "]",
+              performance_metrics:
+                indicator.name +
+                "[" +
+                indicator.min +
+                "," +
+                indicator.max +
+                "]",
               metric_values: "-3.17",
               state: 1,
-            })
+            });
           }
         }
 
-        this.indicators_content.push(content)
+        // this.indicators_content.push(content)
       }
       console.log(this.indicators_content);
 
@@ -1394,7 +1474,7 @@ export default {
             td {
               background-color: #20283c;
               border: 1px solid #3a404f;
-              padding: 0.8vw 0;
+              // padding: 0.8vw 0;
               padding-left: 0.8vw;
               color: #b1b4bb;
             }

@@ -150,23 +150,23 @@
         <div ref="fsbtn" class="right-panel">
             <el-row type="flex" class="row-bg" justify="space-between">
                 <el-col :span="16">
-                    <div style="display: flex;align-items: center;">
+                    <div style="display: flex; align-items: center">
                         <div>
                             <h2>{{ currentRow.name }}</h2>
                         </div>
                         <div v-if="currentRow.state == 0"
                             class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
-                            <span class="crrc-tag-status-dot crrc-tag-badge "></span>
+                            <span class="crrc-tag-status-dot crrc-tag-badge"></span>
                             未消除
                         </div>
                         <div v-if="currentRow.state == 1" class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
-                            <span class="crrc-tag-status-dot crrc-tag-badge  "></span>
+                            <span class="crrc-tag-status-dot crrc-tag-badge"></span>
                             车载消除
                         </div>
                     </div>
                 </el-col>
                 <el-col :span="6">
-                    <div style="display: flex;justify-content: end;">
+                    <div style="display: flex; justify-content: end">
                         <el-button size="mini" @click="goback">返回</el-button>
                     </div>
                 </el-col>
@@ -197,12 +197,13 @@
                     <span>预警码：{{ currentRow.code }}</span>
                 </el-col>
                 <el-col :span="6">
-                    <span>发生时间：{{ currentRow.createTime ? currentRow.createTime :
-                        '--' }}</span>
+                    <span>发生时间：{{
+                        currentRow.createTime ? currentRow.createTime : "--"
+                    }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
-                <div style="display: flex;">
+                <div style="display: flex">
                     <div class="diagnosis">
                         <div class="diagnosis-title">诊断逻辑</div>
                         <div class="content">{{ currentRow.diagnoseLogic }}</div>
@@ -217,20 +218,19 @@
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="12">
-                    <span style="font-size: 1dvw;">信号量</span>
+                    <span style="font-size: 1dvw">信号量</span>
                 </el-col>
                 <el-col :span="12">
-                    <div style="color: white; display: flex;justify-content: end;">
-                        <div style="margin-right: 5px;cursor: pointer;">
-
-                            <svg @click="goback" t="1726801127036" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                                xmlns="http://www.w3.org/2000/svg" p-id="878" width="22" height="22">
+                    <div style="color: white; display: flex; justify-content: end">
+                        <div style="margin-right: 5px; cursor: pointer">
+                            <svg @click="semaphore_togg" t="1726801127036" class="icon" viewBox="0 0 1024 1024"
+                                version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="878" width="22" height="22">
                                 <path
                                     d="M882.176 190.610286l-174.08 174.153143a34.304 34.304 0 0 1-48.493714-48.493715l174.153143-174.08H694.198857a34.304 34.304 0 0 1 0-68.608h222.281143c18.944 0 34.304 15.36 34.304 34.304v222.281143a34.304 34.304 0 0 1-68.608 0V190.610286z m-56.758857 646.875428l-174.811429-174.811428a36.571429 36.571429 0 1 1 51.785143-51.638857l174.738286 174.738285V636.854857a36.571429 36.571429 0 0 1 73.142857 0v237.202286a36.571429 36.571429 0 0 1-36.571429 36.571428H676.498286a36.571429 36.571429 0 0 1 0-73.142857h148.918857zM197.997714 146.285714l176.566857 176.566857a36.571429 36.571429 0 1 1-51.712 51.712L146.285714 197.997714v148.918857a36.571429 36.571429 0 0 1-73.142857 0V109.714286a36.571429 36.571429 0 0 1 36.571429-36.571429h237.202285a36.571429 36.571429 0 0 1 0 73.142857H197.997714zM146.285714 772.388571l176.566857-176.566857a36.571429 36.571429 0 1 1 51.712 51.785143l-176.566857 176.566857h148.918857a36.571429 36.571429 0 1 1 0 73.142857H109.714286a36.571429 36.571429 0 0 1-36.571429-36.571428V623.542857a36.571429 36.571429 0 1 1 73.142857 0v148.918857z"
                                     fill="#ffffff" p-id="879"></path>
                             </svg>
                         </div>
-                        <div style="cursor: pointer;">
+                        <div style="cursor: pointer">
                             <svg t="1726801203625" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="2803" width="22" height="22">
                                 <path
@@ -299,7 +299,68 @@
                 <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
             </div> -->
         </div>
-
+        <template>
+            <!-- 弹出层 -->
+            <div class="pop_ups">
+                <!-- 弹出层 -->
+                <el-dialog class="indicator_curves" :visible.sync="SemaphoreVisible_" width="80%"
+                    :close-on-click-modal="true" @close="SemaphoreVisible_ = false">
+                    <div class="right-panel right-panel2">
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <span style="font-size: 1dvw">信号量</span>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-button-group>
+                                    <el-button size="mini">全部</el-button>
+                                    <el-button size="mini">数字量</el-button>
+                                    <el-button size="mini">模拟量</el-button>
+                                </el-button-group>
+                            </el-col>
+                            <el-col :span="12">
+                                <div style="
+                    display: flex;
+                    justify-content: end;
+                    align-items: center;
+                  ">
+                                    <div>
+                                        <span>时间范围：</span>
+                                    </div>
+                                    <div style="width: 100px">
+                                        <el-select v-model="dataTimeRangeValue" placeholder="请选择" size="mini">
+                                            <el-option v-for="item in [
+                                                { value: 1, label: '±1分钟' },
+                                                { value: 3, label: '±3分钟' },
+                                                { value: 5, label: '±5分钟' },
+                                            ]" :key="item.value" :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <div class="signal-panel">
+                                <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item">
+                                    <SignalCom :signal_name="item" :signal_value="getSignalsVal(index)"
+                                        :color="getColor(index)">
+                                    </SignalCom>
+                                </div>
+                                <!-- <div class="add-signal-btn" @click="modSignals">
+                  <div><i class="el-icon-plus"></i></div>
+                  <span> &nbsp;编辑信号量</span>
+                </div> -->
+                            </div>
+                        </el-row>
+                        <div>
+                            <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
+                        </div>
+                    </div>
+                </el-dialog>
+            </div>
+        </template>
 
         <el-dialog :visible.sync="dialogVisible" class="selector">
             <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="sigletonSignal" />
@@ -320,48 +381,56 @@ export default {
     components: {
         SignalCom,
         EChartsCom,
-        SignalSelector
+        SignalSelector,
     },
     data() {
         return {
-            // 0报警  1预警 
+            // 弹窗
+            SemaphoreVisible_: false,
+            // 0报警  1预警
             type: null,
-            lineValue: '',
-            lineOptions: [{
-                value: '',
-                label: '全部'
-            },
-            {
-                value: '11',
-                label: '11'
-            }],
-            trainValue: '',
-            trainOptions: [{
-                value: '',
-                label: '全部'
-            },
-            {
-                value: '11001002',
-                label: '11001002'
-            },
-            {
-                value: '11003004',
-                label: '11003004'
-            }],
-            subSysValue: '',
-            subSysOptions: [{
-                value: '',
-                label: '全部'
-            },
-            {
-                value: '辅助系统',
-                label: '辅助系统'
-            }],
-            stateValue: '',
+            lineValue: "",
+            lineOptions: [
+                {
+                    value: "",
+                    label: "全部",
+                },
+                {
+                    value: "11",
+                    label: "11",
+                },
+            ],
+            trainValue: "",
+            trainOptions: [
+                {
+                    value: "",
+                    label: "全部",
+                },
+                {
+                    value: "11001002",
+                    label: "11001002",
+                },
+                {
+                    value: "11003004",
+                    label: "11003004",
+                },
+            ],
+            subSysValue: "",
+            subSysOptions: [
+                {
+                    value: "",
+                    label: "全部",
+                },
+                {
+                    value: "辅助系统",
+                    label: "辅助系统",
+                },
+            ],
+            stateValue: "",
 
-            timerangeValue: '',
-            alarmNameValue: '',
-            alarmTypeValue: '',
+            timerangeValue: "",
+            alarmNameValue: "",
+            alarmTypeValue: "",
 
             pageSize: 7,
 
@@ -374,23 +443,29 @@ export default {
             tableData: {},
             selectedRow: [],
             currentRow: {},
-            options: [{
-                value: '11',
-                label: '11'
-            }, {
-                value: '12',
-                label: '12'
-            }, {
-                value: '13',
-                label: '13'
-            }, {
-                value: '14',
-                label: '14'
-            }, {
-                value: '15',
-                label: '15'
-            }],
-            value: '',
+            options: [
+                {
+                    value: "11",
+                    label: "11",
+                },
+                {
+                    value: "12",
+                    label: "12",
+                },
+                {
+                    value: "13",
+                    label: "13",
+                },
+                {
+                    value: "14",
+                    label: "14",
+                },
+                {
+                    value: "15",
+                    label: "15",
+                },
+            ],
+            value: "",
 
             signals: [{
                 code: "i_DC_Out",
@@ -539,19 +614,19 @@ export default {
 
         //获取列车数据
         getTrainsData() {
-            getTrains(this.lineValue, 1, 10000).then(response => {
+            getTrains(this.lineValue, 1, 10000).then((response) => {
                 var data = response.data.data;
-                var ldata = []
+                var ldata = [];
                 ldata.push({
-                    value: '',
-                    label: '全部'
-                })
+                    value: "",
+                    label: "全部",
+                });
                 for (let index = 0; index < data.length; index++) {
                     const element = data[index];
                     ldata.push({
                         value: element.name,
-                        label: element.name
-                    })
+                        label: element.name,
+                    });
                 }
                 this.trainOptions = ldata;
             });
@@ -563,73 +638,85 @@ export default {
             //     var data = response.data;
             //     this.tableData = data
             // });
-            this.query()
+            this.query();
         },
 
         query() {
             var t = this.timerangeValue.split(",");
-            var st = ''
-            var et = ''
+            var st = "";
+            var et = "";
             if (t.length > 0) {
-                st = t[0]
-                et = t[1]
+                st = t[0];
+                et = t[1];
             }
-            getAlarmList(this.lineValue, this.trainValue, this.stateValue, st, et, this.alarmNameValue, this.alarmTypeValue, this.currentPageValue, this.pageSize).then(response => {
+            getAlarmList(
+                this.lineValue,
+                this.trainValue,
+                this.stateValue,
+                st,
+                et,
+                this.alarmNameValue,
+                this.alarmTypeValue,
+                this.currentPageValue,
+                this.pageSize
+            ).then((response) => {
                 var data = response.data;
-                this.tableData = data
+                this.tableData = data;
 
                 if (data.data.length > 0)
                     this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
             });
         },
         reset() {
-            this.lineValue = '全部'
-            this.trainValue = '全部'
-            this.subSysValue = '全部'
-            this.stateValue = '全部'
-            this.timerangeValue = ''
-            this.alarmNameValue = ''
-            this.alarmTypeValue = ''
+            this.lineValue = "全部";
+            this.trainValue = "全部";
+            this.subSysValue = "全部";
+            this.stateValue = "全部";
+            this.timerangeValue = "";
+            this.alarmNameValue = "";
+            this.alarmTypeValue = "";
         },
 
         getSignalsData() {
-            var data = []
+            var data = [];
             for (let i = 0; i < this.signals.length; i++) {
-                data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550))
+                data.push(lineData(this.signals[i], 1, new Date(), 1400, 1550));
             }
 
-            this.signal_option.series = data
+            this.signal_option.series = data;
         },
         getSignalsVal(i) {
-            return String(this.signal_option.series[i].data[0][1])
+            return String(this.signal_option.series[i].data[0][1]);
         },
 
         // 更改每页行数触发
         handleSizeChange(val) {
-            this.pageSize = val
+            this.pageSize = val;
             this.getAlarmListData();
         },
         handleCurrentChange(val) {
-            this.currentPageValue = val
+            this.currentPageValue = val;
             this.getAlarmListData();
         },
 
         // 勾选记录触发
         handleSelectionChange(val) {
-            this.selectedRow = val
+            this.selectedRow = val;
         },
 
         // 选中行时触发
         handleRowChange(val) {
-            if (!val)
-                return
-            this.currentRow = val
+            if (!val) return;
+            this.currentRow = val;
         },
 
         formatTimestamp(timestamp) {
-            return moment.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
+            return moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss");
         },
-
+        // 查看信号量详情
+        semaphore_togg() {
+            this.SemaphoreVisible_ = true;
+        },
         goback() {
             this.$router.back()
         },
@@ -665,7 +752,7 @@ export default {
                 .filter((value, index, self) => self.indexOf(value) === index)
                 .join(',')
 
-            signalVal(1, codes, '2024-10-22 00:00:00.000', '2024-10-22 00:01:00.000', false).then(response => {
+            signalVal(1, codes, '2024-10-23 00:00:00.000', '2024-10-23 00:01:00.000', false).then(response => {
                 var data = [];
 
                 for (let i = 0; i < this.signals.length; i++) {
@@ -727,7 +814,7 @@ export default {
             margin: 0 10px;
             min-height: 10dvh;
             border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem;
             background-color: #182030;
 
@@ -743,7 +830,7 @@ export default {
             margin: 0 10px;
             min-height: 10dvh;
             border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem;
             background-color: #182030;
 
@@ -789,6 +876,21 @@ export default {
             }
         }
     }
+
+    /* 信号量弹出层 */
+    .pop_ups .panel .el-dialog__body {
+        background-color: #181f30;
+        padding: 0px;
+    }
+
+    // 弹出层
+    .pop_ups .right-panel2 {
+        box-sizing: border-box;
+        background-color: #181f30;
+        min-width: 100%;
+        margin: 0;
+        border-radius: 3px;
+    }
 }
 </style>
 
@@ -808,9 +910,8 @@ export default {
 
 .panel .el-select .el-input__inner {
     background-color: #181f30 !important;
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
-
 
 .panel .el-range-editor.el-input__inner {
     height: 2rem;
@@ -821,13 +922,13 @@ export default {
 
 .panel .el-input__inner {
     background-color: #181f30;
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: #ffffffa6;
 }
 
 .panel .el-input.is-disabled .el-input__inner {
     background-color: #181f30;
-    border-color: rgba(255, 255, 255, .15);
+    border-color: rgba(255, 255, 255, 0.15);
     color: #ffffffa6;
 }
 
@@ -846,8 +947,8 @@ export default {
 
 .el-picker-panel {
     color: #ffffffa6;
-    border: 1px solid rgba(255, 255, 255, .15);
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     background-color: #181f30;
     border-radius: 4px;
     line-height: 30px;
@@ -855,7 +956,7 @@ export default {
 }
 
 .el-picker-panel__footer {
-    border-top: 1px solid rgba(255, 255, 255, .15);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     padding: 4px;
     text-align: right;
     background-color: #181f30;
@@ -871,7 +972,7 @@ export default {
 }
 
 .el-time-panel {
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background-color: #181f30;
 }
 
@@ -902,7 +1003,7 @@ export default {
 
 .el-button {
     background: #181f30;
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: #ffffffa6;
 }
 </style>
@@ -971,8 +1072,7 @@ export default {
 }
 
 .el-select-dropdown {
-
-    border: 1px solid rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background-color: #181f30;
 }
 
@@ -997,7 +1097,7 @@ export default {
     display: none;
 }
 
-.panel .el-dialog__body {
+.selector.panel .el-dialog__body {
     height: 70dvh;
     padding: 0;
 }
