@@ -343,7 +343,9 @@ git config --global --unset https.proxy -->
                           index3 === item.indicators.length - 1 ? 'none' : ''
                         "
                       >
-                        <span @click="instructions_togg">查看详情</span>
+                        <span @click="instructions_togg(item3.name, item3.code)"
+                          >查看详情</span
+                        >
                       </td>
                     </tr>
                   </td>
@@ -368,7 +370,7 @@ git config --global --unset https.proxy -->
           <!-- 关键指标曲线 -->
           <div class="curves_title font_size26w">
             <!-- 部件名称 -->
-            <div class="curves_title_le">电机滤网</div>
+            <div class="curves_title_le">{{ detail_title }}</div>
             <!-- 查询时间 -->
             <div class="curves_title_ri">
               <!-- <div class="choices">
@@ -383,6 +385,9 @@ git config --global --unset https.proxy -->
                   range-separator="-"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd HH:mm:sss"
+                  format="yyyy-MM-dd"
+                  @blur="get_echarts_time"
                 >
                 </el-date-picker>
               </div>
@@ -525,6 +530,9 @@ export default {
         ],
         series: [],
       },
+      // 查看详情显示的数据
+      detail_title: null,
+      detail_code:null,
 
       dialogVisible1: false,
       signals: [],
@@ -633,8 +641,14 @@ export default {
       //   }
       // });
     },
+    // 选择时间
+    get_echarts_time(data){
+      let times = data.value;
+      console.log('当前时间',times)
+      this.update_signal(this.detail_code,this.detail_title,times[0],times[1])
+    },
     // 指标曲线图
-    echarts_() {
+    echarts_(data, time, parts) {
       //  根据屏幕宽度调整 文字大小
       var e = document.body.clientWidth;
       if (this.$refs.chartRef) {
@@ -650,7 +664,7 @@ export default {
             },
           },
           legend: {
-            data: ["预警", "故障"],
+            data: [this.detail_title],
             itemGap: 20, //图例间隔
             itemHeight: (e / 1920) * 10, // 图例项的高度，单位可以是像素或百分比（如 '10%'）
             itemWidth: (e / 1920) * 10, // 图例项的宽度，单位同上
@@ -683,7 +697,13 @@ export default {
             },
             type: "category",
             boundaryGap: false,
-            data: ["2023-09-25", "2023-10-03", "2023-10-11", "2023-10-19"],
+            // data: ["2023-09-25", "2023-10-03", "2023-10-11", "2023-10-19"],
+            data: time || [
+              "2023-09-25",
+              "2023-10-03",
+              "2023-10-11",
+              "2023-10-19",
+            ],
             axisLine: {
               lineStyle: {
                 // color: "red",
@@ -719,7 +739,7 @@ export default {
           },
           series: [
             {
-              name: "预警",
+              name: this.detail_title,
               type: "line",
               smooth: true, // 变为曲线
               // stack: 'Total',
@@ -741,14 +761,14 @@ export default {
                 borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
                 borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
               },
-              data: [0, 8, 0, 0],
+              data: data || [0, 8, 0, 0],
               markLine: {
                 data: [
                   {
-                    yAxis: 6, // 阈值
+                    yAxis: parts[1], // 阈值
                     label: {
                       // 自定义阈值线的标签
-                      formatter: "阈值: 6",
+                      formatter: "阈值: " + parts[1],
                       position: "middle",
                     },
                     lineStyle: {
@@ -759,39 +779,40 @@ export default {
                 ],
               },
             },
-            {
-              name: "故障",
-              type: "line",
-              smooth: true, // 变为曲线
-              axisLabel: {
-                fontSize: (e / 1920) * 18, // y轴刻度标签的字体大小
-              },
-              // stack: 'Total',
-              symbolSize: (e / 1920) * 8,
-              // label: {
-              //   show: true, // 开启标签显示
-              //   position: 'top', // 设置标签位置在数据点的上方
-              //   color: '#da8157',
-              //   fontSize: e / 1920 * 18
-              // },
-              lineStyle: {
-                // 设置线的样式
-                // color: '#e48555' // 线的颜色
-                width: (e / 1920) * 3,
-              },
-              itemStyle: {
-                color: "#da8157",
-                borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
-                borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
-              },
-              data: [0, 4, 0, 0],
-            },
+            // {
+            //   name: "故障",
+            //   type: "line",
+            //   smooth: true, // 变为曲线
+            //   axisLabel: {
+            //     fontSize: (e / 1920) * 18, // y轴刻度标签的字体大小
+            //   },
+            //   // stack: 'Total',
+            //   symbolSize: (e / 1920) * 8,
+            //   // label: {
+            //   //   show: true, // 开启标签显示
+            //   //   position: 'top', // 设置标签位置在数据点的上方
+            //   //   color: '#da8157',
+            //   //   fontSize: e / 1920 * 18
+            //   // },
+            //   lineStyle: {
+            //     // 设置线的样式
+            //     // color: '#e48555' // 线的颜色
+            //     width: (e / 1920) * 3,
+            //   },
+            //   itemStyle: {
+            //     color: "#da8157",
+            //     borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
+            //     borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
+            //   },
+            //   data: [0, 4, 0, 0],
+            // },
           ],
         });
       }
     },
     // 查看部件详情
-    instructions_togg() {
+    instructions_togg(Name, code) {
+      // console.log("折线图：", Name, code);
       this.dialogVisible = true;
       if (this.chartRef) {
         this.chartRef.dispose();
@@ -800,10 +821,41 @@ export default {
       let checkChartRef = setInterval(() => {
         if (this.$refs.chartRef) {
           clearInterval(checkChartRef);
-          this.echarts_();
+          let openBracketIndex = Name.indexOf("[");
+          let prefix = Name.substring(0, openBracketIndex);
+          let bracketContent = Name.substring(openBracketIndex);
+          let trimmedStr = bracketContent.slice(1, -1);
+          // 阈值
+          let parts = trimmedStr.split(",");
+          // title
+          this.detail_title = prefix;
+          this.detail_code = code
+          this.update_signal(code, parts);
         }
       }, 30);
     },
+    // 更新弹出框echarts数据
+    update_signal(code,parts,time1,time2) {
+      let tmp = code.charAt(0).toLowerCase() + code.slice(1);
+      //获取echarts数据
+      signalVal(
+        this.trainValue,
+        code,
+        time1 || "2024-10-23 15:18:00.000",
+        time2 || "2024-10-23 15:19:00.000",
+        false
+      ).then((response) => {
+        let data = response.data.data;
+        let array_data = [];
+        let array_time = [];
+        for (let i = 0; i < data.length; i++) {
+          array_data.push(data[i][tmp]);
+          array_time.push(data[i].createTime.split(" ")[0]);
+        }
+        this.echarts_(array_data, array_time, parts);
+      });
+    },
+
     // 获取 车号下拉框
     get_state() {
       getState().then((response) => {
@@ -864,8 +916,8 @@ export default {
       signalVal(
         this.trainValue,
         codes,
-        "2024-10-23 00:00:00.000",
-        "2024-10-23 00:01:00.000",
+        "2024-10-23 15:18:00.000",
+        "2024-10-23 15:19:00.000",
         false
       ).then((response) => {
         var data = [];
@@ -930,7 +982,7 @@ export default {
     },
 
     getIndicatorInfo(trainId, trainNum, e, Name) {
-      console.log("我接收的值", trainId, trainNum);
+      // console.log("我接收的值", trainId, trainNum);
       indicatorInfo(trainNum, trainId).then((response) => {
         var data = response.data.data;
 
@@ -999,6 +1051,7 @@ export default {
                 "]",
               metric_values: indicator.value,
               state: indicator.state,
+              code: indicator.signalCode,
             });
           }
 
@@ -1083,7 +1136,7 @@ export default {
           this.chartRef.dispose();
           this.chartRef = null;
         }
-        this.echarts_();
+        // this.echarts_();
       }
     });
     // this.fun_circuitFig(1400,700,50,300)

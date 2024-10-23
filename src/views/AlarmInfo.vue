@@ -571,9 +571,6 @@ export default {
         // 预警/报警
         this.type = this.$route.query.state
         // console.log(this.type);
-
-
-
         //this.getSignalsData();
         this.getLinesData();
         this.getTrainsData();
