@@ -199,7 +199,7 @@
                 <el-col :span="6">
                     <span>发生时间：{{
                         currentRow.createTime ? currentRow.createTime : "--"
-                    }}</span>
+                        }}</span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -575,11 +575,11 @@ export default {
         //this.getSignalsData();
         this.getLinesData();
         this.getTrainsData();
-        this.getAlarmListData();
-        this.initSignalData();
     },
     mounted() {
 
+        this.getAlarmListData();
+        this.initSignalData();
     },
     computed: {
         sigletonSignal() {
@@ -662,9 +662,10 @@ export default {
             ).then((response) => {
                 var data = response.data;
                 this.tableData = data;
+                console.log(this.$refs.alarmTable);
 
-                if (data.data.length > 0)
-                    this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
+                // if (data.data.length > 0)
+                //     this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
             });
         },
         reset() {
