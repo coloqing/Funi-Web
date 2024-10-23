@@ -232,7 +232,7 @@ git config --global --unset https.proxy -->
                           padding: 0.8vw 0 0.8vw 0.8vw;
                         " :class="index3 === item.indicators.length - 1 ? 'none' : ''
                           ">
-                      <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{ item.state === 0 ? "异常" : "正常"
+                      <span :class="item3.state === 0 ? 'abnormal' : 'normal'">{{ item3.state === 0 ? "异常" : "正常"
                         }}</span>
                     </td>
                   </tr>
@@ -441,153 +441,7 @@ export default {
         { id: "A5", class: "Card", name: "辅助变流器220/3", isActive: false },
         { id: "A6", class: "Card", name: "充电机24/2", isActive: false },
       ],
-      // 指标表格 body
-      indicators_content: [
-        {
-          system: "辅助变流器1",
-          parts: [
-            {
-              parts_: "V相输出电流传感器",
-              performance_metrics: "电压偏置因子[-5,5]",
-              metric_values: "-3.17",
-              state: 1,
-            },
-            {
-              parts_: "V相输出电流传感器",
-              performance_metrics: "传感器零飘值[-5,5]",
-              metric_values: "-3.17",
-              state: 0,
-            },
-            {
-              parts_: "W相输出电流传感器",
-              performance_metrics: "电压波动因子[-5,5]",
-              metric_values: "-3.17",
-              state: 0,
-            },
-          ],
-        },
-        {
-          system: "充电机1",
-          parts: [
-            {
-              parts_: "W相输出电流传感器",
-              performance_metrics: "传感器零飘值[-5,5]",
-              metric_values: "-3.17",
-              state: 1,
-            },
-            {
-              parts_: "W相输出电流传感器",
-              performance_metrics: "电流偏置因子[-5,5]",
-              metric_values: "-3.17",
-              state: 0,
-            },
-            {
-              parts_: "输入电流传感器",
-              performance_metrics: "传感器零飘值[-5,5]",
-              metric_values: "-3.17",
-              state: 1,
-            },
-            {
-              parts_: "输入电流传感器",
-              performance_metrics: "电流偏置因子[-5,5]",
-              metric_values: "-3.17",
-              state: 0,
-            },
-          ],
-        },
-      ],
-      indicators_contents: [
-        {
-          system: "辅助变流器1",
-          parts: [
-            {
-              name: "U相输出电流传感器",
-              indicators: [
-                {
-                  name: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "传感器零飘值[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "电压波动因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-              ],
-            },
-            {
-              name: "w相输出电流传感器",
-              indicators: [
-                {
-                  name: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "传感器零飘值[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "电压波动因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          system: "辅助变流器2",
-          parts: [
-            {
-              name: "U相输出电流传感器",
-              indicators: [
-                {
-                  name: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "传感器零飘值[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "电压波动因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-              ],
-            },
-            {
-              name: "w相输出电流传感器",
-              indicators: [
-                {
-                  name: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "传感器零飘值[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-                {
-                  name: "电压波动因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 1,
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      indicators_contents: [],
       // 指标表格parts长度
       parts_long: null,
       // 弹窗
@@ -664,68 +518,10 @@ export default {
         element.isActive = false;
         if (i === this.indicators_cards.length - 1) {
           this.indicators_cards[e].isActive = true;
-          // 修改tbody的值
-          this.indicators_content = [
-            {
-              system: "辅助变流器" + (e + 1),
-              parts: [
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-              ],
-            },
-            {
-              system: "辅助变流器" + (e + 1),
-              parts: [
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-              ],
-            },
-            {
-              system: "辅助变流器" + (e + 1),
-              parts: [
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-                {
-                  parts_: "网压传感器",
-                  performance_metrics: "电压偏置因子[-5,5]",
-                  metric_values: "-3.17",
-                  state: 0,
-                },
-              ],
-            },
-          ];
         }
       });
+
+
     },
     // 指标曲线图
     echarts_() {
@@ -1045,7 +841,7 @@ export default {
     },
 
     setIndicatorsContent(data) {
-      // this.indicators_content = []
+      this.indicators_contents = []
       for (let index = 0; index < data.length; index++) {
         var device = data[index];
 
@@ -1056,29 +852,31 @@ export default {
 
         for (let i = 0; i < device.components.length; i++) {
           var component = device.components[i];
+          var comContent = {
+            name: component.name,
+            indicators: []
+          }
 
           for (let y = 0; y < component.indicators.length; y++) {
             var indicator = component.indicators[y];
-
-            content.parts.push({
-              parts_: component.name,
-              performance_metrics:
+            comContent.indicators.push({
+              name:
                 indicator.name +
                 "[" +
                 indicator.min +
                 "," +
                 indicator.max +
                 "]",
-              metric_values: "-3.17",
-              state: 1,
-            });
+              metric_values: indicator.value,
+              state: indicator.state,
+            })
           }
+
+          content.parts.push(comContent);
         }
 
-        // this.indicators_content.push(content)
+        this.indicators_contents.push(content)
       }
-      console.log(this.indicators_content);
-
     },
 
     setInitSignals(deviceDM) {
@@ -1123,11 +921,11 @@ export default {
     // 通过车号查询数据
   },
   computed: {
-    total() {
-      this.parts_long = this.indicators_content.reduce((sum, item) => {
-        return sum + item.parts.length;
-      }, 0);
-    },
+    // total() {
+    //   this.parts_long = this.indicators_content.reduce((sum, item) => {
+    //     return sum + item.parts.length;
+    //   }, 0);
+    // },
     sigletonSignal() {
       return this.signals.map(x => x.signalName).filter((value, index, self) => self.indexOf(value) === index)
     }
