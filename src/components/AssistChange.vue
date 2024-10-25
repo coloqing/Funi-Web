@@ -4270,7 +4270,6 @@ export default {
 
   },
   created() {
-    console.log('状态',this.states);
         // 获取辅变系统
         this.get_trainStateCount();
   },

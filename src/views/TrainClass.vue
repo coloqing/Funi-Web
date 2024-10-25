@@ -171,7 +171,11 @@ git config --global --unset https.proxy -->
       <div class="train_center_canvas">
         <!-- <img style="width: 100vw;" src="../../public/img/map.png" alt="" /> -->
         <!-- <canvas ref="circuit_fig" ></canvas> -->
-        <CanvasCircuit :id="vanvas_id" :key="vanvas_id" />
+        <CanvasCircuit
+          style="width: 1800px; height: 800px"
+          :id="vanvas_id"
+          :key="vanvas_id"
+        />
       </div>
 
       <div class="train-signal">
@@ -179,11 +183,25 @@ git config --global --unset https.proxy -->
           <span>信号量</span>
         </div>
         <div class="signal-btn-div">
-          <el-button size="mini" class="signal-btn">全部</el-button>
-          <el-button size="mini" class="signal-btn">辅助变流器</el-button>
+          <el-button
+            size="mini"
+            ref="all_title"
+            :class="signal_btn"
+            @click="select_code(-1)"
+            >全部</el-button
+          >
+          <el-button
+            size="mini"
+            :class="item.togg ? 'signal-btn' : 'signal-btn_no'"
+            @click="select_code(index)"
+            v-for="(item, index) in indicators_contents"
+            :key="index"
+            >{{ item.system }}</el-button
+          >
+          <!-- <el-button size="mini" class="signal-btn">辅助变流器</el-button>
           <el-button size="mini" class="signal-btn">高压电气箱</el-button>
           <el-button size="mini" class="signal-btn">逆变输出</el-button>
-          <el-button size="mini" class="signal-btn">充电机</el-button>
+          <el-button size="mini" class="signal-btn">充电机</el-button> -->
         </div>
         <div class="data-time">
           <i class="el-icon-time"></i>数据时间: {{ data_time }}
@@ -200,8 +218,12 @@ git config --global --unset https.proxy -->
           >
             <SignalCom
               :signal_name="item.name"
+              :signal_id="index"
               :signal_value="item.value"
+              :ref="item.code"
               :color="getColor(index)"
+              @erts-click="echarts_togg([item.name])"
+              @opac-click="opacity_togg"
             >
             </SignalCom>
           </div>
@@ -216,7 +238,9 @@ git config --global --unset https.proxy -->
             :height="'40dvh'"
             :option="signal_option"
             :key="trainValue"
+            ref="childRef"
           ></EChartsCom>
+          <!-- :key="trainValue + ect_name" -->
         </div>
       </div>
     </div>
@@ -364,7 +388,7 @@ git config --global --unset https.proxy -->
           class="indicator_curves"
           :visible.sync="dialogVisible"
           width="80%"
-          :close-on-click-modal="false"
+          :close-on-click-modal="true"
           @close="dialogVisible = false"
         >
           <!-- 关键指标曲线 -->
@@ -379,17 +403,17 @@ git config --global --unset https.proxy -->
                 <div>近12月</div>
               </div> -->
               <div class="block">
-                <el-date-picker
+                <!-- <el-date-picker
                   v-model="value1"
                   type="daterange"
                   range-separator="-"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd HH:mm:sss"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   format="yyyy-MM-dd"
                   @blur="get_echarts_time"
                 >
-                </el-date-picker>
+                </el-date-picker> -->
               </div>
             </div>
           </div>
@@ -445,9 +469,18 @@ export default {
     let max = 40;
     let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
     return {
+      // 信号量的类名 togg（显示隐藏）使用
+      signal_btn: "signal-btn",
+      // ect_name: "",
       vanvas_id: 1,
       data_time: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       signal_option: {
+        legend: {
+          show: false,
+          selectedMode:'multiple',
+          data: [], // 与 series 中的 name 属性值相匹配
+          selected:[]
+        },
         color: colors(),
         tooltip: {
           trigger: "axis",
@@ -532,7 +565,7 @@ export default {
       },
       // 查看详情显示的数据
       detail_title: null,
-      detail_code:null,
+      detail_code: null,
 
       dialogVisible1: false,
       signals: [],
@@ -642,10 +675,15 @@ export default {
       // });
     },
     // 选择时间
-    get_echarts_time(data){
+    get_echarts_time(data) {
       let times = data.value;
-      console.log('当前时间',times)
-      this.update_signal(this.detail_code,this.detail_title,times[0],times[1])
+      console.log("当前时间", times);
+      this.update_signal(
+        this.detail_code,
+        this.detail_title,
+        times[0],
+        times[1]
+      );
     },
     // 指标曲线图
     echarts_(data, time, parts) {
@@ -829,20 +867,20 @@ export default {
           let parts = trimmedStr.split(",");
           // title
           this.detail_title = prefix;
-          this.detail_code = code
+          this.detail_code = code;
           this.update_signal(code, parts);
         }
       }, 30);
     },
     // 更新弹出框echarts数据
-    update_signal(code,parts,time1,time2) {
+    update_signal(code, parts, time1, time2) {
       let tmp = code.charAt(0).toLowerCase() + code.slice(1);
       //获取echarts数据
       signalVal(
         this.trainValue,
         code,
-        time1 || "2024-10-23 15:18:00.000",
-        time2 || "2024-10-23 15:19:00.000",
+        time1 || "2024-10-24 00:00:00.000",
+        time2 || "2024-10-24 00:01:00.000",
         false
       ).then((response) => {
         let data = response.data.data;
@@ -855,7 +893,117 @@ export default {
         this.echarts_(array_data, array_time, parts);
       });
     },
+    // 点击控制信号量样式 和 togg
+    select_code(i) {
+      if (i === -1) {
+        //点击全部
+        if (this.signal_btn === "signal-btn") {
+          this.signal_btn = "signal-btn_no";
+          // 全部隐藏
+          for (let i = 0; i < this.indicators_contents.length; i++) {
+            this.indicators_contents[i].togg = false;
+            
+          }
+          // 隐藏折线
+          // console.log('隐藏的信息量',this.sigletonSignal);
+          this.echarts_sifnalcom(this.sigletonSignal,false);
+          // 隐藏信息量
+        } else {
+          this.signal_btn = "signal-btn";
+          // 全部显示
+          for (let i = 0; i < this.indicators_contents.length; i++) {
+            this.indicators_contents[i].togg = true;
+          }
+          // console.log('显示的信息量',this.sigletonSignal);
 
+          // 显示折线
+          this.echarts_sifnalcom(this.sigletonSignal,true);
+          
+          // 显示信息量
+          
+        }
+      } else {
+        // 点击其它项
+        this.indicators_contents[i].togg = !this.indicators_contents[i].togg;
+        // 获取要调整的数据的 code
+        let array_codes_tmp = [];
+        let array_codes = [];
+        for (let i_ = 0; i_ < this.indicators_contents[i].parts.length; i_++) {
+          for (
+            let j = 0;
+            j < this.indicators_contents[i].parts[i_].indicators.length;
+            j++
+          ) {
+            let tmp_name = this.indicators_contents[i].parts[i_].indicators;
+            array_codes_tmp.push(tmp_name[j].code);
+          }
+        }
+        array_codes = array_codes_tmp.filter(
+          (item, index) => array_codes_tmp.indexOf(item) === index
+        );
+        // console.log("调整的数据的code", array_codes);
+        // 使用 filter 和 some 方法找出相同的项
+        const matchingSignals = this.signals
+          .filter((signal) => array_codes.some((code) => code === signal.code))
+          .map((signal) => signal.name);
+        // console.log("最终传递的昵称", matchingSignals);
+
+        this.echarts_togg(matchingSignals,this.indicators_contents[i].togg);
+        this.sifnalcom_togg(array_codes,this.indicators_contents[i].togg);
+        // 循环遍历 判断全部 是否高亮
+        for (let i = 0; i < this.indicators_contents.length; i++) {
+          if (!this.indicators_contents[i].togg) {
+            this.signal_btn = "signal-btn_no";
+            break;
+          } else {
+            if (i === this.indicators_contents.length - 1) {
+              this.signal_btn = "signal-btn";
+            }
+          }
+        }
+      }
+    },
+    // 显示隐藏echarts折线
+    echarts_togg(Name,bol) {
+      // console.log("被点击的对象");
+      if (this.$refs.childRef && this.$refs.childRef.ets_togg) {
+        // console.log(this.$refs.childRef);
+        // this.ect_name = Name;
+        // 控制子组件EChartsCom togg折线
+        this.$refs.childRef.ets_togg(Name,bol);
+      } else {
+        console.error("Child component method not available");
+      }
+    },
+    // 显示隐藏信号量
+    sifnalcom_togg(codes,bol) {
+      for (let i = 0; i < codes.length; i++) {
+        if (this.$refs[codes[i]][0] && this.$refs[codes[i]][0].togg_names) {
+          // this.$refs[codes[i]][0].togg_erts(codes[i]);
+          this.$refs[codes[i]][0].togg_names(bol);
+        } else {
+          console.error("Child component method not available");
+        }
+      }
+    },
+    // 明确显示/隐藏
+    echarts_sifnalcom(Name,bol){
+      // echarts
+      if (this.$refs.childRef && this.$refs.childRef.show) {
+        // console.log(this.$refs.childRef);
+        this.$refs.childRef.show(Name,bol);
+      } else {
+        console.error("Child component method not available");
+      }
+      // 信号量
+      for (let i = 0; i < this.signals.length; i++) {
+        if (this.$refs[this.signals[i].code][0] && this.$refs[this.signals[i].code][0].togg_names) {
+          this.$refs[this.signals[i].code][0].all_togg(bol);
+        } else {
+          console.error("Child component method not available");
+        }
+      }
+    },
     // 获取 车号下拉框
     get_state() {
       getState().then((response) => {
@@ -867,6 +1015,13 @@ export default {
         }
       });
     },
+    // 鼠标移入/移出 控制opacity
+    opacity_togg(Name,bol){
+      this.$refs.childRef._togg(Name,bol)
+    },
+
+
+
 
     // 更改车号
     handleChange(value) {
@@ -916,8 +1071,8 @@ export default {
       signalVal(
         this.trainValue,
         codes,
-        "2024-10-23 15:18:00.000",
-        "2024-10-23 15:19:00.000",
+        "2024-10-24 00:18:00.000",
+        "2024-10-24 00:19:00.000",
         false
       ).then((response) => {
         var data = [];
@@ -926,13 +1081,25 @@ export default {
           var axis = 0;
           if (signal.name.includes("电压")) axis = 1;
           else if (signal.name.includes("电流")) axis = 0;
+          this.signal_option.legend.data.push(signal.name);
           var temp = {
             name: signal.name,
+            // type: 'legendUnselect',
+            // type: 'legendSelect',
             type: "line",
             showSymbol: true,
             smooth: false,
             yAxisIndex: axis,
             sample: "auto",
+            lineStyle: {  
+                color: colors()[i],  
+                opacity: 1  
+            },
+            itemStyle: {  
+              // normal: {  
+                opacity: 1
+              // }  
+            },
             data: response.data.data.map((x) => [
               x.createTime,
               x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
@@ -988,11 +1155,13 @@ export default {
 
         this.deviceDM = data.deviceDM;
 
-        this.setIndicatorsCards(data.devices);
-
-        this.setIndicatorsContent(data.deviceDM, e, Name);
-
-        this.setInitSignals(data.deviceDM);
+        if (Name) {
+          this.setIndicatorsContent(data.deviceDM, e, Name);
+        } else {
+          this.setIndicatorsCards(data.devices);
+          this.setIndicatorsContent(data.deviceDM, e, Name);
+          this.setInitSignals(data.deviceDM);
+        }
       });
     },
 
@@ -1030,6 +1199,8 @@ export default {
         var content = {
           system: device.name,
           parts: [],
+          // 增加togg 控制显示隐藏
+          togg: true,
         };
 
         for (let i = 0; i < device.components.length; i++) {
@@ -1060,7 +1231,7 @@ export default {
         this.indicators_contents.push(content);
       }
       // 选择部分显示时
-      if (e) {
+      if (e !== undefined) {
         this.indicators_cards.forEach((element, i) => {
           element.isActive = false;
           if (i === this.indicators_cards.length - 1) {
@@ -1330,6 +1501,11 @@ export default {
           color: #177ddc;
           background-color: #181f30;
           border-color: #177ddc;
+        }
+        .signal-btn_no {
+          color: #909bb1;
+          background-color: #181f30;
+          border-color: #525a6a;
         }
       }
 
