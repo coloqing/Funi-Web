@@ -516,7 +516,7 @@ import { getLineTrains, alarmList, colors, lineData } from "@/api/api.js";
 import SignalSelector from "@/components/SignalSelector.vue";
 import { getLines, getTrains, getAlarmList } from "@/api/alarmInfo";
 import { indicatorInfo, signalVal } from "@/api/trainClass";
-
+import { bef_after } from "@/api/api.js";
 export default {
   components: {
     SignalCom,
@@ -724,7 +724,6 @@ export default {
   },
   mounted() {
     this.getAlarmListData();
-    this.initSignalData();
   },
   computed: {
     sigletonSignal() {
@@ -757,7 +756,7 @@ export default {
     // 更改线路时触发
     lineValueChange() {
       this.getTrainsData();
-      this.trainValue = null
+      this.trainValue = null;
     },
 
     //获取列车数据
@@ -779,7 +778,6 @@ export default {
         this.trainOptions = ldata;
       });
     },
-
     //获取预警列表数据
     getAlarmListData() {
       // getAlarmList(null, null, null, null, null, null, null, this.currentPageValue, this.pageSize).then(response => {
@@ -792,7 +790,6 @@ export default {
     // 调整查询的时间
     get_semaphore_time(time) {
       if (this.currentRow) {
-        // 给定的调整时间
         const adjustedTimeString = this.currentRow.createTime;
         const adjustedTime = new Date(adjustedTimeString);
         // 计算前一分钟的时间
@@ -812,20 +809,21 @@ export default {
             date.getSeconds()
           )}`;
         };
-        this.initSignalData(formatDate(oneMinuteBefore), formatDate(oneMinuteAfter));
-        // console.log("前一分钟的时间:", formatDate(oneMinuteBefore));
-        // console.log("后一分钟的时间:", formatDate(oneMinuteAfter));
+        this.initSignalData(
+          formatDate(oneMinuteBefore),
+          formatDate(oneMinuteAfter)
+        );
       }
     },
 
     query() {
-        var t = this.timerangeValue.split(",");
-        var st = "";
-        var et = "";
-        if (t.length > 0) {
-          st = t[0];
-          et = t[1];
-        }
+      var t = this.timerangeValue.split(",");
+      var st = "";
+      var et = "";
+      if (t.length > 0) {
+        st = t[0];
+        et = t[1];
+      }
       getAlarmList(
         this.lineValue,
         this.trainValue,
@@ -843,6 +841,11 @@ export default {
 
         if (data.data.length > 0)
           this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
+
+        // 默认查询第一条完成后 开始获取信号量
+        // 获取信号量数据
+        let result = bef_after(this.currentRow.createTime, 5, 5);
+        this.initSignalData(result.beforeTime, result.afterTime);
       });
     },
     reset() {
@@ -886,6 +889,8 @@ export default {
     handleRowChange(val) {
       if (!val) return;
       this.currentRow = val;
+      let result = bef_after(this.currentRow.createTime, 5, 5);
+      this.initSignalData(result.beforeTime, result.afterTime);
     },
 
     formatTimestamp(timestamp) {
@@ -925,17 +930,17 @@ export default {
     getColor(i) {
       return colors(i);
     },
-    initSignalData(startTime,endTime) {
+    initSignalData(startTime, endTime) {
       var codes = this.signals
         .map((obj) => obj.code)
         .filter((value, index, self) => self.indexOf(value) === index)
         .join(",");
 
       signalVal(
-        11001002,
+        this.currentRow.trainNumber,
         codes,
-        startTime||"2024-10-24 11:50:00.000",
-        endTime||"2024-10-24 11:55:00.000",
+        startTime || "2024-10-24 11:50:00.000",
+        endTime || "2024-10-24 11:55:00.000",
         false
       ).then((response) => {
         var data = [];

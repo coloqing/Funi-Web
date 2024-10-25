@@ -509,9 +509,7 @@ export default {
   },
   // 挂载前
   beforeMount() {
-    getState().then((response) => {
-      this.state = response.data.data;
-    });
+    this.get_state()
   },
   // 挂载后
   mounted() {
@@ -539,6 +537,14 @@ export default {
     });
   },
   methods: {
+    // 获取列车列表 数据
+    get_state(){
+      getState().then((response) => {
+        this.state = response.data.data;
+    });
+    },
+
+
     stateText(state) {
       const statusMap = {
         0: "离线",

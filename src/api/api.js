@@ -2735,3 +2735,44 @@ export function trainState() {
       // 总是会执行
     });
 }
+
+// 获取当前时间 格式 xx-xx-xx xx-xx-xx
+export function getTime() {
+  const now = new Date();
+  const formattedNow = now.toISOString().replace("T", " ").replace(/\..+/, "");
+  return formattedNow;
+}
+// 获取当前时间上一分钟 格式 xx-xx-xx xx-xx-xx
+export function getTime_() {
+  let now = new Date();
+  // console.log("当前时间:", now.toISOString().slice(0, 19).replace("T", " "));
+  now.setMinutes(now.getMinutes() - 1);
+  // 当前时间上一分钟
+  return now.toISOString().slice(0, 19).replace("T", " ");
+}
+// 获取传递时间的前后 x x 分钟
+export function bef_after(timeString, minutesBefore, minutesAfter) {
+  const adjustedTime = new Date(timeString.replace(/-/g, '/')); // 替换-为/以兼容Date解析  
+  // 定义时间间隔（分钟）  
+  const timeBe = minutesBefore;  
+  const timeAf = minutesAfter;  
+  // 计算前一分钟的时间  
+  const oneMinuteBefore = new Date(  
+    adjustedTime.getTime() - timeBe * 60 * 1000  
+  );  
+  // 计算后一分钟的时间  
+  const oneMinuteAfter = new Date(  
+    adjustedTime.getTime() + timeAf * 60 * 1000  
+  );  
+  // 自定义格式化函数  
+  const formatDate = (date) => {  
+    const pad = (num) => (num < 10 ? "0" : "") + num;  
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;  
+  };  
+    return {  
+        beforeTime: formatDate(oneMinuteBefore),  
+        afterTime: formatDate(oneMinuteAfter)  
+    };  
+}  
+  
+

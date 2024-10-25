@@ -1,5 +1,6 @@
 <template>
   <div class="train">
+    <!-- 顶部线路下拉框 -->
     <div class="train-select">
       <div class="svg">
         <div>
@@ -117,9 +118,6 @@
         <LifetimeCom :train_value="trainValue" :key="trainValue + 2" />
       </div>
     </div>
-    <!-- git config --global --unset http.proxy
-git config --global --unset https.proxy -->
-
     <!-- 列车状态实时监视 33.6-->
     <div class="train_center">
       <!-- 车厢选择 -->
@@ -173,8 +171,8 @@ git config --global --unset https.proxy -->
         <!-- <canvas ref="circuit_fig" ></canvas> -->
         <CanvasCircuit
           style="width: 1800px; height: 800px"
-          :id="vanvas_id"
-          :key="vanvas_id"
+          :trainValue="trainValue"
+          :key="trainValue"
         />
       </div>
 
@@ -442,7 +440,7 @@ import EChartsCom from "@/components/EChartsCom.vue";
 import LifetimeCom from "@/components/LifetimeCom.vue";
 import CanvasCircuit from "@/components/CanvasCircuit.vue";
 import SignalSelector from "@/components/SignalSelector.vue";
-import { colors, lineData } from "@/api/api.js";
+import { colors, lineData, getTime,getTime_ } from "@/api/api.js";
 import { getState } from "@/api/train";
 import { indicatorInfo, signalVal } from "@/api/trainClass";
 import { getSignals } from "@/api/signalSelector";
@@ -469,6 +467,7 @@ export default {
     let max = 40;
     let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
     return {
+      intervalId: null, // 用于存储定时器的ID
       // 信号量的类名 togg（显示隐藏）使用
       signal_btn: "signal-btn",
       // ect_name: "",
@@ -477,9 +476,9 @@ export default {
       signal_option: {
         legend: {
           show: false,
-          selectedMode:'multiple',
+          selectedMode: "multiple",
           data: [], // 与 series 中的 name 属性值相匹配
-          selected:[]
+          selected: [],
         },
         color: colors(),
         tooltip: {
@@ -817,33 +816,6 @@ export default {
                 ],
               },
             },
-            // {
-            //   name: "故障",
-            //   type: "line",
-            //   smooth: true, // 变为曲线
-            //   axisLabel: {
-            //     fontSize: (e / 1920) * 18, // y轴刻度标签的字体大小
-            //   },
-            //   // stack: 'Total',
-            //   symbolSize: (e / 1920) * 8,
-            //   // label: {
-            //   //   show: true, // 开启标签显示
-            //   //   position: 'top', // 设置标签位置在数据点的上方
-            //   //   color: '#da8157',
-            //   //   fontSize: e / 1920 * 18
-            //   // },
-            //   lineStyle: {
-            //     // 设置线的样式
-            //     // color: '#e48555' // 线的颜色
-            //     width: (e / 1920) * 3,
-            //   },
-            //   itemStyle: {
-            //     color: "#da8157",
-            //     borderWidth: (e / 1920) * 5, // 正常状态下数据点的边框宽度
-            //     borderHeight: (e / 1920) * 5, // 正常状态下数据点的边框宽度
-            //   },
-            //   data: [0, 4, 0, 0],
-            // },
           ],
         });
       }
@@ -902,11 +874,10 @@ export default {
           // 全部隐藏
           for (let i = 0; i < this.indicators_contents.length; i++) {
             this.indicators_contents[i].togg = false;
-            
           }
           // 隐藏折线
           // console.log('隐藏的信息量',this.sigletonSignal);
-          this.echarts_sifnalcom(this.sigletonSignal,false);
+          this.echarts_sifnalcom(this.sigletonSignal, false);
           // 隐藏信息量
         } else {
           this.signal_btn = "signal-btn";
@@ -917,10 +888,9 @@ export default {
           // console.log('显示的信息量',this.sigletonSignal);
 
           // 显示折线
-          this.echarts_sifnalcom(this.sigletonSignal,true);
-          
+          this.echarts_sifnalcom(this.sigletonSignal, true);
+
           // 显示信息量
-          
         }
       } else {
         // 点击其它项
@@ -948,8 +918,8 @@ export default {
           .map((signal) => signal.name);
         // console.log("最终传递的昵称", matchingSignals);
 
-        this.echarts_togg(matchingSignals,this.indicators_contents[i].togg);
-        this.sifnalcom_togg(array_codes,this.indicators_contents[i].togg);
+        this.echarts_togg(matchingSignals, this.indicators_contents[i].togg);
+        this.sifnalcom_togg(array_codes, this.indicators_contents[i].togg);
         // 循环遍历 判断全部 是否高亮
         for (let i = 0; i < this.indicators_contents.length; i++) {
           if (!this.indicators_contents[i].togg) {
@@ -964,19 +934,19 @@ export default {
       }
     },
     // 显示隐藏echarts折线
-    echarts_togg(Name,bol) {
+    echarts_togg(Name, bol) {
       // console.log("被点击的对象");
       if (this.$refs.childRef && this.$refs.childRef.ets_togg) {
         // console.log(this.$refs.childRef);
         // this.ect_name = Name;
         // 控制子组件EChartsCom togg折线
-        this.$refs.childRef.ets_togg(Name,bol);
+        this.$refs.childRef.ets_togg(Name, bol);
       } else {
         console.error("Child component method not available");
       }
     },
     // 显示隐藏信号量
-    sifnalcom_togg(codes,bol) {
+    sifnalcom_togg(codes, bol) {
       for (let i = 0; i < codes.length; i++) {
         if (this.$refs[codes[i]][0] && this.$refs[codes[i]][0].togg_names) {
           // this.$refs[codes[i]][0].togg_erts(codes[i]);
@@ -987,17 +957,20 @@ export default {
       }
     },
     // 明确显示/隐藏
-    echarts_sifnalcom(Name,bol){
+    echarts_sifnalcom(Name, bol) {
       // echarts
       if (this.$refs.childRef && this.$refs.childRef.show) {
         // console.log(this.$refs.childRef);
-        this.$refs.childRef.ets_togg(Name,bol);
+        this.$refs.childRef.ets_togg(Name, bol);
       } else {
         console.error("Child component method not available");
       }
       // 信号量
       for (let i = 0; i < this.signals.length; i++) {
-        if (this.$refs[this.signals[i].code][0] && this.$refs[this.signals[i].code][0].togg_names) {
+        if (
+          this.$refs[this.signals[i].code][0] &&
+          this.$refs[this.signals[i].code][0].togg_names
+        ) {
           this.$refs[this.signals[i].code][0].all_togg(bol);
         } else {
           console.error("Child component method not available");
@@ -1016,8 +989,8 @@ export default {
       });
     },
     // 鼠标移入/移出 控制opacity
-    opacity_togg(Name,bol){
-      this.$refs.childRef._togg(Name,bol)
+    opacity_togg(Name, bol) {
+      this.$refs.childRef._togg(Name, bol);
     },
     // 更改车号
     handleChange(value) {
@@ -1067,8 +1040,8 @@ export default {
       signalVal(
         this.trainValue,
         codes,
-        "2024-10-24 00:18:00.000",
-        "2024-10-24 00:19:00.000",
+        getTime_(),
+        getTime(),
         false
       ).then((response) => {
         var data = [];
@@ -1077,7 +1050,7 @@ export default {
           var axis = 0;
           if (signal.name.includes("电压")) axis = 1;
           else if (signal.name.includes("电流")) axis = 0;
-            this.signal_option.legend.data.push(signal.name);
+          this.signal_option.legend.data.push(signal.name);
           var temp = {
             name: signal.name,
             // type: 'legendUnselect',
@@ -1087,14 +1060,14 @@ export default {
             smooth: false,
             yAxisIndex: axis,
             sample: "auto",
-            lineStyle: {  
-                color: colors()[i],  
-                opacity: 1  
+            lineStyle: {
+              color: colors()[i],
+              opacity: 1,
             },
-            itemStyle: {  
-              // normal: {  
-                opacity: 1
-              // }  
+            itemStyle: {
+              // normal: {
+              opacity: 1,
+              // }
             },
             data: response.data.data.map((x) => [
               x.createTime,
@@ -1104,7 +1077,7 @@ export default {
 
           data.push(temp);
         }
-        console.log("echarts", data);
+        // console.log("echarts", data);
         this.signal_option.series = data;
       });
     },
@@ -1148,9 +1121,7 @@ export default {
       // console.log("我接收的值", trainId, trainNum);
       indicatorInfo(trainNum, trainId).then((response) => {
         var data = response.data.data;
-
         this.deviceDM = data.deviceDM;
-
         if (Name) {
           this.setIndicatorsContent(data.deviceDM, e, Name);
         } else {
@@ -1264,10 +1235,27 @@ export default {
             index === self.findIndex((u) => u.name === signal.name)
         );
 
-        console.log("signals", this.signals);
+        // console.log("signals", this.signals);
 
         this.initSignalData();
       });
+    },
+    // 根据页面可见性启动或停止定时器
+    handleVisibilityChange() {
+      if (!document.hidden && this.intervalId === null) {
+        // 页面变为可见且定时器未启动，启动定时器
+        this.startInterval();
+      } else if (document.hidden && this.intervalId !== null) {
+        // 页面变为不可见且定时器已启动，停止定时器
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
+    },
+    // 设置定时器，每5秒调用一次getIndicatorInfo方法
+    startInterval() {
+      this.intervalId = setInterval(() => {
+        this.getIndicatorInfo(this.trainValue);
+      }, 5000);
     },
   },
   created() {
@@ -1277,7 +1265,7 @@ export default {
     // 通过路由获取对应车号
     this.trainValue = this.$route.query.trainNum;
     // 通过车号查询数据
-    console.log("先获取车号");
+    // console.log("先获取车号");
   },
   computed: {
     // total() {
@@ -1293,10 +1281,20 @@ export default {
   },
   beforeMount() {
     //this.getSignalsData()
-    this.getIndicatorInfo(this.trainValue);
   },
   // 挂载后
   mounted() {
+    // 组件挂载后立即调用一次getIndicatorInfo
+    this.getIndicatorInfo(this.trainValue);
+
+    // 设置页面可见性变化时的监听器
+    window.addEventListener("visibilitychange", this.handleVisibilityChange);
+    // 如果页面初始时是可见的，则启动定时器
+    if (!document.hidden) {
+      this.startInterval();
+    }
+    // ----
+
     window.addEventListener("resize", () => {
       if (this.dialogVisible) {
         if (this.chartRef) {
@@ -1307,6 +1305,14 @@ export default {
       }
     });
     // this.fun_circuitFig(1400,700,50,300)
+  },
+  beforeDestroy() {
+    // 清除定时器
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+    }
+    // 移除页面可见性变化时的监听器
+    window.removeEventListener("visibilitychange", this.handleVisibilityChange);
   },
 };
 </script>

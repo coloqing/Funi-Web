@@ -27,15 +27,15 @@ export function signalVal(trainNum, code, startTime, endTime, isTop1) {
 }
 
 // 获取电路图数据
-export function SignalVal() {
+export function SignalVal(trainValue) {
   return request({
     url: "/Train/SignalVal",
     method: "get",
     params: {
-      trainNum: 11001002,
+      trainNum: trainValue,
       isTop1: true,
-      // startTime: "2024-10-23 11:50:00",
-      // endTime: "2024-10-23 23:01:00",
+      // startTime: "2024-10-25 14:00:00",
+      // endTime: "2024-10-25 14:01:00",
     },
   });
 }

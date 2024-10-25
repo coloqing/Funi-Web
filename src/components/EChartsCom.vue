@@ -111,10 +111,10 @@ export default {
     option: {
       handler(newVal, oldVal) {
         this.option = newVal;
-        this.bar_echarts.clear();
+        // this.bar_echarts.clear();
         this.bar_echarts.setOption(newVal);
+        // console.log('重新渲染');
         this.show(this.select_no, false)
-      
       },
       deep: true,
     },

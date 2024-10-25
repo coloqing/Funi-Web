@@ -4132,9 +4132,17 @@
               y="395"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants" >
-                <span _ngcontent-eda-c392="" class="crrc-fc-green">{{auxiliary_variants.normal}}</span
-                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              <div
+                _ngcontent-eda-c392=""
+                class="fault-trainnos"
+                v-if="auxiliary_variants"
+              >
+                <span _ngcontent-eda-c392="" class="crrc-fc-green">{{
+                  auxiliary_variants.normal
+                }}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{
+                  "/" + auxiliary_variants.online
+                }}</span>
               </div>
               <div _ngcontent-eda-c392="" class="fault-trainnos" v-else>
                 <span _ngcontent-eda-c392="" class="crrc-fc-green">3</span
@@ -4147,9 +4155,16 @@
               y="485"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants">
-                <span _ngcontent-eda-c392="" class="crrc-fc-red"> {{auxiliary_variants.alarm}}</span
-                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              <div
+                _ngcontent-eda-c392=""
+                class="fault-trainnos"
+                v-if="auxiliary_variants"
+              >
+                <span _ngcontent-eda-c392="" class="crrc-fc-red">
+                  {{ auxiliary_variants.alarm }}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{
+                  "/" + auxiliary_variants.online
+                }}</span>
               </div>
               <div _ngcontent-eda-c392="" class="fault-trainnos" v-else>
                 <span _ngcontent-eda-c392="" class="crrc-fc-red"> 0</span
@@ -4162,11 +4177,19 @@
               y="400"
               style="overflow: visible"
             >
-              <div _ngcontent-eda-c392="" class="fault-trainnos" v-if="auxiliary_variants">
-                <span _ngcontent-eda-c392="" class="crrc-fc-orange">{{auxiliary_variants.warning}}</span
-                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{'/' + auxiliary_variants.online}}</span>
+              <div
+                _ngcontent-eda-c392=""
+                class="fault-trainnos"
+                v-if="auxiliary_variants"
+              >
+                <span _ngcontent-eda-c392="" class="crrc-fc-orange">{{
+                  auxiliary_variants.warning
+                }}</span
+                ><span _ngcontent-eda-c392="" class="crrc-fc-heading">{{
+                  "/" + auxiliary_variants.online
+                }}</span>
               </div>
-              <div _ngcontent-eda-c392="" class="fault-trainnos" v-else >
+              <div _ngcontent-eda-c392="" class="fault-trainnos" v-else>
                 <span _ngcontent-eda-c392="" class="crrc-fc-orange">0</span
                 ><span _ngcontent-eda-c392="" class="crrc-fc-heading">/3</span>
               </div>
@@ -4183,7 +4206,7 @@
                 style="font-size: 72px"
                 v-if="auxiliary_variants"
               >
-                {{auxiliary_variants.online + '/' +auxiliary_variants.total}}
+                {{ auxiliary_variants.online + "/" + auxiliary_variants.total }}
               </div>
               <div
                 _ngcontent-eda-c392=""
@@ -4244,19 +4267,18 @@
   </div>
 </template>
 <script>
-import {
-  getTrainStateCount,
-} from "@/api/homeView";
+import { getTrainStateCount } from "@/api/homeView";
 export default {
-  name: 'assistChange',
+  name: "assistChange",
   // props: {
   //   states: Object
   // },
 
   data() {
     return {
-      auxiliary_variants:null
-    }
+      auxiliary_variants: null,
+      intervalId: null,
+    };
   },
   methods: {
     // 获取辅变系统
@@ -4267,582 +4289,593 @@ export default {
         console.log("获取辅变系统数据", response);
       });
     },
-
+    startInterval() {  
+      // 开始定时器，每5秒执行一次get_trainStateCount方法  
+      this.intervalId = setInterval(this.get_trainStateCount, 5000);  
+    },  
+    stopInterval() {  
+      // 停止定时器  
+      if (this.intervalId !== null) {  
+        clearInterval(this.intervalId);  
+        this.intervalId = null;  
+      }  
+    },
   },
   created() {
-        // 获取辅变系统
-        this.get_trainStateCount();
+    // 获取辅变系统
+    this.get_trainStateCount();
+    // 组件创建时开始定时器
+    this.startInterval();
   },
-  computed: {
-
-
+  beforeDestroy() {
+    // 组件销毁前停止定时器
+    this.stopInterval();
   },
+  computed: {},
   // 挂载后
-  mounted() {
-
-  }
-}
+  mounted() {},
+};
 </script>
 <!-- ================== -->
 <!-- 电池动画 -->
 <style>
-	.cardOfHeight-tips[_ngcontent-eda-c392] {
-		position: absolute;
-		top: 14px;
-		right: 20px
-	}
-
-	[_nghost-eda-c392] .ant-card {
-		background: transparent
-	}
-
-	[_nghost-eda-c392] .ant-card-body {
-		padding: 0 !important
-	}
-
-	.fault-trainnos[_ngcontent-eda-c392] {
-		font-weight: 400;
-		font-size: 36px;
-		font-family: BebasNeue;
-		fill: #fff;
-		fill-opacity: .85
-	}
-
-	.crrc-fc-blue[_ngcontent-eda-c392] {
-		color: #5089f7 !important
-	}
-
-	.crrc-fill-green[_ngcontent-eda-c392] {
-		fill: #58b04a
-	}
-
-	.crrc-fill-red[_ngcontent-eda-c392] {
-		fill: #d95454
-	}
-
-	.crrc-fill-orange[_ngcontent-eda-c392] {
-		fill: #d58652
-	}
-
-	#\8def\5f84-9[_ngcontent-eda-c392],
-	#\7535\6c60\53d1\5149[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_opacity 5s linear infinite alternate
-	}
-
-	#\7535\6c60\53d1\5149 1[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_opacity1 5s linear infinite alternate
-	}
-
-	@keyframes _ngcontent-eda-c392_opacity {
-		0% {
-			opacity: .85
-		}
-
-		33.3% {
-			opacity: .45
-		}
-
-		to {
-			opacity: .85
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_opacity1 {
-		0% {
-			opacity: .85
-		}
-
-		33.3% {
-			opacity: .65
-		}
-
-		to {
-			opacity: 1
-		}
-	}
-
-	#\692d\5706\5f62\5907\4efd-12[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY12 4s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-13[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY13 4.5s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-14[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY14 6s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-15[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY15 6.5s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-16[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY16 5.5s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-17[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY17 7s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-18[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY18 8s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-19[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY19 9s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-20[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY20 4s ease-out infinite
-	}
-
-	#\692d\5706\5f62\5907\4efd-21[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveY21 3.5s ease-out infinite
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY12 {
-		0% {
-			transform: translateY(6);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-50px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY13 {
-		0% {
-			transform: translateY(0);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-50px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY14 {
-		0% {
-			transform: translateY(20px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-40px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY15 {
-		0% {
-			transform: translateY(30px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-20px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY16 {
-		0% {
-			transform: translateY(48px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-10px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY17 {
-		0% {
-			transform: translateY(30px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-40px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY18 {
-		0% {
-			transform: translateY(46px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-20px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY19 {
-		0% {
-			transform: translateY(71px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-30px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY20 {
-		0% {
-			transform: translateY(30px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-40px);
-			opacity: 0
-		}
-	}
-
-	@keyframes _ngcontent-eda-c392_moveY21 {
-		0% {
-			transform: translateY(62px);
-			opacity: 0
-		}
-
-		6% {
-			opacity: .5
-		}
-
-		50% {
-			opacity: .3
-		}
-
-		to {
-			transform: translateY(-6px);
-			opacity: 0
-		}
-	}
+.cardOfHeight-tips[_ngcontent-eda-c392] {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+}
+
+[_nghost-eda-c392] .ant-card {
+  background: transparent;
+}
+
+[_nghost-eda-c392] .ant-card-body {
+  padding: 0 !important;
+}
+
+.fault-trainnos[_ngcontent-eda-c392] {
+  font-weight: 400;
+  font-size: 36px;
+  font-family: BebasNeue;
+  fill: #fff;
+  fill-opacity: 0.85;
+}
+
+.crrc-fc-blue[_ngcontent-eda-c392] {
+  color: #5089f7 !important;
+}
+
+.crrc-fill-green[_ngcontent-eda-c392] {
+  fill: #58b04a;
+}
+
+.crrc-fill-red[_ngcontent-eda-c392] {
+  fill: #d95454;
+}
+
+.crrc-fill-orange[_ngcontent-eda-c392] {
+  fill: #d58652;
+}
+
+#\8def\5f84-9[_ngcontent-eda-c392],
+#\7535\6c60\53d1\5149[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_opacity 5s linear infinite alternate;
+}
+
+#\7535\6c60\53d1\5149 1[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_opacity1 5s linear infinite alternate;
+}
+
+@keyframes _ngcontent-eda-c392_opacity {
+  0% {
+    opacity: 0.85;
+  }
+
+  33.3% {
+    opacity: 0.45;
+  }
+
+  to {
+    opacity: 0.85;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_opacity1 {
+  0% {
+    opacity: 0.85;
+  }
+
+  33.3% {
+    opacity: 0.65;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+#\692d\5706\5f62\5907\4efd-12[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY12 4s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-13[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY13 4.5s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-14[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY14 6s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-15[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY15 6.5s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-16[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY16 5.5s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-17[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY17 7s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-18[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY18 8s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-19[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY19 9s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-20[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY20 4s ease-out infinite;
+}
+
+#\692d\5706\5f62\5907\4efd-21[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveY21 3.5s ease-out infinite;
+}
+
+@keyframes _ngcontent-eda-c392_moveY12 {
+  0% {
+    transform: translateY(6);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY13 {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY14 {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY15 {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY16 {
+  0% {
+    transform: translateY(48px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY17 {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY18 {
+  0% {
+    transform: translateY(46px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY19 {
+  0% {
+    transform: translateY(71px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY20 {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+@keyframes _ngcontent-eda-c392_moveY21 {
+  0% {
+    transform: translateY(62px);
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  to {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+}
 </style>
 <!-- 云动画 -->
 <style>
-	.title-svg[_ngcontent-eda-c392] {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 166px;
-		height: 38px;
-    /*  */
-		/* background: center url(/assets/images/health-manage/title-bg.png) no-repeat  */
-	}
+.title-svg[_ngcontent-eda-c392] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 166px;
+  height: 38px;
+  /*  */
+  /* background: center url(/assets/images/health-manage/title-bg.png) no-repeat  */
+}
 
-	.mb-xxs[_ngcontent-eda-c392] {
-		margin-bottom: 2px
-	}
+.mb-xxs[_ngcontent-eda-c392] {
+  margin-bottom: 2px;
+}
 
-	#\4e91[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move 10s ease-in infinite alternate
-	}
+#\4e91[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move 10s ease-in infinite alternate;
+}
 
-	#\4e91\5907\4efd[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move1 10s ease-in infinite alternate
-	}
+#\4e91\5907\4efd[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move1 10s ease-in infinite alternate;
+}
 
-	#\5c0f\4e91[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move2 10s ease-in infinite alternate
-	}
+#\5c0f\4e91[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move2 10s ease-in infinite alternate;
+}
 
-	#\4e91 1[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move3 15s ease-in infinite alternate
-	}
+#\4e91 1[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move3 15s ease-in infinite alternate;
+}
 
-	#\4e91\5907\4efd-3[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move4 12s ease-in infinite alternate
-	}
+#\4e91\5907\4efd-3[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move4 12s ease-in infinite alternate;
+}
 
-	#\4e91\5907\4efd-2[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_move5 10s ease-in infinite alternate
-	}
+#\4e91\5907\4efd-2[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_move5 10s ease-in infinite alternate;
+}
 
-	#\692d\5706\5f62[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop 12s ease-out infinite
-	}
+#\692d\5706\5f62[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop 12s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-3[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop1 14s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-3[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop1 14s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-5[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop1 15s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-5[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop1 15s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-4[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop3 12s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-4[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop3 12s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-6[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop1 5.5s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-6[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop1 5.5s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop2 16s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop2 16s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-7[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop2 4.5s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-7[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop2 4.5s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-8[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop2 3.5s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-8[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop2 3.5s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-9[_ngcontent-eda-c392],
-	#\692d\5706\5f62\5907\4efd-10[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop2 5s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-9[_ngcontent-eda-c392],
+#\692d\5706\5f62\5907\4efd-10[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop2 5s ease-out infinite;
+}
 
-	#\692d\5706\5f62\5907\4efd-2[_ngcontent-eda-c392] {
-		animation: _ngcontent-eda-c392_moveTop2 6s ease-out infinite
-	}
+#\692d\5706\5f62\5907\4efd-2[_ngcontent-eda-c392] {
+  animation: _ngcontent-eda-c392_moveTop2 6s ease-out infinite;
+}
 
-	@keyframes _ngcontent-eda-c392_move {
-		0% {
-			transform: translate(36.000367px, 151.4963px)
-		}
+@keyframes _ngcontent-eda-c392_move {
+  0% {
+    transform: translate(36.000367px, 151.4963px);
+  }
 
-		40% {
-			transform: translate(36.000367px, 141.4963px)
-		}
+  40% {
+    transform: translate(36.000367px, 141.4963px);
+  }
 
-		to {
-			transform: translate(36.000367px, 171.4963px)
-		}
-	}
+  to {
+    transform: translate(36.000367px, 171.4963px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_move1 {
-		0% {
-			transform: translate(114.000367px, 15.4963px)
-		}
+@keyframes _ngcontent-eda-c392_move1 {
+  0% {
+    transform: translate(114.000367px, 15.4963px);
+  }
 
-		40% {
-			transform: translate(114.000367px, 35.4963px)
-		}
+  40% {
+    transform: translate(114.000367px, 35.4963px);
+  }
 
-		to {
-			transform: translate(114.000367px, 5.4963px)
-		}
-	}
+  to {
+    transform: translate(114.000367px, 5.4963px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_move2 {
-		0% {
-			transform: translate(105px, 45px)
-		}
+@keyframes _ngcontent-eda-c392_move2 {
+  0% {
+    transform: translate(105px, 45px);
+  }
 
-		40% {
-			transform: translate(105px, 55px)
-		}
+  40% {
+    transform: translate(105px, 55px);
+  }
 
-		to {
-			transform: translate(105px, 35px)
-		}
-	}
+  to {
+    transform: translate(105px, 35px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_move3 {
-		0% {
-			transform: translate(620px)
-		}
+@keyframes _ngcontent-eda-c392_move3 {
+  0% {
+    transform: translate(620px);
+  }
 
-		40% {
-			transform: translate(620px, 40px)
-		}
+  40% {
+    transform: translate(620px, 40px);
+  }
 
-		to {
-			transform: translate(620px, -10px)
-		}
-	}
+  to {
+    transform: translate(620px, -10px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_move4 {
-		0% {
-			transform: translate(715px, 176px)
-		}
+@keyframes _ngcontent-eda-c392_move4 {
+  0% {
+    transform: translate(715px, 176px);
+  }
 
-		40% {
-			transform: translate(715px, 196px)
-		}
+  40% {
+    transform: translate(715px, 196px);
+  }
 
-		to {
-			transform: translate(715px, 166px)
-		}
-	}
+  to {
+    transform: translate(715px, 166px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_move5 {
-		0% {
-			transform: translateY(86px)
-		}
+@keyframes _ngcontent-eda-c392_move5 {
+  0% {
+    transform: translateY(86px);
+  }
 
-		40% {
-			transform: translateY(106px)
-		}
+  40% {
+    transform: translateY(106px);
+  }
 
-		to {
-			transform: translateY(73px)
-		}
-	}
+  to {
+    transform: translateY(73px);
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_moveTop {
-		0% {
-			cy: 150;
-			opacity: 0
-		}
+@keyframes _ngcontent-eda-c392_moveTop {
+  0% {
+    cy: 150;
+    opacity: 0;
+  }
 
-		6% {
-			opacity: .5
-		}
+  6% {
+    opacity: 0.5;
+  }
 
-		50% {
-			opacity: .3
-		}
+  50% {
+    opacity: 0.3;
+  }
 
-		to {
-			cy: 0;
-			opacity: 0
-		}
-	}
+  to {
+    cy: 0;
+    opacity: 0;
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_moveTop1 {
-		0% {
-			cy: 190px;
-			opacity: 0
-		}
+@keyframes _ngcontent-eda-c392_moveTop1 {
+  0% {
+    cy: 190px;
+    opacity: 0;
+  }
 
-		6% {
-			opacity: .5
-		}
+  6% {
+    opacity: 0.5;
+  }
 
-		50% {
-			opacity: .3
-		}
+  50% {
+    opacity: 0.3;
+  }
 
-		to {
-			cy: 0;
-			opacity: 0
-		}
-	}
+  to {
+    cy: 0;
+    opacity: 0;
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_moveTop2 {
-		0% {
-			cy: 140px;
-			opacity: 0
-		}
+@keyframes _ngcontent-eda-c392_moveTop2 {
+  0% {
+    cy: 140px;
+    opacity: 0;
+  }
 
-		6% {
-			opacity: .5
-		}
+  6% {
+    opacity: 0.5;
+  }
 
-		40% {
-			opacity: .3
-		}
+  40% {
+    opacity: 0.3;
+  }
 
-		to {
-			cy: 0;
-			opacity: 0
-		}
-	}
+  to {
+    cy: 0;
+    opacity: 0;
+  }
+}
 
-	@keyframes _ngcontent-eda-c392_moveTop3 {
-		0% {
-			cy: 190px;
-			opacity: 0
-		}
+@keyframes _ngcontent-eda-c392_moveTop3 {
+  0% {
+    cy: 190px;
+    opacity: 0;
+  }
 
-		6% {
-			opacity: .3
-		}
+  6% {
+    opacity: 0.3;
+  }
 
-		50% {
-			opacity: .3
-		}
+  50% {
+    opacity: 0.3;
+  }
 
-		to {
-			cy: 0;
-			opacity: 0
-		}
-	}
+  to {
+    cy: 0;
+    opacity: 0;
+  }
+}
 </style>
