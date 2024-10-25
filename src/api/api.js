@@ -2738,17 +2738,46 @@ export function trainState() {
 
 // 获取当前时间 格式 xx-xx-xx xx-xx-xx
 export function getTime() {
-  const now = new Date();
-  const formattedNow = now.toISOString().replace("T", " ").replace(/\..+/, "");
+  // 创建一个新的 Date 对象，它默认包含当前的本地时间  
+  // 在大多数情况下，如果你的系统时区设置为中国时区（CST，UTC+8），这将是中国时间  
+  const now = new Date();  
+  
+  // 获取年、月、日、小时、分钟、秒  
+  const year = now.getFullYear();  
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1，并确保是两位数  
+  const day = String(now.getDate()).padStart(2, '0'); // 确保日期是两位数  
+  const hours = String(now.getHours()).padStart(2, '0'); // 确保小时是两位数（24小时制）  
+  const minutes = String(now.getMinutes()).padStart(2, '0'); // 确保分钟是两位数  
+  const seconds = String(now.getSeconds()).padStart(2, '0'); // 确保秒是两位数  
+  
+  // 格式化为 "YYYY-MM-DD HH:mm:ss"  
+  const formattedNow = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;  
+  
+  // return formattedTime;  
   return formattedNow;
 }
 // 获取当前时间上一分钟 格式 xx-xx-xx xx-xx-xx
 export function getTime_() {
-  let now = new Date();
-  // console.log("当前时间:", now.toISOString().slice(0, 19).replace("T", " "));
-  now.setMinutes(now.getMinutes() - 1);
-  // 当前时间上一分钟
-  return now.toISOString().slice(0, 19).replace("T", " ");
+  // 创建一个新的 Date 对象，它包含当前的本地时间  
+  const now = new Date();  
+  
+  // 减去一分钟（60秒 * 1000毫秒/秒）  
+  now.setMinutes(now.getMinutes() - 1);  
+  
+  // 获取年、月、日、小时、分钟、秒  
+  const year = now.getFullYear();  
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，加1后确保是两位数  
+  const day = String(now.getDate()).padStart(2, '0'); // 确保日期是两位数  
+  const hours = String(now.getHours()).padStart(2, '0'); // 确保小时是两位数（24小时制）  
+  const minutes = String(now.getMinutes()).padStart(2, '0'); // 确保分钟是两位数  
+  const seconds = String(now.getSeconds()).padStart(2, '0'); // 可以选择包含秒，或者设置为00或省略  
+  
+  // 格式化为 "YYYY-MM-DD HH:mm:ss" 或 "YYYY-MM-DD HH:mm"（如果不需要秒）  
+  const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;  
+  // 如果不需要秒，可以使用下面的行代替上面的行  
+  // const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;  
+  
+  return formattedTime;  
 }
 // 获取传递时间的前后 x x 分钟
 export function bef_after(timeString, minutesBefore, minutesAfter) {
