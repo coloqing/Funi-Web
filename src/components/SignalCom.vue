@@ -58,18 +58,19 @@ export default {
       if (this.bg_className === "") {
         this.bg_className = "side-bar_filter";
         this.col_className = "right-panel_filter";
+        // 传递昵称
+        this.$emit("erts-click", [this.signal_name],false);
       } else {
         this.bg_className = "";
         this.col_className = "";
+        this.$emit("erts-click", [this.signal_name],true);
       }
-      // 传递昵称
-      this.$emit("erts-click", this.signal_name);
     },
     // 组件外多昵称 传递
     togg_names(bol) {
       // 亮度 togg
-      //   if (!bol) {
-      if (this.bg_className === "") {
+        if (!bol) {
+      // if (this.bg_className === "") {
         this.bg_className = "side-bar_filter";
         this.col_className = "right-panel_filter";
       } else {
@@ -92,12 +93,16 @@ export default {
     // 鼠标移入
     onMouseEnter(){
         // console.log('鼠标移入',this.signal_name);
-        this.$emit('opac-click',this.signal_name,1)
+        // if (this.bg_className === "") {
+          this.$emit('opac-click',this.signal_name,1)
+        // }
     },
     // 鼠标移出
     onMouseLeave(){
-        // console.log('鼠标移出',this.signal_name);
+      // console.log('鼠标移出',this.signal_name);
+      // if (this.bg_className === "") {
         this.$emit('opac-click',this.signal_name,0)
+      // }
 
     },
   },

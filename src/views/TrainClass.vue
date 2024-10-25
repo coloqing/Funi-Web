@@ -222,7 +222,7 @@ git config --global --unset https.proxy -->
               :signal_value="item.value"
               :ref="item.code"
               :color="getColor(index)"
-              @erts-click="echarts_togg([item.name])"
+              @erts-click="echarts_togg"
               @opac-click="opacity_togg"
             >
             </SignalCom>
@@ -991,7 +991,7 @@ export default {
       // echarts
       if (this.$refs.childRef && this.$refs.childRef.show) {
         // console.log(this.$refs.childRef);
-        this.$refs.childRef.show(Name,bol);
+        this.$refs.childRef.ets_togg(Name,bol);
       } else {
         console.error("Child component method not available");
       }
@@ -1019,10 +1019,6 @@ export default {
     opacity_togg(Name,bol){
       this.$refs.childRef._togg(Name,bol)
     },
-
-
-
-
     // 更改车号
     handleChange(value) {
       // console.log('选中的值',value);
@@ -1081,7 +1077,7 @@ export default {
           var axis = 0;
           if (signal.name.includes("电压")) axis = 1;
           else if (signal.name.includes("电流")) axis = 0;
-          this.signal_option.legend.data.push(signal.name);
+            this.signal_option.legend.data.push(signal.name);
           var temp = {
             name: signal.name,
             // type: 'legendUnselect',
