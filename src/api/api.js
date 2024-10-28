@@ -2771,12 +2771,8 @@ export function getTime_() {
   const hours = String(now.getHours()).padStart(2, '0'); // 确保小时是两位数（24小时制）  
   const minutes = String(now.getMinutes()).padStart(2, '0'); // 确保分钟是两位数  
   const seconds = String(now.getSeconds()).padStart(2, '0'); // 可以选择包含秒，或者设置为00或省略  
-  
   // 格式化为 "YYYY-MM-DD HH:mm:ss" 或 "YYYY-MM-DD HH:mm"（如果不需要秒）  
   const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;  
-  // 如果不需要秒，可以使用下面的行代替上面的行  
-  // const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;  
-  
   return formattedTime;  
 }
 // 获取传递时间的前后 x x 分钟

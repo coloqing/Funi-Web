@@ -418,7 +418,8 @@ export default {
       history_forewarn: null,
       // 报警预警top10
       line_top10: null,
-
+      // 定时器
+      intervalId: null, 
       alarm_echarts_option: {
         legend: {
           textStyle: {
@@ -510,7 +511,10 @@ export default {
   // 挂载前
   beforeMount() {
     this.get_state()
+    // 执行定时器
+    this.startInterval();
   },
+
   // 挂载后
   mounted() {
     this.init_my_charts();
@@ -543,8 +547,17 @@ export default {
         this.state = response.data.data;
     });
     },
-
-
+    // 设置每 5 秒执行一次的 interval  
+    startInterval() {  
+      this.intervalId = setInterval(this.get_state, 5000);  
+    },  
+    // 清除 interval  
+    clearInterval() {  
+      if (this.intervalId !== null) {  
+        clearInterval(this.intervalId);  
+        this.intervalId = null;  
+      }  
+    },
     stateText(state) {
       const statusMap = {
         0: "离线",
@@ -1358,7 +1371,10 @@ export default {
   // DOM重新加载
   // updated() {  },
   // 销毁前
-  // beforeDestroy() {},
+  beforeDestroy() {  
+    // 在组件销毁前清除 interval  
+    this.clearInterval();  
+  },
   // 销毁
   // destroyed() {},
 };
