@@ -440,7 +440,7 @@ import EChartsCom from "@/components/EChartsCom.vue";
 import LifetimeCom from "@/components/LifetimeCom.vue";
 import CanvasCircuit from "@/components/CanvasCircuit.vue";
 import SignalSelector from "@/components/SignalSelector.vue";
-import { colors, lineData, getTime,getTime_ } from "@/api/api.js";
+import { colors, lineData, getTime, getTime_ } from "@/api/api.js";
 import { getState } from "@/api/train";
 import { indicatorInfo, signalVal } from "@/api/trainClass";
 import { getSignals } from "@/api/signalSelector";
@@ -1022,7 +1022,6 @@ export default {
             data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)];
           newSignals.push(item);
         }
-
         this.signals = newSignals;
 
         this.initSignalData();
@@ -1037,49 +1036,45 @@ export default {
         .filter((value, index, self) => self.indexOf(value) === index)
         .join(",");
 
-      signalVal(
-        this.trainValue,
-        codes,
-        getTime_(),
-        getTime(),
-        false
-      ).then((response) => {
-        var data = [];
-        for (let i = 0; i < this.signals.length; i++) {
-          var signal = this.signals[i];
-          var axis = 0;
-          if (signal.name.includes("电压")) axis = 1;
-          else if (signal.name.includes("电流")) axis = 0;
-          this.signal_option.legend.data.push(signal.name);
-          var temp = {
-            name: signal.name,
-            // type: 'legendUnselect',
-            // type: 'legendSelect',
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: axis,
-            sample: "auto",
-            lineStyle: {
-              color: colors()[i],
-              opacity: 1,
-            },
-            itemStyle: {
-              // normal: {
-              opacity: 1,
-              // }
-            },
-            data: response.data.data.map((x) => [
-              x.createTime,
-              x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
-            ]),
-          };
+      signalVal(this.trainValue, codes, getTime_(), getTime(), false).then(
+        (response) => {
+          var data = [];
+          for (let i = 0; i < this.signals.length; i++) {
+            var signal = this.signals[i];
+            var axis = 0;
+            if (signal.name.includes("电压")) axis = 1;
+            else if (signal.name.includes("电流")) axis = 0;
+            this.signal_option.legend.data.push(signal.name);
+            var temp = {
+              name: signal.name,
+              // type: 'legendUnselect',
+              // type: 'legendSelect',
+              type: "line",
+              showSymbol: true,
+              smooth: false,
+              yAxisIndex: axis,
+              sample: "auto",
+              lineStyle: {
+                color: colors()[i],
+                opacity: 1,
+              },
+              itemStyle: {
+                // normal: {
+                opacity: 1,
+                // }
+              },
+              data: response.data.data.map((x) => [
+                x.createTime,
+                x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
+              ]),
+            };
 
-          data.push(temp);
+            data.push(temp);
+          }
+          // console.log("echarts", data);
+          this.signal_option.series = data;
         }
-        // console.log("echarts", data);
-        this.signal_option.series = data;
-      });
+      );
     },
 
     updateSignalData() {
@@ -1127,7 +1122,13 @@ export default {
         } else {
           this.setIndicatorsCards(data.devices);
           this.setIndicatorsContent(data.deviceDM, e, Name);
-          this.setInitSignals(data.deviceDM);
+          if (this.signals.length === 0) {
+            // 调整信号量title 条数
+            this.setInitSignals(data.deviceDM);
+          } else {
+            // 更新数据
+            this.initSignalData();
+          }
         }
       });
     },
@@ -1229,7 +1230,6 @@ export default {
             });
           }
         }
-
         this.signals = this.signals.filter(
           (signal, index, self) =>
             index === self.findIndex((u) => u.name === signal.name)
