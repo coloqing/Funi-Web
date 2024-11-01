@@ -16,13 +16,13 @@
       </div>
       <!-- 报警body -->
       <div class="alarm_body font_size18">
-        <div class="train_body_list" v-for="(item,n) in message" :key="n">
+        <div class="train_body_list" v-for="(item, n) in message" :key="n">
           <!-- 车厢-->
-          <div class="train_number body_train_number">{{item.cx}}</div>
+          <div class="train_number body_train_number">{{ item.cx }}</div>
           <!-- 设备名称 -->
-          <div class="dev-name body_train_number">{{item.name}}</div>
+          <div class="dev-name body_train_number">{{ item.name }}</div>
           <!-- 使用量-->
-          <div class="usage body_alarm">{{item.runLife}}</div>
+          <div class="usage body_alarm">{{ item.runLife }}</div>
           <!--剩余寿命-->
           <div class="remain body_forewarn">{{ item.percent }}%</div>
           <!--更新时间-->
@@ -43,22 +43,22 @@ export default {
   data() {
     return {
       // value1: '',
-      message:[],
+      message: [],
     };
   },
   methods: {
     // 获取实时报警、实时预警信息
     get_parts_life() {
       getPartsLife({
-        cxh: this.train_value,
+        lch: this.train_value,
         pageIndex: 1,
         pageRow: 20,
-        sortFile:'Percent',
-        sortType:'desc'
+        sortFile: 'Percent',
+        sortType: 'desc'
       }).then((response) => {
         if (response.data.code === 200) {
           this.message = response.data.data;
-        //   console.log("获取寿命 列表:", response.data.data);
+          //   console.log("获取寿命 列表:", response.data.data);
         } else {
           console.error("获取寿命 列表失败");
         }
