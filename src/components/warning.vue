@@ -33,7 +33,7 @@
       <div class="alarm_body font_size18">
         <div class="train_body_list" v-for="(item, n) in message" :key="n">
           <!-- 车号-->
-          <div class="train_number body_train_number">{{ item.trainId }}</div>
+          <div class="train_number body_train_number">{{ item.trainNumber }}</div>
           <!-- 车厢-->
           <div class="state body_state">
             <div class="state_border">{{ item.carriageNumber }}</div>
@@ -45,7 +45,7 @@
           <!--操作 -->
           <div class="operate body_operate">
             <router-link
-              :to="{ path: '/AlarmInfo', query: { trainNum: item.trainId ,carriage:item.carriageNumber,state:msg}}"
+              :to="{ path: '/AlarmInfo', query: { trainNum: item.trainNumber ,carriage:item.carriageNumber,state:msg}}"
               class="router_link"
               >详情</router-link
             >

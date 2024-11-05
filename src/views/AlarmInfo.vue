@@ -38,8 +38,8 @@
               <el-select v-model="stateValue" placeholder="请选择" size="mini">
                 <el-option v-for="item in [
                   { value: '', label: '全部' },
-                  { value: '已消除', label: '已消除' },
-                  { value: '未消除', label: '未消除' },
+                  { value: '1', label: '已消除' },
+                  { value: '0', label: '未消除' },
                 ]" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -262,8 +262,11 @@
       <el-row>
         <div class="signal-panel">
           <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
-            <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
+            <SignalCom :signal_name="item.name" :key="currentRow.code" :signal_id="index" :signal_value="item.value" :ref="item.code"
+              :color="getColor(index)" @erts-click="echarts_togg" @opac-click="opacity_togg">
             </SignalCom>
+            <!-- <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
+            </SignalCom> -->
           </div>
           <div class="add-signal-btn" @click="modSignals">
             <div><i class="el-icon-plus"></i></div>
@@ -272,7 +275,9 @@
         </div>
       </el-row>
       <div>
-        <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
+        <!-- <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom> -->
+        <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option" :key="random" ref="childRef">
+        </EChartsCom>
       </div>
       <!-- <el-divider></el-divider>
             <el-row :gutter="20">
@@ -339,6 +344,7 @@
                 <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
                   <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
                   </SignalCom>
+
                 </div>
                 <!-- <div class="add-signal-btn" @click="modSignals">
                   <div><i class="el-icon-plus"></i></div>
@@ -348,6 +354,7 @@
             </el-row>
             <div>
               <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
+
             </div>
           </div>
         </el-dialog>
@@ -384,6 +391,8 @@ export default {
       // 获取所有信号量
       signals_tmp: null,
       lineValue: "",
+      // 图标数据更新后的随机数
+      random:'',
       lineOptions: [
         {
           value: "",
@@ -431,8 +440,8 @@ export default {
       dialogVisible: false,
 
       currentPageValue: 1,
-
-      dataTimeRangeValue: 5,
+      // 查询时间间隔
+      dataTimeRangeValue: 1,
 
       tableData: {},
       selectedRow: [],
@@ -471,6 +480,12 @@ export default {
       ],
 
       signal_option: {
+        legend: {
+          show: false,
+          selectedMode: "multiple",
+          data: [], // 与 series 中的 name 属性值相匹配
+          selected: [],
+        },
         color: colors(),
         tooltip: {
           trigger: "axis",
@@ -482,6 +497,14 @@ export default {
           left: "3%",
           right: "4%",
           bottom: "3%",
+          splitLine: {
+            // x轴网格线样式
+            // show: true, // 显示网格线
+            lineStyle: {
+              color: "#282f41", // 设置网格颜色
+              type: "solid", // 线条类型，默认为实线
+            },
+          },
           containLabel: true,
         },
         xAxis: {
@@ -612,7 +635,24 @@ export default {
       this.getTrainsData();
       this.trainValue = null;
     },
+    // 显示隐藏echarts折线
+    echarts_togg(Name, bol) {
+      // console.log("被点击的对象");
+      if (this.$refs.childRef && this.$refs.childRef.ets_togg) {
+        // console.log(this.$refs.childRef);
+        // this.ect_name = Name;
+        // 控制子组件EChartsCom togg折线
+        this.$refs.childRef.ets_togg(Name, bol);
+      } else {
+        console.error("Child component method not available");
+      }
+    },
+    // 鼠标移入/移出 控制opacity
+    opacity_togg(Name, bol) {
+      console.log('sd', Name, bol);
 
+      this.$refs.childRef._togg(Name, bol);
+    },
     //获取列车数据
     getTrainsData() {
       getTrains(this.lineValue, 1, 10000).then((response) => {
@@ -655,7 +695,9 @@ export default {
     getxhl() {
       // this.signals = 
       // ali
-      // console.log('选中的值', this.tableData.data[0].subSystem);
+      console.log('选中的值', this.tableData.data);
+      if (this.tableData.data.length !==0) {
+        
       // 默认选中的信号量 中文
       let str_code_arr = this.tableData.data[0].subSystem
       // let code_arr = str_code_arr.split(',')
@@ -688,52 +730,58 @@ export default {
             }
           }
           console.log('最后的结果', code_arr);
-        // 获取信号量数据
-        // let result = bef_after('2024-11-04 14:47:00', 5, 5);
-        let result = bef_after(this.currentRow.createTime, 5, 5);
-        this.initSignalData(result.beforeTime, result.afterTime);
+          // 获取信号量数据
+          // let result = bef_after('2024-11-04 14:47:00', 5, 5);
+          let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
+          this.initSignalData(result.beforeTime, result.afterTime);
         }
       });
+    }
 
     },
 
 
     // 调整查询的时间
     get_semaphore_time(time) {
-      if (this.currentRow) {
-        // const adjustedTimeString = this.currentRow.createTime;
-        const adjustedTime = new Date();
-        console.log('当前时间',adjustedTime);
-        
-        // 计算前一分钟的时间
-        const oneMinuteBefore = new Date(
-          adjustedTime.getTime() - time * 60 * 1000
-        );
-        // 计算后一分钟的时间
-        const oneMinuteAfter = new Date(
-          adjustedTime.getTime() + time * 60 * 1000
-        );
-        // 自定义格式化函数（可选）
-        const formatDate = (date) => {
-          const pad = (num) => (num < 10 ? "0" : "") + num;
-          return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-            date.getDate()
-          )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
-            date.getSeconds()
-          )}`;
-        };
-        console.log( (oneMinuteBefore),
-        (oneMinuteAfter));
-        
-        this.initSignalData(
-          formatDate(oneMinuteBefore),
-          formatDate(oneMinuteAfter)
-        );
-      }
+      // if (this.currentRow) {
+      //   // const adjustedTimeString = this.currentRow.createTime;
+      //   const adjustedTime = new Date();
+      //   console.log('当前时间', adjustedTime);
+
+      //   // 计算前一分钟的时间
+      //   const oneMinuteBefore = new Date(
+      //     adjustedTime.getTime() - time * 60 * 1000
+      //   );
+      //   // 计算后一分钟的时间
+      //   const oneMinuteAfter = new Date(
+      //     adjustedTime.getTime() + time * 60 * 1000
+      //   );
+      //   // 自定义格式化函数（可选）
+      //   const formatDate = (date) => {
+      //     const pad = (num) => (num < 10 ? "0" : "") + num;
+      //     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      //       date.getDate()
+      //     )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      //       date.getSeconds()
+      //     )}`;
+      //   };
+      // console.log((oneMinuteBefore),
+      //   (oneMinuteAfter));
+      // console.log(this.currentRow.createTime.split('.')[0]);
+      let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
+      this.initSignalData(result.beforeTime, result.afterTime);
+      // this.initSignalData(
+      //   // formatDate(this.currentRow.createTime.split('.')[0]),
+      //   // formatDate(this.currentRow.createTime.split('.')[0])
+      //   formatDate(oneMinuteBefore),
+      //   formatDate(oneMinuteAfter)
+      // );
+      // }
     },
 
     query() {
-      var t = this.timerangeValue.split(",");
+      var t = this.timerangeValue;
+      // var t = this.timerangeValue.split(",");
       var st = "";
       var et = "";
       if (t.length > 0) {
@@ -768,11 +816,11 @@ export default {
         // this.initSignalData(result.beforeTime, result.afterTime);
       });
     },
-    reset() {
-      this.lineValue = "全部";
-      this.trainValue = "全部";
-      this.subSysValue = "全部";
-      this.stateValue = "全部";
+    reset() { ;
+      this.lineValue = this.$route.query.trainNum.slice(0, 2);
+      this.trainValue = this.$route.query.trainNum;
+      this.subSysValue = "";
+      this.stateValue = "";
       this.timerangeValue = "";
       this.alarmNameValue = "";
       this.alarmTypeValue = "";
@@ -807,11 +855,14 @@ export default {
 
     // 选中行时触发
     handleRowChange(val) {
+      debugger
       if (!val) return;
       this.currentRow = val;
       // let result = bef_after('2024-11-04 14:47:00', 5, 5);
-      let result = bef_after(this.currentRow.createTime || '2024-11-04 14:47:00', 5, 5);
-      this.initSignalData(result.beforeTime, result.afterTime);
+      let result = bef_after(this.currentRow.createTime || '2024-11-04 14:47:00', this.dataTimeRangeValue, this.dataTimeRangeValue);
+      // this.initSignalData(result.beforeTime, result.afterTime);
+      this.getxhls()
+
     },
 
     formatTimestamp(timestamp) {
@@ -833,10 +884,10 @@ export default {
     comfirm(val) {
       this.dialogVisible = false;
       var newSignals = [];
-      signalVal(11001002, "", "", "", true).then((response) => {
+      signalVal(this.trainValue, "", "", "", true).then((response) => {
         console.log(response);
         var data = response.data.data;
-        
+
         for (let i = 0; i < val.length; i++) {
           const item = val[i];
           item.value =
@@ -845,8 +896,8 @@ export default {
         }
 
         this.signals = newSignals;
-
-        this.initSignalData();
+        let result = bef_after(this.currentRow.createTime || '2024-11-04 14:47:00', this.dataTimeRangeValue, this.dataTimeRangeValue);
+        this.initSignalData(result.beforeTime, result.afterTime);
       });
     },
     getColor(i) {
@@ -885,6 +936,15 @@ export default {
               smooth: false,
               yAxisIndex: axis,
               sample: "auto",
+              lineStyle: {
+                color: colors()[i],
+                opacity: 1,
+              },
+              itemStyle: {
+                // normal: {
+                opacity: 1,
+                // }
+              },
               data: response.data.data.map((x) => [
                 x.createTime,
                 x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
@@ -894,8 +954,8 @@ export default {
             data.push(temp);
           }
         }
-
-        this.signal_option.series = data;
+          this.random = Math.random()
+          this.signal_option.series = data;
       });
     },
   },

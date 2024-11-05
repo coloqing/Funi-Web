@@ -626,11 +626,21 @@ export default {
                 color: "#757984",
               },
             },
+            // axisLabel: {
+            //   fontSize: (e / 1920) * 16,
+            //   interval: 3, // 显示所有标签
+            //   margin: (e / 1920) * 18,
+            // },
             axisLabel: {
-              fontSize: (e / 1920) * 16,
-              interval: 0, // 显示所有标签
-              margin: (e / 1920) * 18,
+            formatter: function (value, index) {
+              var date = new Date(value);
+              return (
+                moment(date).format("YYYY-MM-DD") +
+                "\n" +
+                moment(date).format("HH:mm:ss.SSS")
+              );
             },
+          },
           },
           yAxis: {
             name: "°c",
@@ -1235,7 +1245,7 @@ export default {
       padding: 10px 10px 10px  0;
       // align-items: center;
       flex-direction: column;
-
+      align-items: center;
       :last-child {
         margin-left: 2px;
       }
