@@ -18,27 +18,19 @@
           </div>
           <!-- 列表身体 -->
           <div class="train_body font_size18">
-            <div
-              class="train_body_list"
-              v-for="item in state"
-              :key="item.trainNum"
-            >
+            <div class="train_body_list" v-for="item in state" :key="item.trainNum">
               <!-- 车号-->
               <div class="train_number body_train_number">
                 {{ item.trainNum }}
               </div>
               <!-- 设备状态 -->
               <div class="state body_state">
-                <div
-                  class="state_border font_size24"
-                  :class="
-                    item.state + 1 === 2
-                      ? 'crrc-tag-green'
-                      : item.state + 1 === 0
-                      ? 'crrc-tag-gray'
-                      : 'crrc-tag-white'
-                  "
-                >
+                <div class="state_border font_size24" :class="item.state + 1 === 2
+                  ? 'crrc-tag-green'
+                  : item.state + 1 === 0
+                    ? 'crrc-tag-gray'
+                    : 'crrc-tag-white'
+                  ">
                   {{ stateText(item.state) }}
                 </div>
               </div>
@@ -48,39 +40,25 @@
               <div class="forewarn body_forewarn">{{ item.warning }}</div>
               <!--操作 -->
               <div class="operate body_operate">
-                <router-link
-                  :to="{
-                    path: '/TrainClass',
-                    query: { trainNum: item.trainNum },
-                  }"
-                  class="router_link"
-                  >查看详情</router-link
-                >
+                <router-link :to="{
+                  path: '/TrainClass',
+                  query: { trainNum: item.trainNum },
+                }" class="router_link">查看详情</router-link>
               </div>
             </div>
           </div>
         </div>
         <!-- 辅变系统 -->
-        <div
-          class="line_Tcenter font_size26w"
-          style="display: flex; flex-direction: column"
-        >
-          <div
-            style="
+        <div class="line_Tcenter font_size26w" style="display: flex; flex-direction: column">
+          <div style="
               display: flex;
               justify-content: space-between;
               padding: 0 10px;
-            "
-          >
+            ">
             <div>辅变系统</div>
             <div>
-              <el-select v-model="trainValue" placeholder="11号线">
-                <el-option
-                  v-for="item in trainOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select v-model="trainValue" placeholder="3号线东延">
+                <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -98,54 +76,29 @@
               <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
-                <div
-                  class="alarm_time1"
-                  data-item="7"
-                  @click="alarm_time"
-                  :class="{ active_time: alarmTime === '7' }"
-                >
+                <div class="alarm_time1" data-item="7" @click="alarm_time" :class="{ active_time: alarmTime === '7' }">
                   近7天
                 </div>
-                <div
-                  class="alarm_time2"
-                  data-item="30"
-                  @click="alarm_time"
-                  :class="{ active_time: alarmTime === '30' }"
-                >
+                <div class="alarm_time2" data-item="30" @click="alarm_time"
+                  :class="{ active_time: alarmTime === '30' }">
                   近30天
                 </div>
-                <div
-                  class="alarm_time3"
-                  data-item="12"
-                  @click="alarm_time"
-                  :class="{ active_time: alarmTime === '12' }"
-                >
+                <div class="alarm_time3" data-item="12" @click="alarm_time"
+                  :class="{ active_time: alarmTime === '12' }">
                   近12个月
                 </div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker
-                v-model="alarm_value"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                @blur="get_alarm_time"
-              >
+              <el-date-picker v-model="alarm_value" type="daterange" range-separator="-" start-placeholder="开始日期"
+                end-placeholder="结束日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd HH:mm:ss" @blur="get_alarm_time">
               </el-date-picker>
               <!-- 历史分析 -->
-              <div class="alarm_history font_size16">                <router-link
-                  :to="{
-                    path: '/AlarmInfo',
-                    query: {
-                      state: 0,
-                    },
-                  }"
-                  class="router_link"
-                  >历史分析</router-link
-                ></div>
+              <div class="alarm_history font_size16"> <router-link :to="{
+                path: '/AlarmInfo',
+                query: {
+                  state: 0,
+                },
+              }" class="router_link">历史分析</router-link></div>
             </div>
             <!-- 列表头部 -->
             <div class="alarm_header font_size20">
@@ -157,12 +110,7 @@
             </div>
             <!-- 报警body -->
             <div class="alarm_body font_size18">
-              <div
-                class="train_body_list"
-                v-for="(item, n) in alarm_data"
-                :title="item.diagnoseLogic"
-                :key="n"
-              >
+              <div class="train_body_list" v-for="(item, n) in alarm_data" :title="item.diagnoseLogic" :key="n">
                 <!-- 车号-->
                 <div class="train_number body_train_number">
                   {{ item.trainNumber }}
@@ -177,18 +125,14 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link
-                    :to="{
-                      path: '/AlarmInfo',
-                      query: {
-                        trainNum: item.trainNumber,
-                        carriage: item.carriageNumber,
-                        state: 0,
-                      },
-                    }"
-                    class="router_link"
-                    >查看详情</router-link
-                  >
+                  <router-link :to="{
+                    path: '/AlarmInfo',
+                    query: {
+                      trainNum: item.trainNumber,
+                      carriage: item.carriageNumber,
+                      state: 0,
+                    },
+                  }" class="router_link">查看详情</router-link>
                 </div>
               </div>
               <div class="null" v-if="!alarm_data.length">暂无数据~</div>
@@ -201,55 +145,31 @@
               <!-- <div class="recording font_size20">报警记录</div> -->
               <!-- 日期选择 -->
               <div class="alarm_choose font_size16">
-                <div
-                  class="alarm_time1"
-                  :class="{ active_time: forewarnTime === '7' }"
-                  data-item="7"
-                  @click="forewarn_time"
-                >
+                <div class="alarm_time1" :class="{ active_time: forewarnTime === '7' }" data-item="7"
+                  @click="forewarn_time">
                   近7天
                 </div>
-                <div
-                  class="alarm_time2"
-                  :class="{ active_time: forewarnTime === '30' }"
-                  data-item="30"
-                  @click="forewarn_time"
-                >
+                <div class="alarm_time2" :class="{ active_time: forewarnTime === '30' }" data-item="30"
+                  @click="forewarn_time">
                   近30天
                 </div>
-                <div
-                  class="alarm_time3"
-                  :class="{ active_time: forewarnTime === '12' }"
-                  data-item="12"
-                  @click="forewarn_time"
-                >
+                <div class="alarm_time3" :class="{ active_time: forewarnTime === '12' }" data-item="12"
+                  @click="forewarn_time">
                   近12个月
                 </div>
               </div>
               <!-- 年月日选择器 -->
-              <el-date-picker
-                v-model="forewarn_value"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                @blur="get_forewarn_time"
-              >
+              <el-date-picker v-model="forewarn_value" type="daterange" range-separator="-" start-placeholder="开始日期"
+                end-placeholder="结束日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd HH:mm:ss" @blur="get_forewarn_time">
               </el-date-picker>
               <!-- 历史分析 -->
               <div class="alarm_history font_size16">
-                <router-link
-                  :to="{
-                    path: '/AlarmInfo',
-                    query: {
-                      state: 1,
-                    },
-                  }"
-                  class="router_link"
-                  >历史分析</router-link
-                >
+                <router-link :to="{
+                  path: '/AlarmInfo',
+                  query: {
+                    state: 1,
+                  },
+                }" class="router_link">历史分析</router-link>
               </div>
             </div>
             <!-- 列表头部 -->
@@ -262,12 +182,7 @@
             </div>
             <!-- 报警body -->
             <div class="alarm_body font_size18">
-              <div
-                class="train_body_list"
-                v-for="(item, n) in forewarn_data"
-                :key="n"
-                :title="item.diagnoseLogic"
-              >
+              <div class="train_body_list" v-for="(item, n) in forewarn_data" :key="n" :title="item.diagnoseLogic">
                 <!-- 车号-->
                 <div class="train_number body_train_number">
                   {{ item.trainNumber }}
@@ -282,18 +197,14 @@
                 </div>
                 <!--操作 -->
                 <div class="operate body_operate">
-                  <router-link
-                    :to="{
-                      path: '/AlarmInfo',
-                      query: {
-                        trainNum: item.trainNumber,
-                        carriage: item.carriageNumber,
-                        state: 1,
-                      },
-                    }"
-                    class="router_link"
-                    >查看详情</router-link
-                  >
+                  <router-link :to="{
+                    path: '/AlarmInfo',
+                    query: {
+                      trainNum: item.trainNumber,
+                      carriage: item.carriageNumber,
+                      state: 1,
+                    },
+                  }" class="router_link">查看详情</router-link>
                 </div>
               </div>
               <div class="null" v-if="!forewarn_data.length">暂无数据~</div>
@@ -307,16 +218,8 @@
           <div class="bott_title_left">车辆预警报警统计</div>
           <div class="bott_title_right">
             <!-- 年月日选择器 -->
-            <el-date-picker
-              v-model="value1"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              @blur="get_echarts_time"
-            >
+            <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
+              end-placeholder="结束日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd HH:mm:ss" @blur="get_echarts_time">
             </el-date-picker>
           </div>
         </div>
@@ -326,11 +229,7 @@
           <div class="line_warning1">
             <div class="alarm_echarts_title font_size20">报警预警趋势</div>
             <!-- <div ref="alarm_echarts" class="alarm_echarts"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="alarm_echarts_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="alarm_echarts_option"></EChartsCom>
           </div>
 
           <el-divider direction="vertical" style="height: 100%" />
@@ -338,21 +237,13 @@
           <div class="line_warning2">
             <div class="history_alarm_title">历史报警分布统计</div>
             <!-- <div ref="history_alarm" class="history_alarm" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="history_alarm_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_alarm_option"></EChartsCom>
           </div>
           <!-- 历史预警发布统计 -->
           <div class="line_warning3">
             <div class="history_forewarn_title">历史预警发布统计</div>
             <!-- <div ref="history_forewarn" class="history_forewarn" style="height: 78%; width: 100%"></div> -->
-            <EChartsCom
-              :width="'100%'"
-              :height="'92%'"
-              :option="history_forewarn_option"
-            ></EChartsCom>
+            <EChartsCom :width="'100%'" :height="'92%'" :option="history_forewarn_option"></EChartsCom>
           </div>
           <!-- 报警预警top10 -->
           <div class="line_warning4">
@@ -419,7 +310,7 @@ export default {
       // 报警预警top10
       line_top10: null,
       // 定时器
-      intervalId: null, 
+      intervalId: null,
       alarm_echarts_option: {
         legend: {
           textStyle: {
@@ -486,18 +377,18 @@ export default {
         ],
       },
       top10_option: {},
-      trainValue: "11号线",
+      trainValue: "3号线东延",
       trainOptions: [
         {
-          value: "11号线",
-          label: "11号线",
+          value: "3号线东延",
+          label: "3号线东延",
         },
       ],
     };
   },
   computed: {},
   // 初始化之前
-  beforeCreate() {},
+  beforeCreate() { },
   // 初始化之后
   created() {
     // 开始获取数据------------
@@ -542,21 +433,21 @@ export default {
   },
   methods: {
     // 获取列车列表 数据
-    get_state(){
+    get_state() {
       getState().then((response) => {
         this.state = response.data.data;
-    });
+      });
     },
     // 设置每 5 秒执行一次的 interval  
-    startInterval() {  
-      this.intervalId = setInterval(this.get_state, 5000);  
-    },  
+    startInterval() {
+      this.intervalId = setInterval(this.get_state, 5000);
+    },
     // 清除 interval  
-    clearInterval() {  
-      if (this.intervalId !== null) {  
-        clearInterval(this.intervalId);  
-        this.intervalId = null;  
-      }  
+    clearInterval() {
+      if (this.intervalId !== null) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
     },
     stateText(state) {
       const statusMap = {
@@ -1268,8 +1159,8 @@ export default {
           let trainNumbers = [];
           let counts = [];
           for (let i = 0; i < tmp.length; i++) {
-            trainNumbers.push(tmp[i].trainNumber);
-            counts.push(tmp[i].count);
+            trainNumbers.unshift(tmp[i].trainNumber);
+            counts.unshift(tmp[i].count);
           }
           let top10_option = this.get_top10_option(trainNumbers, counts);
           this.top10_option = top10_option;
@@ -1371,9 +1262,9 @@ export default {
   // DOM重新加载
   // updated() {  },
   // 销毁前
-  beforeDestroy() {  
+  beforeDestroy() {
     // 在组件销毁前清除 interval  
-    this.clearInterval();  
+    this.clearInterval();
   },
   // 销毁
   // destroyed() {},
@@ -1420,7 +1311,7 @@ body {
       width: 25%;
       height: 100%;
 
-      > div {
+      >div {
         box-sizing: border-box;
         padding: 0 0.625rem;
       }
@@ -1432,7 +1323,7 @@ body {
       .state {
         width: 25%;
 
-        > .state_border {
+        >.state_border {
           // border: #555b69 solid 1px;
           padding: 0.3vw 0;
           max-width: 4vw;
@@ -1493,6 +1384,7 @@ body {
           align-items: center;
           // height: 1.875rem;
           height: 2.9vw;
+
           // 设备状态
           .body_state {
             padding-left: 0.5rem;
@@ -1534,7 +1426,7 @@ body {
         .state {
           width: 15%;
 
-          > .state_border {
+          >.state_border {
             width: 3.5vw;
             height: 1.5vw;
             box-sizing: border-box;
@@ -1569,6 +1461,7 @@ body {
           height: 12%;
           width: 100%;
           padding: 5px 0px;
+
           // 报警记录
           .recording {
             // flex: 2;
@@ -1587,10 +1480,12 @@ body {
             // width: 25%;
             // min-width: 140px;
             box-sizing: border-box;
+
             // padding-right: 10px;
-            > div {
+            >div {
               cursor: pointer;
             }
+
             .active_time {
               color: #0084ffa6;
             }
@@ -1634,12 +1529,14 @@ body {
           height: 68%;
           color: #989eae;
           overflow-y: auto;
+
           .train_body_list {
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 2vw;
             cursor: pointer;
+
             // 设备状态
             .body_state {
               padding-left: 0.5rem;
@@ -1655,6 +1552,7 @@ body {
 
       // 预警body
       .train_margin {
+
         // margin-top: 35px;
         // 预警title
         .alarm_title {
@@ -1830,13 +1728,7 @@ body {
   line-height: 0vw;
 }
 
-.line
-  .line_block
-  .line_top
-  .line_Tbott
-  .line_alarm
-  .alarm_title
-  .el-range-editor.el-input__inner {
+.line .line_block .line_top .line_Tbott .line_alarm .alarm_title .el-range-editor.el-input__inner {
   height: 1.8vw !important;
   width: 39%;
   background: transparent;
