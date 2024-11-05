@@ -86,7 +86,7 @@
         <el-row>
           <el-col :span="12">
             <div>
-              <span>预警列表</span>
+              <span>{{ type === "0" ? "报警列表" : "预警列表" }}</span>
             </div>
           </el-col>
           <el-col :span="12">
@@ -100,7 +100,7 @@
             <el-table ref="alarmTable" :data="tableData.data" tooltip-effect="dark" style="width: 100%"
               @selection-change="handleSelectionChange" @current-change="handleRowChange" highlight-current-row>
               <el-table-column type="selection"> </el-table-column>
-              <el-table-column prop="name" label="预警名称"> </el-table-column>
+              <el-table-column prop="name" :label="type === '0' ? '报警列表' : '预警列表'"> </el-table-column>
               <el-table-column prop="subSystem" label="子系统" width="80">
               </el-table-column>
               <el-table-column label="状态" width="90">
@@ -182,10 +182,10 @@
           <span>子系统：{{ currentRow.subSystem }}</span>
         </el-col>
         <el-col :span="6">
-          <span>预警等级：{{ currentRow.grade }}</span>
+          <span>{{ type === "0" ? "报警等级" : "预警等级" }}：{{ currentRow.grade }}</span>
         </el-col>
         <el-col :span="6">
-          <span>预警码：{{ currentRow.code }}</span>
+          <span>{{ type === "0" ? "报警码" : "预警码" }}：{{ currentRow.code }}</span>
         </el-col>
         <el-col :span="6">
           <span>发生时间：{{
@@ -824,6 +824,7 @@ export default {
       this.timerangeValue = "";
       this.alarmNameValue = "";
       this.alarmTypeValue = "";
+      this.query()
     },
 
     getSignalsData() {
@@ -882,17 +883,22 @@ export default {
       this.dialogVisible = false;
     },
     comfirm(val) {
+      console.log('可能出问题的地方',val);
+      
       this.dialogVisible = false;
       var newSignals = [];
       signalVal(this.trainValue, "", "", "", true).then((response) => {
         console.log(response);
         var data = response.data.data;
-
-        for (let i = 0; i < val.length; i++) {
-          const item = val[i];
-          item.value =
+        console.log('出问题的对象',data);
+        if (data.length !== 0) {
+          
+          for (let i = 0; i < val.length; i++) {
+            const item = val[i];
+            item.value =
             data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)];
-          newSignals.push(item);
+            newSignals.push(item);
+          }
         }
 
         this.signals = newSignals;

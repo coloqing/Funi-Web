@@ -79,6 +79,7 @@ export default {
             var result = []
             for (let i = 0; i < this.checkList.length; i++) {
                 const item = this.checkList[i];
+                console.log(item);
                 
                 result.push({
                     name: item,
