@@ -1,5 +1,5 @@
 <template>
-  <div ref="echartref" :style="{ height: height, width: width }"></div>
+  <div  ref="echartref" :style="{ height: height, width: width }"></div>
 </template>
 
 <script>
@@ -27,6 +27,7 @@ export default {
       //     name: Name[i],
       //   });
       // }
+      
       if (bol) {
         this.option.legend.selected = [];
         for (let i = 0; i < Name.length; i++) {
@@ -74,12 +75,15 @@ export default {
     },
     // 控制 透明度
     _togg(Name, bol) {
+
       if (bol) {
         // 透明其它元素
         // 遍历所有系列，除了当前被鼠标悬停的那个系列
         this.option.series.forEach(function (series) {
           if (series.name !== Name) {
             // 设置其他系列的透明度
+              console.log('操作的对象',series.lineStyle);
+              
             series.lineStyle.opacity = 0.2; // 你可以根据需要调整这个值
             // series.itemStyle.opacity = 0.1;
           }
@@ -100,7 +104,7 @@ export default {
       // 移入移除后 重新控制取消选中的元素进行取消选中
       this.show(this.select_no, false)
     },
-  },
+    },
   mounted() {
     if (this.$refs.echartref) {
       this.bar_echarts = echarts.init(this.$refs.echartref);
@@ -112,8 +116,8 @@ export default {
       handler(newVal, oldVal) {
         this.option = newVal;
         // this.bar_echarts.clear();
-        this.bar_echarts.setOption(newVal);
-        // console.log('重新渲染');
+        this.bar_echarts.setOption(newVal,true);
+        console.log('重新渲染',newVal);
         this.show(this.select_no, false)
       },
       deep: true,

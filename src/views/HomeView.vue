@@ -110,7 +110,7 @@
             </div>
             <!-- 报警body -->
             <div class="alarm_body font_size18">
-              <div class="train_body_list" v-for="(item, n) in alarm_data" title="这是一个段落的提示文本" :key="n">
+              <div class="train_body_list" v-for="(item, n) in alarm_data" :title="item.diagnoseLogic" :key="n">
                 <!-- 车号-->
                 <div class="train_number body_train_number">
                   {{ item.trainNumber }}
