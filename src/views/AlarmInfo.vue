@@ -703,9 +703,9 @@ export default {
       // let code_arr = str_code_arr.split(',')
       console.log('分割后的数据', str_code_arr);
 
-      indicatorInfo(null, this.trainValue).then((response) => {
-        // console.log(response);
-        if (response.status === 200) {
+      indicatorInfo(null, this.trainValue || this.currentRow.trainNumber).then((response) => {
+        console.log(response);
+        if (response.data.success) {
           var data = response.data.data.deviceDM;
           let code_arr = ''
           console.log('需要过滤的数据数据', data);
@@ -816,8 +816,8 @@ export default {
         // this.initSignalData(result.beforeTime, result.afterTime);
       });
     },
-    reset() { ;
-      this.lineValue = this.$route.query.trainNum.slice(0, 2);
+    reset() {
+      this.lineValue = this.$route.query.trainNum ? this.$route.query.trainNum.slice(0, 2) :'';
       this.trainValue = this.$route.query.trainNum;
       this.subSysValue = "";
       this.stateValue = "";
@@ -887,7 +887,7 @@ export default {
       
       this.dialogVisible = false;
       var newSignals = [];
-      signalVal(this.trainValue, "", "", "", true).then((response) => {
+      signalVal(this.trainValue || this.currentRow.trainNumber, "", "", "", true).then((response) => {
         console.log(response);
         var data = response.data.data;
         console.log('出问题的对象',data);

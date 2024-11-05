@@ -1762,6 +1762,6 @@ body {
   background-color: #0b1121 !important;
   border: 0;
   color: #0084ffa6;
-  width: 100px;
+  width: 112px;
 }
 </style>

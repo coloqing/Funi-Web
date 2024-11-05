@@ -33,11 +33,8 @@
                 font-family: Arial, sans-serif;
                 font-size: 28px;
                 white-space: pre;
-              "
-              x="214.754"
-              y="258.002"
-              transform="matrix(1.3642630577087402, 0, 0, 1.2998440265655518, -136.27794493487204, -67.0629607616197)"
-            >
+              " x="214.754" y="258.002"
+              transform="matrix(1.3642630577087402, 0, 0, 1.2998440265655518, -136.27794493487204, -67.0629607616197)">
               SIV
             </text>
           </svg>
@@ -470,7 +467,10 @@ export default {
         { id: "A5", class: "Card", name: "辅助变流器220/3", isActive: false },
         { id: "A6", class: "Card", name: "充电机24/2", isActive: false },
       ],
+      // table 数据
       indicators_contents: null,
+      // 选中table 显示的索引
+      select_table: null,
       // 指标表格parts长度
       parts_long: null,
       // 弹窗
@@ -543,6 +543,8 @@ export default {
     },
     // 指标选择
     indicators_togg(e, Name) {
+      console.log('选中的索引', e);
+      this.select_table = e
       this.getIndicatorInfo(this.trainValue, null, e, Name);
       // this.indicators_cards.forEach((element, i) => {
       //   element.isActive = false;
@@ -632,15 +634,15 @@ export default {
             //   margin: (e / 1920) * 18,
             // },
             axisLabel: {
-            formatter: function (value, index) {
-              var date = new Date(value);
-              return (
-                moment(date).format("YYYY-MM-DD") +
-                "\n" +
-                moment(date).format("HH:mm:ss.SSS")
-              );
+              formatter: function (value, index) {
+                var date = new Date(value);
+                return (
+                  moment(date).format("YYYY-MM-DD") +
+                  "\n" +
+                  moment(date).format("HH:mm:ss.SSS")
+                );
+              },
             },
-          },
           },
           yAxis: {
             name: "°c",
@@ -1023,24 +1025,28 @@ export default {
     },
 
     setIndicatorsCards(data) {
-      this.indicators_cards = [
-        { id: 0, class: "Card", name: "全部", isActive: true },
-      ];
+      if (this.select_table === null) {
 
-      for (let index = 0; index < data.length; index++) {
-        const item = data[index];
-        this.indicators_cards.push({
-          id: item.id,
-          class: "Card",
-          name: item.name,
-          isActive: false,
-        });
+        this.indicators_cards = [
+          { id: 0, class: "Card", name: "全部", isActive: true },
+        ];
+
+        for (let index = 0; index < data.length; index++) {
+          const item = data[index];
+          this.indicators_cards.push({
+            id: item.id,
+            class: "Card",
+            name: item.name,
+            isActive: false,
+          });
+        }
       }
+
     },
 
     setIndicatorsContent(data, e, Name) {
-      console.log('首次获取数据',data, e, Name);
-      
+      // console.log('首次获取数据', data, e, Name);
+
       // 选择部分显示
       if (Name && Name !== "全部") {
         for (let i = 0; i < data.length; i++) {
@@ -1050,7 +1056,8 @@ export default {
           }
         }
       }
-      
+      console.log('table数据', data, e, Name);
+
       this.indicators_contents = [];
       for (let index = 0; index < data.length; index++) {
         var device = data[index];
@@ -1062,33 +1069,41 @@ export default {
           togg: true,
         };
 
-        for (let i = 0; i < device.components.length; i++) {
-          var component = device.components[i];
-          var comContent = {
-            name: component.name,
-            indicators: [],
-          };
+        // console.log(this.select_table === null || this.select_table === (index + 1),'是否添加的数据', device, this.select_table, (index + 1));
+        if (this.select_table === null || this.select_table === (index + 1) || this.select_table === 0 || data.length === 1) {
+          // console.log('添加数据', device, this.select_table, (index + 1));
 
-          for (let y = 0; y < component.indicators.length; y++) {
-            var indicator = component.indicators[y];
-            comContent.indicators.push({
-              name:
-                indicator.name +
-                "[" +
-                indicator.min +
-                "," +
-                indicator.max +
-                "]",
-              metric_values: indicator.value,
-              state: indicator.state,
-              code: indicator.signalCode,
-            });
+          for (let i = 0; i < device.components.length; i++) {
+            var component = device.components[i];
+            var comContent = {
+              name: component.name,
+              indicators: [],
+            };
+
+            for (let y = 0; y < component.indicators.length; y++) {
+              var indicator = component.indicators[y];
+
+              comContent.indicators.push({
+                name:
+                  indicator.name +
+                  "[" +
+                  indicator.min +
+                  "," +
+                  indicator.max +
+                  "]",
+                metric_values: indicator.value,
+                state: indicator.state,
+                code: indicator.signalCode,
+              });
+            }
+
+            content.parts.push(comContent);
           }
 
-          content.parts.push(comContent);
+          this.indicators_contents.push(content);
         }
-        this.indicators_contents.push(content);
       }
+
       // 选择部分显示时
       if (e !== undefined) {
         this.indicators_cards.forEach((element, i) => {
@@ -1242,10 +1257,11 @@ export default {
     .svg {
       background-color: #273553;
       display: flex;
-      padding: 10px 10px 10px  0;
+      padding: 10px 10px 10px 0;
       // align-items: center;
       flex-direction: column;
       align-items: center;
+
       :last-child {
         margin-left: 2px;
       }
