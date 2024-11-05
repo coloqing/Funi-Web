@@ -6,18 +6,8 @@
           <el-col :span="12">
             <div>线路号</div>
             <div>
-              <el-select
-                v-model="lineValue"
-                placeholder="请选择"
-                size="mini"
-                @change="lineValueChange"
-              >
-                <el-option
-                  v-for="item in lineOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select v-model="lineValue" placeholder="请选择" size="mini" @change="lineValueChange">
+                <el-option v-for="item in lineOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -26,12 +16,7 @@
             <div>车号</div>
             <div>
               <el-select v-model="trainValue" placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in trainOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+                <el-option v-for="item in trainOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -42,12 +27,7 @@
             <div>子系统</div>
             <div>
               <el-select v-model="subSysValue" placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in subSysOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+                <el-option v-for="item in subSysOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -56,16 +36,11 @@
             <div>状态</div>
             <div>
               <el-select v-model="stateValue" placeholder="请选择" size="mini">
-                <el-option
-                  v-for="item in [
-                    { value: '', label: '全部' },
-                    { value: '已消除', label: '已消除' },
-                    { value: '未消除', label: '未消除' },
-                  ]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+                <el-option v-for="item in [
+                  { value: '', label: '全部' },
+                  { value: '已消除', label: '已消除' },
+                  { value: '未消除', label: '未消除' },
+                ]" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -75,27 +50,15 @@
           <el-col :span="12">
             <div>时间</div>
             <div>
-              <el-date-picker
-                v-model="timerangeValue"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                format="yyyy-MM-dd HH:mm:ss"
-              >
+              <el-date-picker v-model="timerangeValue" type="datetimerange" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
             </div>
           </el-col>
           <el-col :span="12">
             <div>{{ type === "0" ? "报警名称" : "预警名称" }}</div>
             <div>
-              <el-input
-                size="mini"
-                placeholder="请输入"
-                v-model="alarmNameValue"
-                clearable
-              >
+              <el-input size="mini" placeholder="请输入" v-model="alarmNameValue" clearable>
               </el-input>
             </div>
           </el-col>
@@ -104,12 +67,7 @@
           <el-col :span="12">
             <div>{{ type === "0" ? "报警类型" : "预警类型" }}</div>
             <div>
-              <el-input
-                size="mini"
-                placeholder="请输入"
-                v-model="alarmTypeValue"
-                clearable
-              >
+              <el-input size="mini" placeholder="请输入" v-model="alarmTypeValue" clearable>
               </el-input>
             </div>
           </el-col>
@@ -117,9 +75,7 @@
         <el-row :gutter="20">
           <el-col :span="12" :offset="12">
             <div style="display: flex; justify-content: end">
-              <el-button size="mini" type="primary" @click="query"
-                >查询</el-button
-              >
+              <el-button size="mini" type="primary" @click="query">查询</el-button>
               <el-button size="mini" @click="reset">重置</el-button>
             </div>
           </el-col>
@@ -135,40 +91,25 @@
           </el-col>
           <el-col :span="12">
             <div style="display: flex; justify-content: end">
-              <el-button size="mini"
-                >导出(已选择{{ selectedRow.length }}项)</el-button
-              >
+              <el-button size="mini">导出(已选择{{ selectedRow.length }}项)</el-button>
             </div>
           </el-col>
         </el-row>
         <el-row>
           <div>
-            <el-table
-              ref="alarmTable"
-              :data="tableData.data"
-              tooltip-effect="dark"
-              style="width: 100%"
-              @selection-change="handleSelectionChange"
-              @current-change="handleRowChange"
-              highlight-current-row
-            >
+            <el-table ref="alarmTable" :data="tableData.data" tooltip-effect="dark" style="width: 100%"
+              @selection-change="handleSelectionChange" @current-change="handleRowChange" highlight-current-row>
               <el-table-column type="selection"> </el-table-column>
               <el-table-column prop="name" label="预警名称"> </el-table-column>
               <el-table-column prop="subSystem" label="子系统" width="80">
               </el-table-column>
               <el-table-column label="状态" width="90">
                 <template slot-scope="scope">
-                  <div
-                    v-if="scope.row.state == 0"
-                    class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round"
-                  >
+                  <div v-if="scope.row.state == 0" class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
                     <span class="crrc-tag-status-dot crrc-tag-badge"></span>
                     未消除
                   </div>
-                  <div
-                    v-if="scope.row.state == 1"
-                    class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round"
-                  >
+                  <div v-if="scope.row.state == 1" class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
                     <span class="crrc-tag-status-dot crrc-tag-badge"></span>
                     车载消除
                   </div>
@@ -190,15 +131,9 @@
 
         <el-row>
           <div>
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPageValue"
-              :page-sizes="[7, 14, 28, 56]"
-              :page-size="pageSize"
-              layout="sizes, prev, pager, next, jumper"
-              :total="tableData.total"
-            >
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+              :current-page="currentPageValue" :page-sizes="[7, 14, 28, 56]" :page-size="pageSize"
+              layout="sizes, prev, pager, next, jumper" :total="tableData.total">
             </el-pagination>
           </div>
         </el-row>
@@ -211,17 +146,11 @@
             <div>
               <h2>{{ currentRow.name }}</h2>
             </div>
-            <div
-              v-if="currentRow.state == 0"
-              class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round"
-            >
+            <div v-if="currentRow.state == 0" class="crrc-tag crrc-tag-orange crrc-tag-middle crrc-tag-round">
               <span class="crrc-tag-status-dot crrc-tag-badge"></span>
               未消除
             </div>
-            <div
-              v-if="currentRow.state == 1"
-              class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round"
-            >
+            <div v-if="currentRow.state == 1" class="crrc-tag crrc-tag-blue crrc-tag-middle crrc-tag-round">
               <span class="crrc-tag-status-dot crrc-tag-badge"></span>
               车载消除
             </div>
@@ -259,11 +188,9 @@
           <span>预警码：{{ currentRow.code }}</span>
         </el-col>
         <el-col :span="6">
-          <span
-            >发生时间：{{
-              currentRow.createTime ? currentRow.createTime : "--"
-            }}</span
-          >
+          <span>发生时间：{{
+            currentRow.createTime ? currentRow.createTime : "--"
+          }}</span>
         </el-col>
       </el-row>
       <el-row :gutter="20">
@@ -287,40 +214,19 @@
         <el-col :span="12">
           <div style="color: white; display: flex; justify-content: end">
             <div style="margin-right: 5px; cursor: pointer">
-              <svg
-                @click="semaphore_togg"
-                t="1726801127036"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="878"
-                width="22"
-                height="22"
-              >
+              <svg @click="semaphore_togg" t="1726801127036" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="878" width="22" height="22">
                 <path
                   d="M882.176 190.610286l-174.08 174.153143a34.304 34.304 0 0 1-48.493714-48.493715l174.153143-174.08H694.198857a34.304 34.304 0 0 1 0-68.608h222.281143c18.944 0 34.304 15.36 34.304 34.304v222.281143a34.304 34.304 0 0 1-68.608 0V190.610286z m-56.758857 646.875428l-174.811429-174.811428a36.571429 36.571429 0 1 1 51.785143-51.638857l174.738286 174.738285V636.854857a36.571429 36.571429 0 0 1 73.142857 0v237.202286a36.571429 36.571429 0 0 1-36.571429 36.571428H676.498286a36.571429 36.571429 0 0 1 0-73.142857h148.918857zM197.997714 146.285714l176.566857 176.566857a36.571429 36.571429 0 1 1-51.712 51.712L146.285714 197.997714v148.918857a36.571429 36.571429 0 0 1-73.142857 0V109.714286a36.571429 36.571429 0 0 1 36.571429-36.571429h237.202285a36.571429 36.571429 0 0 1 0 73.142857H197.997714zM146.285714 772.388571l176.566857-176.566857a36.571429 36.571429 0 1 1 51.712 51.785143l-176.566857 176.566857h148.918857a36.571429 36.571429 0 1 1 0 73.142857H109.714286a36.571429 36.571429 0 0 1-36.571429-36.571428V623.542857a36.571429 36.571429 0 1 1 73.142857 0v148.918857z"
-                  fill="#ffffff"
-                  p-id="879"
-                ></path>
+                  fill="#ffffff" p-id="879"></path>
               </svg>
             </div>
             <div style="cursor: pointer">
-              <svg
-                t="1726801203625"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="2803"
-                width="22"
-                height="22"
-              >
+              <svg t="1726801203625" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="2803" width="22" height="22">
                 <path
                   d="M925.55776 731.0592c-13.952 0-25.26208 11.20768-25.41568 25.1648l0 155.89888c0 35.25632-1.77664 30.63808-36.98176 30.63808L152.6272 942.76096c-35.20512 0-48.44544 4.61312-48.44544-30.63808L104.18176 129.38752c0-35.26144 13.24032-34.44736 48.44544-34.44736l710.53824 0c35.20512 0 36.98176-0.81408 36.98176 34.44736l0 152.0896 0.3584 0c1.97632 12.07808 12.43136 21.30944 25.05728 21.30944 12.64128 0 23.1424-9.23136 25.1136-21.30944l0.3072 0 0-177.3056c0-35.20512-28.50816-63.76448-63.72352-63.76448L117.06368 40.40704c-35.20512 0-63.7184 28.55936-63.7184 63.76448L53.34528 933.4784c0 35.25632 28.50816 63.8208 63.7184 63.8208l770.19136 0c35.21536 0 63.72352-28.56448 63.72352-63.8208L950.97856 756.224C950.82496 742.272 939.51488 731.0592 925.55776 731.0592L925.55776 731.0592zM1004.34944 507.59168c-1.26976-2.53952-2.944-4.92544-5.07392-7.10656-1.21344-1.21344-2.5344-2.28352-3.95264-3.24608l-246.5536-246.7072c-9.23136-9.23136-24.7552-8.62208-34.65216 1.32096-9.93792 9.93792-10.55744 25.46176-1.31584 34.65216l206.01344 206.16704L405.01248 492.672c-14.0032 0-25.41568 11.3664-25.41568 25.4208 0 14.04928 11.41248 25.46688 25.41568 25.46688l515.27168 0-207.48288 207.59552c-9.23648 9.22624-8.6272 24.75008 1.31584 34.69312 9.89696 9.94816 25.4208 10.50624 34.65216 1.32096l246.5536-246.75328c1.41824-0.91648 2.7392-2.02752 3.95264-3.24608 2.12992-2.13504 3.80416-4.56704 5.07392-7.11168 1.72544-3.14368 2.6368-6.69184 2.73408-10.29632l0-1.82272C1006.98624 514.33984 1006.07488 510.78656 1004.34944 507.59168L1004.34944 507.59168z"
-                  fill="#ffffff"
-                  p-id="2804"
-                ></path>
+                  fill="#ffffff" p-id="2804"></path>
               </svg>
             </div>
           </div>
@@ -341,22 +247,12 @@
               <span>时间范围：</span>
             </div>
             <div style="width: 100px">
-              <el-select
-                v-model="dataTimeRangeValue"
-                placeholder="请选择"
-                size="mini"
-                @change="get_semaphore_time"
-              >
-                <el-option
-                  v-for="item in [
-                    { value: 1, label: '±1分钟' },
-                    { value: 3, label: '±3分钟' },
-                    { value: 5, label: '±5分钟' },
-                  ]"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select v-model="dataTimeRangeValue" placeholder="请选择" size="mini" @change="get_semaphore_time">
+                <el-option v-for="item in [
+                  { value: 1, label: '±1分钟' },
+                  { value: 3, label: '±3分钟' },
+                  { value: 5, label: '±5分钟' },
+                ]" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -365,16 +261,8 @@
       </el-row>
       <el-row>
         <div class="signal-panel">
-          <div
-            class="singal-item"
-            v-for="(item, index) in signals"
-            v-bind:key="item.id"
-          >
-            <SignalCom
-              :signal_name="item.name"
-              :signal_value="item.value"
-              :color="getColor(index)"
-            >
+          <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
+            <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
             </SignalCom>
           </div>
           <div class="add-signal-btn" @click="modSignals">
@@ -384,11 +272,7 @@
         </div>
       </el-row>
       <div>
-        <EChartsCom
-          :width="'100%'"
-          :height="'30dvh'"
-          :option="signal_option"
-        ></EChartsCom>
+        <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
       </div>
       <!-- <el-divider></el-divider>
             <el-row :gutter="20">
@@ -412,13 +296,8 @@
       <!-- 弹出层 -->
       <div class="pop_ups">
         <!-- 弹出层 -->
-        <el-dialog
-          class="indicator_curves"
-          :visible.sync="SemaphoreVisible_"
-          width="80%"
-          :close-on-click-modal="true"
-          @close="SemaphoreVisible_ = false"
-        >
+        <el-dialog class="indicator_curves" :visible.sync="SemaphoreVisible_" width="80%" :close-on-click-modal="true"
+          @close="SemaphoreVisible_ = false">
           <div class="right-panel right-panel2">
             <el-row :gutter="20">
               <el-col :span="12">
@@ -434,33 +313,21 @@
                 </el-button-group>
               </el-col>
               <el-col :span="12">
-                <div
-                  style="
+                <div style="
                     display: flex;
                     justify-content: end;
                     align-items: center;
-                  "
-                >
+                  ">
                   <div>
                     <span>时间范围：</span>
                   </div>
                   <div style="width: 100px">
-                    <el-select
-                      v-model="dataTimeRangeValue"
-                      placeholder="请选择"
-                      size="mini"
-                      @change="get_semaphore_time"
-                    >
-                      <el-option
-                        v-for="item in [
-                          { value: 1, label: '±1分钟' },
-                          { value: 3, label: '±3分钟' },
-                          { value: 5, label: '±5分钟' },
-                        ]"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
+                    <el-select v-model="dataTimeRangeValue" placeholder="请选择" size="mini" @change="get_semaphore_time">
+                      <el-option v-for="item in [
+                        { value: 1, label: '±1分钟' },
+                        { value: 3, label: '±3分钟' },
+                        { value: 5, label: '±5分钟' },
+                      ]" :key="item.value" :label="item.label" :value="item.value">
                       </el-option>
                     </el-select>
                   </div>
@@ -469,16 +336,8 @@
             </el-row>
             <el-row>
               <div class="signal-panel">
-                <div
-                  class="singal-item"
-                  v-for="(item, index) in signals"
-                  v-bind:key="item.id"
-                >
-                  <SignalCom
-                    :signal_name="item.name"
-                    :signal_value="item.value"
-                    :color="getColor(index)"
-                  >
+                <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
+                  <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
                   </SignalCom>
                 </div>
                 <!-- <div class="add-signal-btn" @click="modSignals">
@@ -488,11 +347,7 @@
               </div>
             </el-row>
             <div>
-              <EChartsCom
-                :width="'100%'"
-                :height="'30dvh'"
-                :option="signal_option"
-              ></EChartsCom>
+              <EChartsCom :width="'100%'" :height="'30dvh'" :option="signal_option"></EChartsCom>
             </div>
           </div>
         </el-dialog>
@@ -500,11 +355,7 @@
     </template>
 
     <el-dialog :visible.sync="dialogVisible" class="selector">
-      <SignalSelector
-        @cancel="cancel"
-        @comfirm="comfirm"
-        :initCheckList="sigletonSignal"
-      />
+      <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="sigletonSignal" />
     </el-dialog>
   </div>
 </template>
@@ -517,6 +368,7 @@ import SignalSelector from "@/components/SignalSelector.vue";
 import { getLines, getTrains, getAlarmList } from "@/api/alarmInfo";
 import { indicatorInfo, signalVal } from "@/api/trainClass";
 import { bef_after } from "@/api/api.js";
+import { getSignals } from "@/api/signalSelector";
 export default {
   components: {
     SignalCom,
@@ -529,6 +381,8 @@ export default {
       SemaphoreVisible_: false,
       // 0报警  1预警
       type: null,
+      // 获取所有信号量
+      signals_tmp: null,
       lineValue: "",
       lineOptions: [
         {
@@ -608,12 +462,12 @@ export default {
       value: "",
 
       signals: [
-        {
-          code: "i_DC_Out",
-          name: "直流输出电流",
-          signalName: "直流输出电流",
-          value: 87,
-        },
+        // {
+        //   code: "i_DC_Out",
+        //   name: "直流输出电流",
+        //   signalName: "直流输出电流",
+        //   value: 87,
+        // },
       ],
 
       signal_option: {
@@ -787,11 +641,70 @@ export default {
       this.query();
       // console.log('选中的ref',this.$refs.alarmTable);
     },
+    // 获取信号量
+    getxhls() {
+      getSignals(1, 1000).then(response => {
+        var data = response.data.data;
+        this.signals_tmp = data
+        this.getxhl()
+        console.log('获取所有信号量', this.signals_tmp);
+
+      });
+    },
+    // 按照选中的预警/报警来进行信号量获取
+    getxhl() {
+      // this.signals = 
+      // ali
+      // console.log('选中的值', this.tableData.data[0].subSystem);
+      // 默认选中的信号量 中文
+      let str_code_arr = this.tableData.data[0].subSystem
+      // let code_arr = str_code_arr.split(',')
+      console.log('分割后的数据', str_code_arr);
+
+      indicatorInfo(null, this.trainValue).then((response) => {
+        // console.log(response);
+        if (response.status === 200) {
+          var data = response.data.data.deviceDM;
+          let code_arr = ''
+          console.log('需要过滤的数据数据', data);
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].name === str_code_arr || data.length === i + 1) {
+              this.signals = []
+              console.log(data[i].components);
+              for (let j = 0; j < data[i].components.length; j++) {
+                if (data[i].components.length === j + 1) {
+                  code_arr += data[i].components[j].signalCode
+                  this.signals.push({
+                    name: data[i].components[j].signalName,
+                    code: data[i].components[j].signalCode,
+                    value: data[i].components[j].signalValue,
+                    signalName: data[i].components[j].signalName
+                  })
+                } else {
+                  code_arr += data[i].components[j].signalCode + ','
+                }
+              }
+              break
+            }
+          }
+          console.log('最后的结果', code_arr);
+        // 获取信号量数据
+        // let result = bef_after('2024-11-04 14:47:00', 5, 5);
+        let result = bef_after(this.currentRow.createTime, 5, 5);
+        this.initSignalData(result.beforeTime, result.afterTime);
+        }
+      });
+
+    },
+
+
     // 调整查询的时间
     get_semaphore_time(time) {
       if (this.currentRow) {
-        const adjustedTimeString = this.currentRow.createTime;
-        const adjustedTime = new Date(adjustedTimeString);
+        // const adjustedTimeString = this.currentRow.createTime;
+        const adjustedTime = new Date();
+        console.log('当前时间',adjustedTime);
+        
         // 计算前一分钟的时间
         const oneMinuteBefore = new Date(
           adjustedTime.getTime() - time * 60 * 1000
@@ -809,6 +722,9 @@ export default {
             date.getSeconds()
           )}`;
         };
+        console.log( (oneMinuteBefore),
+        (oneMinuteAfter));
+        
         this.initSignalData(
           formatDate(oneMinuteBefore),
           formatDate(oneMinuteAfter)
@@ -843,9 +759,13 @@ export default {
           this.$refs.alarmTable.setCurrentRow(this.tableData.data[0]);
 
         // 默认查询第一条完成后 开始获取信号量
-        // 获取信号量数据
-        let result = bef_after(this.currentRow.createTime, 5, 5);
-        this.initSignalData(result.beforeTime, result.afterTime);
+        this.getxhls()
+
+
+        // // 获取信号量数据
+        // let result = bef_after('2024-11-04 14:47:00', 5, 5);
+        // // let result = bef_after(this.currentRow.createTime, 5, 5);
+        // this.initSignalData(result.beforeTime, result.afterTime);
       });
     },
     reset() {
@@ -889,7 +809,8 @@ export default {
     handleRowChange(val) {
       if (!val) return;
       this.currentRow = val;
-      let result = bef_after(this.currentRow.createTime, 5, 5);
+      // let result = bef_after('2024-11-04 14:47:00', 5, 5);
+      let result = bef_after(this.currentRow.createTime || '2024-11-04 14:47:00', 5, 5);
       this.initSignalData(result.beforeTime, result.afterTime);
     },
 
@@ -913,8 +834,9 @@ export default {
       this.dialogVisible = false;
       var newSignals = [];
       signalVal(11001002, "", "", "", true).then((response) => {
+        console.log(response);
         var data = response.data.data;
-
+        
         for (let i = 0; i < val.length; i++) {
           const item = val[i];
           item.value =
@@ -931,10 +853,13 @@ export default {
       return colors(i);
     },
     initSignalData(startTime, endTime) {
+      console.log('文本code', this.signals);
+
       var codes = this.signals
         .map((obj) => obj.code)
         .filter((value, index, self) => self.indexOf(value) === index)
         .join(",");
+      console.log('code', codes);
 
       signalVal(
         this.currentRow.trainNumber,
@@ -944,28 +869,32 @@ export default {
         false
       ).then((response) => {
         var data = [];
+        console.log('初始化查询', response);
+        // 无数据时不执行  防止报错
+        if (response.data.data) {
+          for (let i = 0; i < this.signals.length; i++) {
+            var signal = this.signals[i];
+            var axis = 0;
+            if (signal.name.includes("电压")) axis = 1;
+            else if (signal.name.includes("电流")) axis = 0;
 
-        for (let i = 0; i < this.signals.length; i++) {
-          var signal = this.signals[i];
-          var axis = 0;
-          if (signal.name.includes("电压")) axis = 1;
-          else if (signal.name.includes("电流")) axis = 0;
+            var temp = {
+              name: signal.name,
+              type: "line",
+              showSymbol: true,
+              smooth: false,
+              yAxisIndex: axis,
+              sample: "auto",
+              data: response.data.data.map((x) => [
+                x.createTime,
+                x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
+              ]),
+            };
 
-          var temp = {
-            name: signal.name,
-            type: "line",
-            showSymbol: true,
-            smooth: false,
-            yAxisIndex: axis,
-            sample: "auto",
-            data: response.data.data.map((x) => [
-              x.createTime,
-              x[signal.code.charAt(0).toLowerCase() + signal.code.slice(1)],
-            ]),
-          };
-
-          data.push(temp);
+            data.push(temp);
+          }
         }
+
         this.signal_option.series = data;
       });
     },
@@ -1261,10 +1190,12 @@ export default {
 .el-select {
   width: 100%;
 }
+
 .panel .el-dialog__body {
   /* height: 70dvh; */
   padding: 0;
 }
+
 .el-select-dropdown {
   border: 1px solid rgba(255, 255, 255, 0.15);
   background-color: #181f30;
@@ -1314,13 +1245,13 @@ export default {
   background-color: #20283c;
 }
 
-.panel .el-table__body tr.current-row:hover > td.el-table__cell,
-.el-table__body tr.selection-row > td.el-table__cell {
+.panel .el-table__body tr.current-row:hover>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
   background-color: #005db4;
 }
 
-.panel .el-table__body tr.current-row > td.el-table__cell,
-.el-table__body tr.selection-row > td.el-table__cell {
+.panel .el-table__body tr.current-row>td.el-table__cell,
+.el-table__body tr.selection-row>td.el-table__cell {
   background-color: #005db4;
 }
 
@@ -1330,7 +1261,7 @@ export default {
   font-size: 12px;
 }
 
-.panel .el-table__body tr:hover > td.el-table__cell {
+.panel .el-table__body tr:hover>td.el-table__cell {
   background-color: transparent;
 }
 

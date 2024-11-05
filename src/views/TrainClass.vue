@@ -67,7 +67,7 @@
                 font-size: 28px;
                 white-space: pre;
               "
-              x="224.754"
+              x="214.754"
               y="258.002"
               transform="matrix(1.3642630577087402, 0, 0, 1.2998440265655518, -136.27794493487204, -67.0629607616197)"
             >
@@ -138,7 +138,9 @@
             </div>
             <div class="train_nick3">
               <div>C1</div>
-              <img src="../../public/img/weixian.png" alt="" />
+              <!-- <img src="../../public/img/weixian.png" alt="" /> -->
+              <img src="../../public/img/tongguo.png" alt="" />
+
             </div>
             <div class="train_nick4">
               <div>C2</div>
@@ -591,7 +593,7 @@ export default {
         { id: "A5", class: "Card", name: "辅助变流器220/3", isActive: false },
         { id: "A6", class: "Card", name: "充电机24/2", isActive: false },
       ],
-      indicators_contents: [],
+      indicators_contents: null,
       // 指标表格parts长度
       parts_long: null,
       // 弹窗
@@ -1150,6 +1152,8 @@ export default {
     },
 
     setIndicatorsContent(data, e, Name) {
+      console.log('首次获取数据',data, e, Name);
+      
       // 选择部分显示
       if (Name && Name !== "全部") {
         for (let i = 0; i < data.length; i++) {
@@ -1159,7 +1163,7 @@ export default {
           }
         }
       }
-
+      
       this.indicators_contents = [];
       for (let index = 0; index < data.length; index++) {
         var device = data[index];
@@ -1351,8 +1355,9 @@ export default {
     .svg {
       background-color: #273553;
       display: flex;
-      padding: 10px 0;
-      align-items: center;
+      padding: 10px 10px 10px  0;
+      // align-items: center;
+      flex-direction: column;
 
       :last-child {
         margin-left: 2px;

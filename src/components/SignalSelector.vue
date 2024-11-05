@@ -79,7 +79,7 @@ export default {
             var result = []
             for (let i = 0; i < this.checkList.length; i++) {
                 const item = this.checkList[i];
-
+                
                 result.push({
                     name: item,
                     code: this.signals.find(obj => obj.name === item).code,
