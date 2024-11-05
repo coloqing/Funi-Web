@@ -4,64 +4,31 @@
     <div class="train-select">
       <div class="svg">
         <div>
-          <svg
-            viewBox="156.059 225.515 91.041 59.736"
-            xmlns="http://www.w3.org/2000/svg"
-            width="30px"
-          >
-            <rect
-              style="
+          <svg viewBox="156.059 225.515 91.041 59.736" xmlns="http://www.w3.org/2000/svg" width="30px">
+            <rect style="
                 stroke: rgb(0, 0, 0);
                 stroke-miterlimit: 3.87;
                 stroke-width: 0px;
                 fill: rgb(66, 173, 93);
-              "
-              x="156.059"
-              y="225.515"
-              width="88.38"
-              height="59.736"
-              rx="2"
-              ry="2"
-            />
-            <rect
-              x="244.439"
-              y="235.686"
-              width="2.661"
-              height="10.561"
-              style="
+              " x="156.059" y="225.515" width="88.38" height="59.736" rx="2" ry="2" />
+            <rect x="244.439" y="235.686" width="2.661" height="10.561" style="
                 stroke-width: 0px;
                 stroke: rgb(66, 173, 93);
                 paint-order: stroke;
                 fill: rgb(66, 173, 93);
-              "
-            />
-            <rect
-              x="244.422"
-              y="263.414"
-              width="2.661"
-              height="10.561"
-              style="
+              " />
+            <rect x="244.422" y="263.414" width="2.661" height="10.561" style="
                 stroke: rgb(0, 0, 0);
                 stroke-width: 0px;
                 fill: rgb(66, 173, 93);
-              "
-            />
-            <rect
-              style="
+              " />
+            <rect style="
                 stroke: rgb(0, 0, 0);
                 fill: rgb(39, 53, 83);
                 stroke-miterlimit: 3.87;
                 stroke-width: 0px;
-              "
-              x="160.912"
-              y="229.93"
-              width="78.908"
-              height="51.677"
-              rx="2.231"
-              ry="2.231"
-            />
-            <text
-              style="
+              " x="160.912" y="229.93" width="78.908" height="51.677" rx="2.231" ry="2.231" />
+            <text style="
                 fill: rgb(66, 173, 93);
                 font-family: Arial, sans-serif;
                 font-size: 28px;
@@ -76,25 +43,14 @@
           </svg>
         </div>
         <div>
-          <el-select
-            v-model="trainValue"
-            placeholder="请选择车号"
-            @change="handleChange"
-          >
+          <el-select v-model="trainValue" placeholder="请选择车号" @change="handleChange">
             <!-- 离线 -1  库内 0  正线 1 ali -->
-            <el-option
-              v-for="item in trainOptions"
-              :class="
-                item.state === 0
-                  ? 'text-green'
-                  : item.state === -1
-                  ? 'text-gray'
-                  : 'text-white'
-              "
-              :key="item.trainNum"
-              :label="item.trainNum"
-              :value="item.trainNum"
-            >
+            <el-option v-for="item in trainOptions" :class="item.state === 0
+              ? 'text-green'
+              : item.state === -1
+                ? 'text-gray'
+                : 'text-white'
+              " :key="item.trainNum" :label="item.trainNum" :value="item.trainNum">
             </el-option>
           </el-select>
         </div>
@@ -157,13 +113,8 @@
           </div>
           <!-- 选项透明膜 -->
           <div class="train_item" @click="sideCard">
-            <div
-              :class="card.isActive ? 'visibilit' : 'Card'"
-              v-for="(card, index) in cards"
-              :key="card.id"
-              :data-id="card.id"
-              :data-only="card.only"
-            ></div>
+            <div :class="card.isActive ? 'visibilit' : 'Card'" v-for="(card, index) in cards" :key="card.id"
+              :data-id="card.id" :data-only="card.only"></div>
           </div>
         </div>
       </div>
@@ -171,11 +122,7 @@
       <div class="train_center_canvas">
         <!-- <img style="width: 100vw;" src="../../public/img/map.png" alt="" /> -->
         <!-- <canvas ref="circuit_fig" ></canvas> -->
-        <CanvasCircuit
-          style="width: 1800px; height: 800px"
-          :trainValue="trainValue"
-          :key="trainValue"
-        />
+        <CanvasCircuit style="width: 1800px; height: 800px" :trainValue="trainValue" :key="trainValue" />
       </div>
 
       <div class="train-signal">
@@ -183,21 +130,9 @@
           <span>信号量</span>
         </div>
         <div class="signal-btn-div">
-          <el-button
-            size="mini"
-            ref="all_title"
-            :class="signal_btn"
-            @click="select_code(-1)"
-            >全部</el-button
-          >
-          <el-button
-            size="mini"
-            :class="item.togg ? 'signal-btn' : 'signal-btn_no'"
-            @click="select_code(index)"
-            v-for="(item, index) in indicators_contents"
-            :key="index"
-            >{{ item.system }}</el-button
-          >
+          <el-button size="mini" ref="all_title" :class="signal_btn" @click="select_code(-1)">全部</el-button>
+          <el-button size="mini" :class="item.togg ? 'signal-btn' : 'signal-btn_no'" @click="select_code(index)"
+            v-for="(item, index) in indicators_contents" :key="index">{{ item.system }}</el-button>
           <!-- <el-button size="mini" class="signal-btn">辅助变流器</el-button>
           <el-button size="mini" class="signal-btn">高压电气箱</el-button>
           <el-button size="mini" class="signal-btn">逆变输出</el-button>
@@ -211,20 +146,9 @@
             <SignalCom :signal_name="'A1-充电机输出电流传感器BC11'" signal_value="50A" :color="'#ac3577'">
             </SignalCom>
           </div> -->
-          <div
-            class="singal-item"
-            v-for="(item, index) in signals"
-            v-bind:key="item.id"
-          >
-            <SignalCom
-              :signal_name="item.name"
-              :signal_id="index"
-              :signal_value="item.value"
-              :ref="item.code"
-              :color="getColor(index)"
-              @erts-click="echarts_togg"
-              @opac-click="opacity_togg"
-            >
+          <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
+            <SignalCom :signal_name="item.name" :signal_id="index" :signal_value="item.value" :ref="item.code"
+              :color="getColor(index)" @erts-click="echarts_togg" @opac-click="opacity_togg">
             </SignalCom>
           </div>
           <div class="add-signal-btn" @click="modSignals">
@@ -233,13 +157,8 @@
           </div>
         </div>
         <div>
-          <EChartsCom
-            :width="'100%'"
-            :height="'40dvh'"
-            :option="signal_option"
-            :key="trainValue"
-            ref="childRef"
-          ></EChartsCom>
+          <EChartsCom :width="'100%'" :height="'40dvh'" :option="signal_option" :key="trainValue" ref="childRef">
+          </EChartsCom>
           <!-- :key="trainValue + ect_name" -->
         </div>
       </div>
@@ -254,12 +173,8 @@
         <div class="indicators">
           <!-- title -->
           <div class="indicators_title font_size26w">
-            <div
-              v-for="(item, index) in indicators_cards"
-              :key="index"
-              :class="item.isActive ? 'border' : ''"
-              @click="indicators_togg(index, item.name)"
-            >
+            <div v-for="(item, index) in indicators_cards" :key="index" :class="item.isActive ? 'border' : ''"
+              @click="indicators_togg(index, item.name)">
               {{ item.name }}
             </div>
           </div>
@@ -283,96 +198,67 @@
                     {{ item.name }}
                   </td>
                   <td style="padding-left: 0px">
-                    <tr
-                      v-for="(item3, index3) in item.indicators"
-                      style="border: 0px; display: flex; align-items: center"
-                    >
-                      <td
-                        style="
+                <tr v-for="(item3, index3) in item.indicators" style="border: 0px; display: flex; align-items: center">
+                  <td style="
                           border: 0px;
                           border-bottom: 1px solid #3a404f;
                           width: 100%;
                           padding: 0.8vw 0 0.8vw 0.8vw;
-                        "
-                        :class="
-                          index3 === item.indicators.length - 1 ? 'none' : ''
-                        "
-                      >
-                        {{ item3.name }}
-                      </td>
-                    </tr>
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                    {{ item3.name }}
                   </td>
-                  <!-- <td>{{ item.performance_metrics }}</td> -->
-                  <!-- 指标值 -->
-                  <td style="padding-left: 0px">
-                    <tr
-                      v-for="(item3, index3) in item.indicators"
-                      style="border: 0px; display: flex; align-items: center"
-                    >
-                      <td
-                        style="
+                </tr>
+                </td>
+                <!-- <td>{{ item.performance_metrics }}</td> -->
+                <!-- 指标值 -->
+                <td style="padding-left: 0px">
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
                           border: 0px;
                           border-bottom: 1px solid #3a404f;
                           width: 100%;
                           padding: 0.8vw 0 0.8vw 0.8vw;
-                        "
-                        :class="
-                          index3 === item.indicators.length - 1 ? 'none' : ''
-                        "
-                      >
-                        {{ item3.metric_values }}
-                      </td>
-                    </tr>
-                  </td>
-                  <!-- 状态 -->
-                  <td style="padding-left: 0px">
-                    <!-- <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      {{ item3.metric_values }}
+                    </td>
+                  </tr>
+                </td>
+                <!-- 状态 -->
+                <td style="padding-left: 0px">
+                  <!-- <span :class="item.state === 0 ? 'abnormal' : 'normal'">{{
                       item.state === 0 ? "异常" : "正常"
                     }}</span> -->
-                    <tr
-                      v-for="(item3, index3) in item.indicators"
-                      style="border: 0px; display: flex; align-items: center"
-                    >
-                      <td
-                        style="
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
                           border: 0px;
                           border-bottom: 1px solid #3a404f;
                           width: 100%;
                           padding: 0.8vw 0 0.8vw 0.8vw;
-                        "
-                        :class="
-                          index3 === item.indicators.length - 1 ? 'none' : ''
-                        "
-                      >
-                        <span
-                          :class="item3.state === 0 ? 'abnormal' : 'normal'"
-                          >{{ item3.state === 0 ? "异常" : "正常" }}</span
-                        >
-                      </td>
-                    </tr>
-                  </td>
-                  <td class="detail" style="padding-left: 0px">
-                    <tr
-                      v-for="(item3, index3) in item.indicators"
-                      style="border: 0px; display: flex; align-items: center"
-                    >
-                      <td
-                        style="
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      <span :class="item3.state === 0 ? 'abnormal' : 'normal'">{{ item3.state === 0 ? "异常" : "正常"
+                        }}</span>
+                    </td>
+                  </tr>
+                </td>
+                <td class="detail" style="padding-left: 0px">
+                  <tr v-for="(item3, index3) in item.indicators"
+                    style="border: 0px; display: flex; align-items: center">
+                    <td style="
                           border: 0px;
                           border-bottom: 1px solid #3a404f;
                           width: 100%;
                           padding: 0.8vw 0 0.8vw 0.8vw;
-                        "
-                        :class="
-                          index3 === item.indicators.length - 1 ? 'none' : ''
-                        "
-                      >
-                        <span @click="instructions_togg(item3.name, item3.code)"
-                          >查看详情</span
-                        >
-                      </td>
-                    </tr>
-                  </td>
+                        " :class="index3 === item.indicators.length - 1 ? 'none' : ''
+                          ">
+                      <span @click="instructions_togg(item3.name, item3.code)">查看详情</span>
+                    </td>
+                  </tr>
+                </td>
                 </tr>
               </template>
             </tbody>
@@ -384,13 +270,8 @@
       <!-- 弹出层 -->
       <div class="pop_ups">
         <!-- 弹出层 -->
-        <el-dialog
-          class="indicator_curves"
-          :visible.sync="dialogVisible"
-          width="80%"
-          :close-on-click-modal="true"
-          @close="dialogVisible = false"
-        >
+        <el-dialog class="indicator_curves" :visible.sync="dialogVisible" width="80%" :close-on-click-modal="true"
+          @close="dialogVisible = false">
           <!-- 关键指标曲线 -->
           <div class="curves_title font_size26w">
             <!-- 部件名称 -->
@@ -424,11 +305,7 @@
     </template>
 
     <el-dialog :visible.sync="dialogVisible1" class="selector">
-      <SignalSelector
-        @cancel="cancel"
-        @comfirm="comfirm"
-        :initCheckList="sigletonSignal"
-      />
+      <SignalSelector @cancel="cancel" @comfirm="comfirm" :initCheckList="sigletonSignal" />
     </el-dialog>
   </div>
 </template>
@@ -842,7 +719,7 @@ export default {
           // title
           this.detail_title = prefix;
           this.detail_code = code;
-          this.update_signal(code, parts);
+          this.update_signal(code, parts, moment(new Date()).add(-1, 'minutes').format("YYYY-MM-DD HH:mm:ss"), moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
         }
       }, 30);
     },
@@ -1373,7 +1250,7 @@ export default {
     justify-content: space-between;
     padding-bottom: 1vw;
 
-    > div {
+    >div {
       width: 33.3%;
       height: 100%;
       box-sizing: border-box;
@@ -1447,14 +1324,14 @@ export default {
           height: 40%;
           // font-size: 1vw;
 
-          > div {
+          >div {
             flex: 1;
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
 
-            > img {
+            >img {
               width: 1vw;
               margin-left: 0.5vw;
             }
@@ -1472,7 +1349,7 @@ export default {
           justify-content: space-between;
           align-items: center;
 
-          > div {
+          >div {
             background: rgb(0, 0, 0, 0.8);
             opacity: 0.2;
             flex: 1;
@@ -1509,6 +1386,7 @@ export default {
           background-color: #181f30;
           border-color: #177ddc;
         }
+
         .signal-btn_no {
           color: #909bb1;
           background-color: #181f30;
@@ -1585,7 +1463,7 @@ export default {
           justify-content: left;
           margin: 0.5vw 0;
 
-          > div {
+          >div {
             // width: 10vw;
             padding: 10px 0;
             margin: 0 10px;
@@ -1610,31 +1488,31 @@ export default {
 
           .indicators_thead,
           .indicators_tbody {
-            > th:nth-child(1) {
+            >th:nth-child(1) {
               width: 15.7%;
             }
 
-            > th:nth-child(2) {
+            >th:nth-child(2) {
               width: 23.9%;
             }
 
-            > th:nth-child(3) {
+            >th:nth-child(3) {
               width: 23.8%;
             }
 
-            > th:nth-child(4) {
+            >th:nth-child(4) {
               width: 11.6%;
             }
 
-            > th:nth-child(5) {
+            >th:nth-child(5) {
               width: 11.6%;
             }
 
-            > th:nth-child(6) {
+            >th:nth-child(6) {
               width: 13.4%;
             }
 
-            > th {
+            >th {
               background-color: #20283c;
               border: 1px solid #3a404f;
               padding: 0.8vw 0;
@@ -1707,7 +1585,7 @@ export default {
           justify-content: space-evenly;
           align-items: center;
 
-          > div {
+          >div {
             margin: 0 0.4vw;
             // font-size: 1vw;/
           }
