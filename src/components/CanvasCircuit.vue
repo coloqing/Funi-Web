@@ -1,7 +1,9 @@
 <template>
-  <canvas ref="circuit_fig"></canvas>
+  <div class="canvas" style="position:relative">
+    <canvas ref="circuit_fig" :class="bol ? 'xx':''"  ></canvas>
+    <canvas ref="circuit_fig2" :class="!bol ? 'xx':''" ></canvas>
+  </div>
 </template>
-
 <script>
 import { SignalVal } from "@/api/trainClass";
 export default {
@@ -14,10 +16,13 @@ export default {
       schematics_data: null,
       intervalId: null, // 用于存储setInterval的ID，以便之后可以清除它
       isVisible: true, // 用于跟踪页面的可见性状态
+      bol: true,
+      one:1,
+      delayerId:null,
     };
   },
   methods: {
-    // 渲染电路图 （广三）
+    // 渲染电路图 （广三）       
     fun_circuitFig1(w, h, x, y) {
       // 画布宽度 高度 圆心坐标x y
       // 电压表
@@ -32,15 +37,32 @@ export default {
       // 传感器
       var sensor = new Image();
       sensor.src = "./img/canvas/sensor.png";
-
+      if (!this.$refs.circuit_fig) {
+        return
+      }
       // const ctx = this.$refs.circuit_fig;
-      const ctx = this.$refs.circuit_fig.getContext("2d");
-      const canvas = this.$refs.circuit_fig;
+      if (this.bol || this.one === 1) {
+        this.one = 0
+        var ctx = this.$refs.circuit_fig.getContext("2d");
+        var canvas = this.$refs.circuit_fig;
+      }else{
+        var ctx = this.$refs.circuit_fig2.getContext("2d");
+        var canvas = this.$refs.circuit_fig2;
+      }
       const ratio = window.devicePixelRatio || 1;
       canvas.width = 1600 * ratio; // 实际渲染像素
       canvas.height = 800 * ratio; // 实际渲染像素
       canvas.style.width = `${w}px`; // 控制显示大小
       canvas.style.height = `${h}px`; // 控制显示大小
+      // 创建一个离屏画布元素
+      // var offScreenCanvas = document.createElement('canvas');
+      // console.log('offScreenCanvas', offScreenCanvas);
+      // var ctx = offScreenCanvas.getContext('2d');
+      // // 设置离屏画布的尺寸与屏幕画布相同
+      // offScreenCanvas.width = 1600 * ratio;
+      // offScreenCanvas.height = 800 * ratio;
+      // 目标canvas重新绘制
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       // 文本
       ctx.font = "12px Arial"; // 使用更常见的字体，如Arial，以确保跨浏览器兼容性
       ctx.fillStyle = "#95979d"; // 设置文本颜色
@@ -115,11 +137,11 @@ export default {
         this.schematics_data.i_DC_In_1 + "A",
         // "--A",
         sensor_level +
-          electronic_w -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.i_DC_In_1).length +
-            5 * 1) /
-            2,
+        electronic_w -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.i_DC_In_1).length +
+          5 * 1) /
+        2,
         y + electronic_h + 14
       );
 
@@ -168,11 +190,11 @@ export default {
         this.schematics_data.u_DC_In + "V",
         // "--v",
         ammeter1_level -
-          electronic_w / 2 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_DC_In).length +
-            5 * 1) -
-          5,
+        electronic_w / 2 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_DC_In).length +
+          5 * 1) -
+        5,
         center_r2_y - (center_r2_y - y) / 2 + 6
       );
       // 矩形
@@ -207,22 +229,22 @@ export default {
         (this.schematics_data.t_HS_InConv_1 || "----") + "°c",
         // "----°c",
         (rectangle_w - dashed1) / 2 +
-          dashed1 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.t_HS_InConv_1).length +
-            5 * 1) /
-            2,
+        dashed1 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.t_HS_InConv_1).length +
+          5 * 1) /
+        2,
         center_r2_y + rectangle_overflow + rectangle_jianju
       );
       ctx.fillText(
         (this.schematics_data.t_HS_InConv_2 || "----") + "°c",
         // "----°c",
         (rectangle_w - dashed1) / 2 +
-          dashed1 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.t_HS_InConv_1).length +
-            5 * 1) /
-            2,
+        dashed1 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.t_HS_InConv_1).length +
+          5 * 1) /
+        2,
         center_r2_y + rectangle_overflow + rectangle_jianju + 12 * 1.2
       );
       // DC  AC
@@ -230,17 +252,17 @@ export default {
         "DC",
         dashed1 + 12 * 1,
         (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        (y - rectangle_overflow)
       );
       // AC
       ctx.fillText(
         "AC",
         rectangle_w - 12 * 2,
         center_r2_y +
-          rectangle_overflow -
-          (y - rectangle_overflow) -
-          (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        rectangle_overflow -
+        (y - rectangle_overflow) -
+        (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
+        (y - rectangle_overflow)
       );
 
       //线圈
@@ -761,9 +783,9 @@ export default {
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
-          2 +
-          (capacitor_topX + hu_radius2) -
-          (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
+        2 +
+        (capacitor_topX + hu_radius2) -
+        (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -835,10 +857,10 @@ export default {
         this.schematics_data.u_DC_Out + "V",
         // "--V",
         top1_voltmeter_imgX -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_DC_Out).length +
-            5 * 1) /
-            2,
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_DC_Out).length +
+          5 * 1) /
+        2,
         top1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -899,10 +921,10 @@ export default {
         this.schematics_data.u_Battery + "V",
         // "--V",
         top2_voltmeter_imgX -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_Battery).length +
-            5 * 2) /
-            2,
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_Battery).length +
+          5 * 2) /
+        2,
         top2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -968,8 +990,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.stroke();
@@ -991,9 +1013,9 @@ export default {
         this.schematics_data.i_L1 + "A",
         // "--A",
         sensor2_x +
-          (electronic_w / 2) * 3 +
-          (12 * 2 + 7.33 * String(this.schematics_data.i_L1).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 2 + 7.33 * String(this.schematics_data.i_L1).length + 5 * 1) /
+        2,
         sensor2_y - 12 * 2.2
       );
       // 连接点1
@@ -1006,15 +1028,15 @@ export default {
         //连接
         ctx.moveTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5,
           rectangle4_xu_y
         );
         ctx.lineTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-            lj_w,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+          lj_w,
           rectangle4_xu_y
         );
         ctx.stroke();
@@ -1022,15 +1044,15 @@ export default {
         // 不连接
         ctx.moveTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5,
           rectangle4_xu_y
         );
         ctx.lineTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-            lj_w,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+          lj_w,
           rectangle4_xu_y - lj_h
         );
         ctx.stroke();
@@ -1039,9 +1061,9 @@ export default {
       ctx.fillText(
         "输出接触器",
         lj_w / 2 +
-          (rectangle4_xu_x + rectangle4_xu_w) -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 -
-          (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
+        (rectangle4_xu_x + rectangle4_xu_w) -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 -
+        (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
         rectangle4_xu_y - lj_h - 12
       );
 
@@ -1050,9 +1072,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y
       );
       ctx.lineTo(rectangle4_xu_x + rectangle4_xu_w, rectangle4_xu_y);
@@ -1080,8 +1102,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y + rectangle3_xu_ + jianju);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.stroke();
@@ -1103,9 +1125,9 @@ export default {
         this.schematics_data.i_L2 + "A",
         // "--A",
         sensor3_x +
-          (electronic_w / 2) * 3 +
-          (12 * 2 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 2 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) /
+        2,
         sensor3_y - 12 * 2.2
       );
       // 连接点2
@@ -1113,15 +1135,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
@@ -1131,9 +1153,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
@@ -1167,8 +1189,8 @@ export default {
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.stroke();
@@ -1190,9 +1212,9 @@ export default {
         this.schematics_data.i_L3 + "V",
         // "--A",
         sensor4_x +
-          (electronic_w / 2) * 3 +
-          (12 * 2 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 2 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) /
+        2,
         sensor4_y + 12 * 2.2
       );
       // 连接点3
@@ -1200,15 +1222,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
@@ -1217,9 +1239,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
@@ -1268,7 +1290,7 @@ export default {
       ctx.stroke();
       ctx.setLineDash([10, 3]);
       ctx.fillText(
-        "X",
+        "N",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 3
       );
@@ -1310,8 +1332,8 @@ export default {
         this.schematics_data.u_L1 + "V",
         // "--V",
         bott1_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) /
+        2,
         bott1_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       ctx.setLineDash([]);
@@ -1363,8 +1385,8 @@ export default {
         this.schematics_data.u_L2 + "V",
         // "--V",
         bott2_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) /
+        2,
         bott2_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // 小圆
@@ -1415,8 +1437,8 @@ export default {
         this.schematics_data.u_L3 + "V",
         // "--V",
         bott3_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) /
+        2,
         bott3_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // // 小圆
@@ -1445,7 +1467,7 @@ export default {
       // 三角形顶点
       var vertex_x =
         ((black_spots_x - (voltmeter_top2_x + voltmeter_top2_w)) / 2) *
-          (1 + 0.4) +
+        (1 + 0.4) +
         (voltmeter_top2_x + voltmeter_top2_w);
       var vertex_y = black_spots_y;
       // 竖
@@ -1482,7 +1504,7 @@ export default {
       var black_spots_x2 = black_spots_x;
       var black_spots_y2 =
         ((rectangle3_xu_y - radius - (black_spots_y + radius)) / 2) *
-          (1 - 0.4) +
+        (1 - 0.4) +
         black_spots_y +
         radius;
       // 变阻器icon2
@@ -1499,7 +1521,7 @@ export default {
       ctx.lineTo(black_spots_x2 + shu_w * 0.8, black_spots_y2 + shu_w * 1.5);
       ctx.lineTo(black_spots_x2, black_spots_y2);
       ctx.stroke();
-
+      // let that = this
       // 绘制图片 路径 x轴 y轴 宽度 高度
       sensor.onload = function () {
         // 图片1
@@ -1607,8 +1629,22 @@ export default {
           electronic_w,
           electronic_h
         );
+        // that.cc(offScreenCanvas)
       };
+
+
+      // this.bol = !this.bol
+      this.delayerId = setTimeout(this.toggleBol, 500);
+    
     },
+    toggleBol() {
+      this.bol = !this.bol
+        // 清除延迟器
+        clearTimeout(this.delayerId);
+    },
+    // none(){
+    //   this.bol = !this.bol
+    // },
     // 无数据
     fun_circuitFigNull(w, h, x, y) {
       // 画布宽度 高度 圆心坐标x y
@@ -1626,13 +1662,23 @@ export default {
       sensor.src = "./img/canvas/sensor.png";
 
       // const ctx = this.$refs.circuit_fig;
-      const ctx = this.$refs.circuit_fig.getContext("2d");
-      const canvas = this.$refs.circuit_fig;
+      if (!this.$refs.circuit_fig) {
+        return
+      }
+      // const ctx = this.$refs.circuit_fig;
+      if (this.bol || this.one === 1) {
+        this.one = 0
+        var ctx = this.$refs.circuit_fig.getContext("2d");
+        var canvas = this.$refs.circuit_fig;
+      }else{
+        var ctx = this.$refs.circuit_fig2.getContext("2d");
+        var canvas = this.$refs.circuit_fig2;
+      }
       const ratio = window.devicePixelRatio || 1;
       canvas.width = 1700 * ratio; // 实际渲染像素
       canvas.height = 850 * ratio; // 实际渲染像素
-      canvas.style.width = `${w}px`; // 控制显示大小
-      canvas.style.height = `${h}px`; // 控制显示大小
+      // canvas.style.width = `${w}px`; // 控制显示大小
+      // canvas.style.height = `${h}px`; // 控制显示大小
       // 文本
       ctx.font = "12px Arial"; // 使用更常见的字体，如Arial，以确保跨浏览器兼容性
       ctx.fillStyle = "#95979d"; // 设置文本颜色
@@ -1798,17 +1844,17 @@ export default {
         "DC",
         dashed1 + 12 * 1,
         (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        (y - rectangle_overflow)
       );
       // AC
       ctx.fillText(
         "AC",
         rectangle_w - 12 * 2,
         center_r2_y +
-          rectangle_overflow -
-          (y - rectangle_overflow) -
-          (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        rectangle_overflow -
+        (y - rectangle_overflow) -
+        (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
+        (y - rectangle_overflow)
       );
 
       //线圈
@@ -2317,9 +2363,9 @@ export default {
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
-          2 +
-          (capacitor_topX + hu_radius2) -
-          (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
+        2 +
+        (capacitor_topX + hu_radius2) -
+        (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -2513,8 +2559,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.stroke();
@@ -2544,15 +2590,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y - lj_h
       );
       ctx.stroke();
@@ -2560,9 +2606,9 @@ export default {
       ctx.fillText(
         "输出接触器",
         lj_w / 2 +
-          (rectangle4_xu_x + rectangle4_xu_w) -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 -
-          (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
+        (rectangle4_xu_x + rectangle4_xu_w) -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 -
+        (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
         rectangle4_xu_y - lj_h - 12
       );
 
@@ -2571,9 +2617,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y
       );
       ctx.lineTo(rectangle4_xu_x + rectangle4_xu_w, rectangle4_xu_y);
@@ -2601,8 +2647,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y + rectangle3_xu_ + jianju);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.stroke();
@@ -2630,15 +2676,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
@@ -2648,9 +2694,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
@@ -2684,8 +2730,8 @@ export default {
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.stroke();
@@ -2713,15 +2759,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
@@ -2730,9 +2776,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
@@ -2781,7 +2827,7 @@ export default {
       ctx.stroke();
       ctx.setLineDash([10, 3]);
       ctx.fillText(
-        "X",
+        "N",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 3
       );
@@ -2949,7 +2995,7 @@ export default {
       // 三角形顶点
       var vertex_x =
         ((black_spots_x - (voltmeter_top2_x + voltmeter_top2_w)) / 2) *
-          (1 + 0.4) +
+        (1 + 0.4) +
         (voltmeter_top2_x + voltmeter_top2_w);
       var vertex_y = black_spots_y;
       // 竖
@@ -2986,7 +3032,7 @@ export default {
       var black_spots_x2 = black_spots_x;
       var black_spots_y2 =
         ((rectangle3_xu_y - radius - (black_spots_y + radius)) / 2) *
-          (1 - 0.4) +
+        (1 - 0.4) +
         black_spots_y +
         radius;
       // 变阻器icon2
@@ -3112,6 +3158,7 @@ export default {
           electronic_h
         );
       };
+      this.delayerId = setTimeout(this.toggleBol, 500);
     },
     // 渲染电路图 （广十二 广十四）
     fun_circuitFig(w, h, x, y) {
@@ -3212,8 +3259,8 @@ export default {
         // "--A",
         this.schematics_data.i_DC_In_1,
         sensor_level +
-          electronic_w -
-          (12 * 0 + 7.33 * String(this.schematics_data.i_DC_In_1).length) / 2,
+        electronic_w -
+        (12 * 0 + 7.33 * String(this.schematics_data.i_DC_In_1).length) / 2,
         y + electronic_h + 14
       );
 
@@ -3262,11 +3309,11 @@ export default {
         this.schematics_data.u_DC_In + "V",
         // "--v",
         ammeter1_level -
-          electronic_w / 2 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_DC_In).length +
-            5 * 1) -
-          5,
+        electronic_w / 2 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_DC_In).length +
+          5 * 1) -
+        5,
         center_r2_y - (center_r2_y - y) / 2 + 6
       );
       // 矩形
@@ -3301,22 +3348,22 @@ export default {
         (this.schematics_data.t_HS_InConv_1 || "----") + "°c",
         // "----°c",
         (rectangle_w - dashed1) / 2 +
-          dashed1 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.t_HS_InConv_1).length +
-            5 * 0) /
-            2,
+        dashed1 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.t_HS_InConv_1).length +
+          5 * 0) /
+        2,
         center_r2_y + rectangle_overflow + rectangle_jianju
       );
       ctx.fillText(
         (this.schematics_data.t_HS_InConv_2 || "----") + "°c",
         // "----°c",
         (rectangle_w - dashed1) / 2 +
-          dashed1 -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.t_HS_InConv_2).length +
-            5 * 0) /
-            2,
+        dashed1 -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.t_HS_InConv_2).length +
+          5 * 0) /
+        2,
         center_r2_y + rectangle_overflow + rectangle_jianju + 12 * 1.2
       );
       // DC  AC
@@ -3324,17 +3371,17 @@ export default {
         "DC",
         dashed1 + 12 * 1,
         (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        (y - rectangle_overflow)
       );
       // AC
       ctx.fillText(
         "AC",
         rectangle_w - 12 * 2,
         center_r2_y +
-          rectangle_overflow -
-          (y - rectangle_overflow) -
-          (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        rectangle_overflow -
+        (y - rectangle_overflow) -
+        (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
+        (y - rectangle_overflow)
       );
 
       //线圈
@@ -3854,12 +3901,12 @@ export default {
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
-          2 +
-          (capacitor_topX + hu_radius2) -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.t_Battery).length +
-            5 * 1) /
-            2,
+        2 +
+        (capacitor_topX + hu_radius2) -
+        (12 * 0 +
+          7.33 * String(this.schematics_data.t_Battery).length +
+          5 * 1) /
+        2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -3931,10 +3978,10 @@ export default {
         this.schematics_data.u_DC_Out + "V",
         // "--V",
         top1_voltmeter_imgX -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_DC_Out).length +
-            5 * 1) /
-            2,
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_DC_Out).length +
+          5 * 1) /
+        2,
         top1_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -3995,10 +4042,10 @@ export default {
         this.schematics_data.u_Battery + "V",
         // "--V",
         top2_voltmeter_imgX -
-          (12 * 0 +
-            7.33 * String(this.schematics_data.u_Battery).length +
-            5 * 2) /
-            2,
+        (12 * 0 +
+          7.33 * String(this.schematics_data.u_Battery).length +
+          5 * 2) /
+        2,
         top2_voltmeter_imgY + electronic_h / 2 + 12
       );
       ctx.setLineDash([]);
@@ -4064,8 +4111,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.stroke();
@@ -4087,9 +4134,9 @@ export default {
         this.schematics_data.i_L1 + "V",
         // "--A",
         sensor2_x +
-          (electronic_w / 2) * 3 +
-          (12 * 3 + 7.33 * String(this.schematics_data.i_L1).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 3 + 7.33 * String(this.schematics_data.i_L1).length + 5 * 1) /
+        2,
         sensor2_y - 12 * 2.2
       );
       // 连接点1
@@ -4103,15 +4150,15 @@ export default {
         //连接
         ctx.moveTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5,
           rectangle4_xu_y
         );
         ctx.lineTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-            lj_w,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+          lj_w,
           rectangle4_xu_y
         );
         ctx.stroke();
@@ -4119,15 +4166,15 @@ export default {
         // 不连接
         ctx.moveTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5,
           rectangle4_xu_y
         );
         ctx.lineTo(
           rectangle4_xu_x +
-            rectangle4_xu_w -
-            (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-            lj_w,
+          rectangle4_xu_w -
+          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+          lj_w,
           rectangle4_xu_y - lj_h
         );
         ctx.stroke();
@@ -4137,9 +4184,9 @@ export default {
       ctx.fillText(
         "输出接触器",
         lj_w / 2 +
-          (rectangle4_xu_x + rectangle4_xu_w) -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 -
-          (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
+        (rectangle4_xu_x + rectangle4_xu_w) -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 -
+        (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
         rectangle4_xu_y - lj_h - 12
       );
 
@@ -4148,9 +4195,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y
       );
       ctx.lineTo(rectangle4_xu_x + rectangle4_xu_w, rectangle4_xu_y);
@@ -4178,8 +4225,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y + rectangle3_xu_ + jianju);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.stroke();
@@ -4201,9 +4248,9 @@ export default {
         this.schematics_data.i_L2 + "V",
         // "--A",
         sensor3_x +
-          (electronic_w / 2) * 3 +
-          (12 * 3 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 3 + 7.33 * String(this.schematics_data.i_L2).length + 5 * 1) /
+        2,
         sensor3_y - 12 * 2.2
       );
       // 连接点2
@@ -4211,15 +4258,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
@@ -4229,9 +4276,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
@@ -4265,8 +4312,8 @@ export default {
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.stroke();
@@ -4288,9 +4335,9 @@ export default {
         this.schematics_data.i_L3 + "V",
         // "--A",
         sensor4_x +
-          (electronic_w / 2) * 3 +
-          (12 * 3 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) /
-            2,
+        (electronic_w / 2) * 3 +
+        (12 * 3 + 7.33 * String(this.schematics_data.i_L3).length + 5 * 1) /
+        2,
         sensor4_y + 12 * 2.2
       );
       // 连接点3
@@ -4298,15 +4345,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
@@ -4315,9 +4362,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
@@ -4366,7 +4413,7 @@ export default {
       ctx.stroke();
       ctx.setLineDash([10, 3]);
       ctx.fillText(
-        "X",
+        "N",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 3
       );
@@ -4408,8 +4455,8 @@ export default {
         this.schematics_data.u_L1 + "V",
         // "--V",
         bott1_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L1).length + 5 * 1) /
+        2,
         bott1_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       ctx.setLineDash([]);
@@ -4461,8 +4508,8 @@ export default {
         this.schematics_data.u_L2 + "V",
         // "--V",
         bott2_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L2).length + 5 * 1) /
+        2,
         bott2_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // 小圆
@@ -4513,8 +4560,8 @@ export default {
         this.schematics_data.u_L3 + "V",
         // "--V",
         bott3_voltmeter_imgX -
-          (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) /
-            2,
+        (12 * 0 + 7.33 * String(this.schematics_data.u_L3).length + 5 * 1) /
+        2,
         bott3_voltmeter_imgY + electronic_h / 2 + 12 * 2
       );
       // // // 小圆
@@ -4543,7 +4590,7 @@ export default {
       // 三角形顶点
       var vertex_x =
         ((black_spots_x - (voltmeter_top2_x + voltmeter_top2_w)) / 2) *
-          (1 + 0.4) +
+        (1 + 0.4) +
         (voltmeter_top2_x + voltmeter_top2_w);
       var vertex_y = black_spots_y;
       // 竖
@@ -4580,7 +4627,7 @@ export default {
       var black_spots_x2 = black_spots_x;
       var black_spots_y2 =
         ((rectangle3_xu_y - radius - (black_spots_y + radius)) / 2) *
-          (1 - 0.4) +
+        (1 - 0.4) +
         black_spots_y +
         radius;
       // 变阻器icon2
@@ -4868,17 +4915,17 @@ export default {
         "DC",
         dashed1 + 12 * 1,
         (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        (y - rectangle_overflow)
       );
       // AC
       ctx.fillText(
         "AC",
         rectangle_w - 12 * 2,
         center_r2_y +
-          rectangle_overflow -
-          (y - rectangle_overflow) -
-          (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
-          (y - rectangle_overflow)
+        rectangle_overflow -
+        (y - rectangle_overflow) -
+        (center_r2_y + rectangle_overflow - (y - rectangle_overflow)) / 4 +
+        (y - rectangle_overflow)
       );
 
       //线圈
@@ -5387,9 +5434,9 @@ export default {
           capacitor_w -
           hu_radius2 -
           (capacitor_topX + hu_radius2)) /
-          2 +
-          (capacitor_topX + hu_radius2) -
-          (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
+        2 +
+        (capacitor_topX + hu_radius2) -
+        (12 * 0 + 7.33 * 1 + 5 * 4) / 2,
         capacitor_bottY + 12 * 2
       );
       /*
@@ -5583,8 +5630,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.stroke();
@@ -5614,15 +5661,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y - lj_h
       );
       ctx.stroke();
@@ -5630,9 +5677,9 @@ export default {
       ctx.fillText(
         "输出接触器",
         lj_w / 2 +
-          (rectangle4_xu_x + rectangle4_xu_w) -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 -
-          (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
+        (rectangle4_xu_x + rectangle4_xu_w) -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 -
+        (12 * 5 + 7.33 * 0 + 5 * 0) / 2,
         rectangle4_xu_y - lj_h - 12
       );
 
@@ -5641,9 +5688,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y
       );
       ctx.lineTo(rectangle4_xu_x + rectangle4_xu_w, rectangle4_xu_y);
@@ -5671,8 +5718,8 @@ export default {
       ctx.moveTo(rectangle4_xu_x, rectangle4_xu_y + rectangle3_xu_ + jianju);
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.stroke();
@@ -5700,15 +5747,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju - lj_h
       );
       ctx.stroke();
@@ -5718,9 +5765,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + rectangle3_xu_ + jianju
       );
       ctx.lineTo(
@@ -5754,8 +5801,8 @@ export default {
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.stroke();
@@ -5783,15 +5830,15 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2 - lj_h
       );
       ctx.stroke();
@@ -5800,9 +5847,9 @@ export default {
       ctx.beginPath();
       ctx.moveTo(
         rectangle4_xu_x +
-          rectangle4_xu_w -
-          (rectangle4_xu_x + rectangle4_xu_w) / 5 +
-          lj_w,
+        rectangle4_xu_w -
+        (rectangle4_xu_x + rectangle4_xu_w) / 5 +
+        lj_w,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 2
       );
       ctx.lineTo(
@@ -5851,7 +5898,7 @@ export default {
       ctx.stroke();
       ctx.setLineDash([10, 3]);
       ctx.fillText(
-        "X",
+        "N",
         rectangle4_xu_x + rectangle4_xu_w + radius + 7.33 * 2,
         rectangle4_xu_y + (rectangle3_xu_ + jianju) * 3
       );
@@ -6019,7 +6066,7 @@ export default {
       // 三角形顶点
       var vertex_x =
         ((black_spots_x - (voltmeter_top2_x + voltmeter_top2_w)) / 2) *
-          (1 + 0.4) +
+        (1 + 0.4) +
         (voltmeter_top2_x + voltmeter_top2_w);
       var vertex_y = black_spots_y;
       // 竖
@@ -6056,7 +6103,7 @@ export default {
       var black_spots_x2 = black_spots_x;
       var black_spots_y2 =
         ((rectangle3_xu_y - radius - (black_spots_y + radius)) / 2) *
-          (1 - 0.4) +
+        (1 - 0.4) +
         black_spots_y +
         radius;
       // 变阻器icon2
@@ -6457,23 +6504,26 @@ export default {
       SignalVal(this.trainValue).then((response) => {
         if (response.data.code === 200) {
           this.schematics_data = response.data.data[0];
-          // console.log("查询结果", response);
-          if (bol) {
+          // this.schematics_data.i_DC_In_1 = (Math.random() * 300)
+          console.log("查询结果", response);
+          if (true) {
             if (this.schematics_data === undefined) {
               this.fun_circuitFigNull(1600, 800, 50, 300);
             } else {
               this.fun_circuitFig1(1600, 800, 50, 300);
             }
           }
+          // this.fun_circuitFig1(1600, 800, 50, 300);
+          // this.fun_circuitFigNull(1600, 800, 50, 300);
         } else {
           console.error("电路图数据 接口查询失败");
         }
       });
     },
-    startInterval() {  
+    startInterval() {
       // 设置定时器，每5秒执行一次signal_val函数  
-      this.intervalId = setInterval(this.signal_val, 5000);  
-    }, 
+      this.intervalId = setInterval(this.signal_val, 5000);
+    },
   },
   created() {
     // console.log("查询的电路图：", this.id);
@@ -6499,11 +6549,22 @@ export default {
     this.startInterval();
     // ----
   },
-  beforeDestroy() {  
+  beforeDestroy() {
     // 在组件销毁前清除定时器，避免内存泄漏  
-    if (this.intervalId !== null) {  
-      clearInterval(this.intervalId);  
-    }  
-  },  
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+    }
+  },
 };
 </script>
+<style>
+.xx {
+  opacity: 0;
+}
+.canvas > canvas{
+  position:absolute;
+  left: 50%;
+  top: 0;
+transform: translate(-50%);
+}
+</style>

@@ -129,7 +129,7 @@
         <div class="signal-btn-div">
           <el-button size="mini" ref="all_title" :class="signal_btn" @click="select_code(-1)">全部</el-button>
           <el-button size="mini" :class="item.togg ? 'signal-btn' : 'signal-btn_no'" @click="select_code(index)"
-            v-for="(item, index) in indicators_contents" :key="index">{{ item.system }}</el-button>
+            v-for="(item, index) in indicators_title_xhl" :key="index">{{ item.system }}</el-button>
           <!-- <el-button size="mini" class="signal-btn">辅助变流器</el-button>
           <el-button size="mini" class="signal-btn">高压电气箱</el-button>
           <el-button size="mini" class="signal-btn">逆变输出</el-button>
@@ -469,6 +469,7 @@ export default {
       ],
       // table 数据
       indicators_contents: null,
+      indicators_title_xhl: null,
       // 选中table 显示的索引
       select_table: null,
       // 指标表格parts长度
@@ -763,8 +764,8 @@ export default {
         if (this.signal_btn === "signal-btn") {
           this.signal_btn = "signal-btn_no";
           // 全部隐藏
-          for (let i = 0; i < this.indicators_contents.length; i++) {
-            this.indicators_contents[i].togg = false;
+          for (let i = 0; i < this.indicators_title_xhl.length; i++) {
+            this.indicators_title_xhl[i].togg = false;
           }
           // 隐藏折线
           // console.log('隐藏的信息量',this.sigletonSignal);
@@ -773,8 +774,8 @@ export default {
         } else {
           this.signal_btn = "signal-btn";
           // 全部显示
-          for (let i = 0; i < this.indicators_contents.length; i++) {
-            this.indicators_contents[i].togg = true;
+          for (let i = 0; i < this.indicators_title_xhl.length; i++) {
+            this.indicators_title_xhl[i].togg = true;
           }
           // console.log('显示的信息量',this.sigletonSignal);
 
@@ -785,17 +786,17 @@ export default {
         }
       } else {
         // 点击其它项
-        this.indicators_contents[i].togg = !this.indicators_contents[i].togg;
+        this.indicators_title_xhl[i].togg = !this.indicators_title_xhl[i].togg;
         // 获取要调整的数据的 code
         let array_codes_tmp = [];
         let array_codes = [];
-        for (let i_ = 0; i_ < this.indicators_contents[i].parts.length; i_++) {
+        for (let i_ = 0; i_ < this.indicators_title_xhl[i].parts.length; i_++) {
           for (
             let j = 0;
-            j < this.indicators_contents[i].parts[i_].indicators.length;
+            j < this.indicators_title_xhl[i].parts[i_].indicators.length;
             j++
           ) {
-            let tmp_name = this.indicators_contents[i].parts[i_].indicators;
+            let tmp_name = this.indicators_title_xhl[i].parts[i_].indicators;
             array_codes_tmp.push(tmp_name[j].code);
           }
         }
@@ -809,15 +810,15 @@ export default {
           .map((signal) => signal.name);
         // console.log("最终传递的昵称", matchingSignals);
 
-        this.echarts_togg(matchingSignals, this.indicators_contents[i].togg);
-        this.sifnalcom_togg(array_codes, this.indicators_contents[i].togg);
+        this.echarts_togg(matchingSignals, this.indicators_title_xhl[i].togg);
+        this.sifnalcom_togg(array_codes, this.indicators_title_xhl[i].togg);
         // 循环遍历 判断全部 是否高亮
-        for (let i = 0; i < this.indicators_contents.length; i++) {
-          if (!this.indicators_contents[i].togg) {
+        for (let i = 0; i < this.indicators_title_xhl.length; i++) {
+          if (!this.indicators_title_xhl[i].togg) {
             this.signal_btn = "signal-btn_no";
             break;
           } else {
-            if (i === this.indicators_contents.length - 1) {
+            if (i === this.indicators_title_xhl.length - 1) {
               this.signal_btn = "signal-btn";
             }
           }
@@ -1056,7 +1057,7 @@ export default {
           }
         }
       }
-      console.log('table数据', data, e, Name);
+      // console.log('table数据', data, e, Name);
 
       this.indicators_contents = [];
       for (let index = 0; index < data.length; index++) {
@@ -1102,8 +1103,11 @@ export default {
 
           this.indicators_contents.push(content);
         }
+        
       }
-
+          if (this.indicators_title_xhl === null) {
+            this.indicators_title_xhl = JSON.parse(JSON.stringify(this.indicators_contents))
+          }
       // 选择部分显示时
       if (e !== undefined) {
         this.indicators_cards.forEach((element, i) => {
@@ -1203,11 +1207,12 @@ export default {
 
     window.addEventListener("resize", () => {
       if (this.dialogVisible) {
-        if (this.chartRef) {
-          this.chartRef.dispose();
-          this.chartRef = null;
-        }
-        // this.echarts_();
+        // if (this.chartRef) {
+        //   this.chartRef.dispose();
+        //   this.chartRef = null;
+        // }
+        // // this.echarts_();
+        this.chartRef.resize();
       }
     });
     // this.fun_circuitFig(1400,700,50,300)

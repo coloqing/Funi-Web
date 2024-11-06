@@ -411,24 +411,33 @@ export default {
     this.init_my_charts();
 
     window.addEventListener("resize", () => {
-      if (this.alarm_echarts) {
-        this.alarm_echarts.dispose();
-        this.alarm_echarts = null;
-      }
-      if (this.history_alarm) {
-        this.history_alarm.dispose();
-        this.history_alarm = null;
-      }
-      if (this.history_forewarn) {
-        this.history_forewarn.dispose();
-        this.history_forewarn = null;
-      }
-      if (this.line_top10) {
-        this.line_top10.dispose();
-        this.line_top10 = null;
-      }
-      this.init_my_charts();
-      // console.log('窗口变化了');
+      // if (this.alarm_echarts !== null) {
+
+
+
+
+      // }
+      // if (this.$refs.alarm_echarts) {
+        //     this.alarm_echarts.dispose();
+        //     this.alarm_echarts = null;
+        // this.$refs.alarm_echarts.resize();
+      // }
+      // if (this.history_alarm) {
+      //   //     this.history_alarm.dispose();
+      //   //     this.history_alarm = null;
+      //   this.$refs.history_alarm.resize();
+      // }
+      // if (this.history_forewarn) {
+      //   //     this.history_forewarn.dispose();
+      //   //     this.history_forewarn = null;
+      //   this.$refs.history_forewarn.resize();
+      // }
+      // if (this.line_top10) {
+      //   //     this.line_top10.dispose();
+      //   //     this.line_top10 = null;
+      //   this.$refs.line_top10.resize();
+      // }
+      //   this.init_my_charts();
     });
   },
   methods: {
@@ -1265,6 +1274,9 @@ export default {
   beforeDestroy() {
     // 在组件销毁前清除 interval  
     this.clearInterval();
+    // window.removeEventListener("resize");
+    // console.log('去除');
+
   },
   // 销毁
   // destroyed() {},

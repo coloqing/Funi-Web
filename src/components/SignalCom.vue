@@ -92,14 +92,14 @@ export default {
     },
     // 鼠标移入
     onMouseEnter(){
-        console.log('鼠标移入',this.signal_name);
+        // console.log('鼠标移入',this.signal_name);
         // if (this.bg_className === "") {
           this.$emit('opac-click',this.signal_name,1)
         // }
     },
     // 鼠标移出
     onMouseLeave(){
-      console.log('鼠标移出',this.signal_name);
+      // console.log('鼠标移出',this.signal_name);
       // if (this.bg_className === "") {
         this.$emit('opac-click',this.signal_name,0)
       // }

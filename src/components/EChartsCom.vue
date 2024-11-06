@@ -82,8 +82,7 @@ export default {
         this.option.series.forEach(function (series) {
           if (series.name !== Name) {
             // 设置其他系列的透明度
-              console.log('操作的对象',series.lineStyle);
-              
+              // console.log('操作的对象',series.lineStyle);
             series.lineStyle.opacity = 0.2; // 你可以根据需要调整这个值
             // series.itemStyle.opacity = 0.1;
           }
@@ -110,6 +109,11 @@ export default {
       this.bar_echarts = echarts.init(this.$refs.echartref);
       this.bar_echarts.setOption(this.option);
     }
+    window.addEventListener("resize", () => {
+      if (this.bar_echarts) {
+        this.bar_echarts.resize();
+      }
+    })
   },
   watch: {
     option: {
@@ -117,7 +121,7 @@ export default {
         this.option = newVal;
         // this.bar_echarts.clear();
         this.bar_echarts.setOption(newVal,true);
-        console.log('重新渲染',newVal);
+        // console.log('重新渲染',newVal);
         this.show(this.select_no, false)
       },
       deep: true,
