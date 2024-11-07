@@ -46,3 +46,25 @@ export function getAlarmList(
     },
   });
 }
+
+// 故障预警导出
+export function faultWarnExcel(data) { 
+  return request({
+    url: "/FaultWarn/excel",
+    method: "get",
+    responseType: 'blob',
+    params:data
+  });
+}
+// 关键数据 导出
+export function trainExcel(data) {
+  return request({
+    url: "/Train/excel",
+    method: "get",
+    responseType: 'blob',
+    params:data
+
+  });
+}
+
+

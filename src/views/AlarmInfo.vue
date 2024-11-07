@@ -91,7 +91,7 @@
           </el-col>
           <el-col :span="12">
             <div style="display: flex; justify-content: end">
-              <el-button size="mini">导出(已选择{{ selectedRow.length }}项)</el-button>
+              <el-button size="mini" @click="faultWarn_excel">导出(已选择{{ selectedRow.length }}项)</el-button>
             </div>
           </el-col>
         </el-row>
@@ -221,7 +221,7 @@
                   fill="#ffffff" p-id="879"></path>
               </svg>
             </div>
-            <div style="cursor: pointer">
+            <div style="cursor: pointer" @click="train_excel">
               <svg t="1726801203625" class="icon" viewBox="0 0 1024 1024" version="1.1"
                 xmlns="http://www.w3.org/2000/svg" p-id="2803" width="22" height="22">
                 <path
@@ -262,8 +262,8 @@
       <el-row>
         <div class="signal-panel">
           <div class="singal-item" v-for="(item, index) in signals" v-bind:key="item.id">
-            <SignalCom :signal_name="item.name" :key="currentRow.code" :signal_id="index" :signal_value="item.value" :ref="item.code"
-              :color="getColor(index)" @erts-click="echarts_togg" @opac-click="opacity_togg">
+            <SignalCom :signal_name="item.name" :key="currentRow.code" :signal_id="index" :signal_value="item.value"
+              :ref="item.code" :color="getColor(index)" @erts-click="echarts_togg" @opac-click="opacity_togg">
             </SignalCom>
             <!-- <SignalCom :signal_name="item.name" :signal_value="item.value" :color="getColor(index)">
             </SignalCom> -->
@@ -372,7 +372,7 @@ import EChartsCom from "@/components/EChartsCom.vue";
 import moment from "moment";
 import { getLineTrains, alarmList, colors, lineData } from "@/api/api.js";
 import SignalSelector from "@/components/SignalSelector.vue";
-import { getLines, getTrains, getAlarmList } from "@/api/alarmInfo";
+import { getLines, getTrains, getAlarmList, faultWarnExcel, trainExcel } from "@/api/alarmInfo";
 import { indicatorInfo, signalVal } from "@/api/trainClass";
 import { bef_after } from "@/api/api.js";
 import { getSignals } from "@/api/signalSelector";
@@ -392,7 +392,7 @@ export default {
       signals_tmp: null,
       lineValue: "",
       // 图标数据更新后的随机数
-      random:'',
+      random: '',
       lineOptions: [
         {
           value: "",
@@ -696,89 +696,54 @@ export default {
       // this.signals = 
       // ali
       console.log('选中的值', this.tableData.data);
-      if (this.tableData.data.length !==0) {
-        
-      // 默认选中的信号量 中文
-      let str_code_arr = this.tableData.data[0].subSystem
-      // let code_arr = str_code_arr.split(',')
-      console.log('分割后的数据', str_code_arr);
+      if (this.tableData.data.length !== 0) {
 
-      indicatorInfo(null, this.trainValue || this.currentRow.trainNumber).then((response) => {
-        console.log(response);
-        if (response.data.success) {
-          var data = response.data.data.deviceDM;
-          let code_arr = ''
-          console.log('需要过滤的数据数据', data);
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].name === str_code_arr || data.length === i + 1) {
-              this.signals = []
-              console.log(data[i].components);
-              for (let j = 0; j < data[i].components.length; j++) {
-                if (data[i].components.length === j + 1) {
-                  code_arr += data[i].components[j].signalCode
-                  this.signals.push({
-                    name: data[i].components[j].signalName,
-                    code: data[i].components[j].signalCode,
-                    value: data[i].components[j].signalValue,
-                    signalName: data[i].components[j].signalName
-                  })
-                } else {
-                  code_arr += data[i].components[j].signalCode + ','
+        // 默认选中的信号量 中文
+        let str_code_arr = this.tableData.data[0].subSystem
+        // let code_arr = str_code_arr.split(',')
+        console.log('分割后的数据', str_code_arr);
+
+        indicatorInfo(null, this.trainValue || this.currentRow.trainNumber).then((response) => {
+          console.log(response);
+          if (response.data.success) {
+            var data = response.data.data.deviceDM;
+            let code_arr = ''
+            console.log('需要过滤的数据数据', data);
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].name === str_code_arr || data.length === i + 1) {
+                this.signals = []
+                console.log(data[i].components);
+                for (let j = 0; j < data[i].components.length; j++) {
+                  if (data[i].components.length === j + 1) {
+                    code_arr += data[i].components[j].signalCode
+                    this.signals.push({
+                      name: data[i].components[j].signalName,
+                      code: data[i].components[j].signalCode,
+                      value: data[i].components[j].signalValue,
+                      signalName: data[i].components[j].signalName
+                    })
+                  } else {
+                    code_arr += data[i].components[j].signalCode + ','
+                  }
                 }
+                break
               }
-              break
             }
+            console.log('最后的结果', code_arr);
+            // 获取信号量数据
+            // let result = bef_after('2024-11-04 14:47:00', 5, 5);
+            let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
+            this.initSignalData(result.beforeTime, result.afterTime);
           }
-          console.log('最后的结果', code_arr);
-          // 获取信号量数据
-          // let result = bef_after('2024-11-04 14:47:00', 5, 5);
-          let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
-          this.initSignalData(result.beforeTime, result.afterTime);
-        }
-      });
-    }
+        });
+      }
 
     },
-
-
     // 调整查询的时间
     get_semaphore_time(time) {
-      // if (this.currentRow) {
-      //   // const adjustedTimeString = this.currentRow.createTime;
-      //   const adjustedTime = new Date();
-      //   console.log('当前时间', adjustedTime);
-
-      //   // 计算前一分钟的时间
-      //   const oneMinuteBefore = new Date(
-      //     adjustedTime.getTime() - time * 60 * 1000
-      //   );
-      //   // 计算后一分钟的时间
-      //   const oneMinuteAfter = new Date(
-      //     adjustedTime.getTime() + time * 60 * 1000
-      //   );
-      //   // 自定义格式化函数（可选）
-      //   const formatDate = (date) => {
-      //     const pad = (num) => (num < 10 ? "0" : "") + num;
-      //     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-      //       date.getDate()
-      //     )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
-      //       date.getSeconds()
-      //     )}`;
-      //   };
-      // console.log((oneMinuteBefore),
-      //   (oneMinuteAfter));
-      // console.log(this.currentRow.createTime.split('.')[0]);
       let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
       this.initSignalData(result.beforeTime, result.afterTime);
-      // this.initSignalData(
-      //   // formatDate(this.currentRow.createTime.split('.')[0]),
-      //   // formatDate(this.currentRow.createTime.split('.')[0])
-      //   formatDate(oneMinuteBefore),
-      //   formatDate(oneMinuteAfter)
-      // );
-      // }
     },
-
     query() {
       var t = this.timerangeValue;
       // var t = this.timerangeValue.split(",");
@@ -817,7 +782,7 @@ export default {
       });
     },
     reset() {
-      this.lineValue = this.$route.query.trainNum ? this.$route.query.trainNum.slice(0, 2) :'';
+      this.lineValue = this.$route.query.trainNum ? this.$route.query.trainNum.slice(0, 2) : '';
       this.trainValue = this.$route.query.trainNum;
       this.subSysValue = "";
       this.stateValue = "";
@@ -865,6 +830,70 @@ export default {
       this.getxhls()
 
     },
+    // 预警报警导出
+    faultWarn_excel() {
+      let excel_arr = ''
+      for (let i = 0; i < this.selectedRow.length; i++) {
+        if (this.selectedRow.length - 1 === i) {
+          excel_arr += this.selectedRow[i].id
+        } else {
+          excel_arr += this.selectedRow[i].id + ','
+        }
+      }
+      console.log('导出的id', excel_arr);
+      faultWarnExcel({ ids: excel_arr }).then((res) => {
+        console.log('导出结果：', res);
+        if (res.status === 200) {
+        //  // 创建一个下载链接
+        let blob = new Blob([res.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        // 设置下载文件名，从响应头或自行指定
+        const fileName = (this.type === "0" ? "报警列表" : "预警列表") + '.xlsx'; // 替换为实际文件名
+        link.download = fileName;
+        // 触发下载
+        document.body.appendChild(link);
+        link.click();
+        // 移除下载链接
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }else{
+        console.error('导出失败');
+      }
+      })
+    },
+    // 关键数据导出
+    train_excel() {
+      let result = bef_after(this.currentRow.createTime, this.dataTimeRangeValue, this.dataTimeRangeValue);
+      trainExcel({ trainId: this.currentRow.trainId,startTime: result.beforeTime,endTime: result.afterTime }).then((res) => {
+        console.log('导出结果：', res);
+        if (res.status === 200) {
+        //  // 创建一个下载链接
+        let blob = new Blob([res.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        // 设置下载文件名，从响应头或自行指定
+        const fileName = '关键数据导出.xlsx'; // 替换为实际文件名
+        link.download = fileName;
+        // 触发下载
+        document.body.appendChild(link);
+        link.click();
+        // 移除下载链接
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }else{
+        console.error('导出失败');
+      }
+      })
+
+
+
+    },
+
+
+
 
     formatTimestamp(timestamp) {
       return moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss");
@@ -883,20 +912,20 @@ export default {
       this.dialogVisible = false;
     },
     comfirm(val) {
-      console.log('可能出问题的地方',val);
-      
+      console.log('可能出问题的地方', val);
+
       this.dialogVisible = false;
       var newSignals = [];
       signalVal(this.trainValue || this.currentRow.trainNumber, "", "", "", true).then((response) => {
         console.log(response);
         var data = response.data.data;
-        console.log('出问题的对象',data);
+        console.log('出问题的对象', data);
         if (data.length !== 0) {
-          
+
           for (let i = 0; i < val.length; i++) {
             const item = val[i];
             item.value =
-            data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)];
+              data[0][item.code.charAt(0).toLowerCase() + item.code.slice(1)];
             newSignals.push(item);
           }
         }
@@ -960,8 +989,8 @@ export default {
             data.push(temp);
           }
         }
-          this.random = Math.random()
-          this.signal_option.series = data;
+        this.random = Math.random()
+        this.signal_option.series = data;
       });
     },
   },
